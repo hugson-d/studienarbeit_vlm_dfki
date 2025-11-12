@@ -18,7 +18,7 @@ def load_solutions_1998_2011():
 
 def load_extracted_tasks():
     """Lädt extrahierte Aufgaben aus JSONL."""
-    manifest_path = Path('data/test_references_1998_2011/tasks_manifest_1998_2011_test.jsonl')
+    manifest_path = Path('data/references_1998_2011/tasks_manifest_1998_2011.jsonl')
     
     if not manifest_path.exists():
         print(f"⚠ Manifest nicht gefunden: {manifest_path}")

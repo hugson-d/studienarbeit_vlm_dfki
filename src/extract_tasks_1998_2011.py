@@ -1,41 +1,21 @@
 """
-Test-Skript für Extraktion von Känguru-Aufgaben 1998-2011.
+Extraktions-Skript für Känguru-Aufgaben 1998-2011.
 
 Diese älteren PDFs haben eine andere Struktur:
-- Nummerierung: 1. 2. 3. 4. etc. (statt A1, B1, etc.)
+- Nummerierung: 1. 2. 3. 4. etc. (sequentiell, nicht A1, B1, etc.)
 - Aufgaben starten nach dem Marker "3-Punkte- Aufgaben" oder "3 Punkte-Aufgaben"
 - Labels sind auf gleicher vertikaler X-Position ausgerichtet
 
-Mapping zu lösungen.json:
-- lösungen.json verwendet A1-A10, B1-B10, C1-C10
-- PDFs verwenden 1-30 (sequentiell)
-- Mapping: 1-10 -> A1-A10, 11-20 -> B1-B10, 21-30 -> C1-C10
+Verwendet lösungen_1998_2011.json mit sequentieller Nummerierung 1-30.
 """
 
 import json
+import csv
 from pathlib import Path
 from typing import Dict, List, Optional
 import re
 
 import fitz  # type: ignore[import]
-
-
-def map_sequential_to_abc(task_num: int) -> str:
-    """
-    Map sequential task number (1-30) to A1-C10 format for lösungen.json lookup.
-    
-    1-10 -> A1-A10
-    11-20 -> B1-B10
-    21-30 -> C1-C10
-    """
-    if 1 <= task_num <= 10:
-        return f"A{task_num}"
-    elif 11 <= task_num <= 20:
-        return f"B{task_num - 10}"
-    elif 21 <= task_num <= 30:
-        return f"C{task_num - 20}"
-    else:
-        raise ValueError(f"Task number {task_num} out of range (1-30)")
 
 
 def load_solutions(solutions_path: Path) -> Dict[tuple, str]:
@@ -256,7 +236,7 @@ def extract_items_from_pdf(pdf_path, year, class_code, solutions, output_dir):
         # Extract text
         text = page.get_text('text', clip=clip)
         
-        # Get solution - for old format, task_id is just the number
+        # Get solution - use sequential numbering (1-30) directly
         solution_key = (year, class_code, label)
         answer = solutions.get(solution_key, 'UNKNOWN')
         
@@ -276,65 +256,80 @@ def extract_items_from_pdf(pdf_path, year, class_code, solutions, output_dir):
 
 
 def main():
-    """Main extraction routine for 1998-2011 test."""
+    """Main function."""
+    # Paths
+    data_dir = Path('data')
+    output_dir = Path('data/references_1998_2011')
+    solutions_file = Path('lösungen_1998_2011.json')
     
-    # Setup paths
-    project_root = Path(__file__).parent.parent
-    data_root = project_root / 'data'
-    solutions_path = project_root / 'lösungen.json'
-    output_dir = project_root / 'data' / 'test_references_1998_2011'
+    # Output files
+    manifest_jsonl = output_dir / 'tasks_manifest_1998_2011.jsonl'
+    manifest_csv = output_dir / 'tasks_manifest_1998_2011.csv'
     
     # Create output directory
     output_dir.mkdir(parents=True, exist_ok=True)
     
     # Load solutions
-    print(f"Loading solutions from {solutions_path}...")
-    solutions = load_solutions(solutions_path)
-    print(f"Loaded {len(solutions)} solutions")
+    print(f"\n📖 Loading solutions from {solutions_file}...")
+    solutions = load_solutions(solutions_file)
+    print(f"   Loaded {len(solutions)} solutions")
     
-    # Find all PDFs (1998-2011 only)
-    pdf_files = []
-    for class_folder in data_root.iterdir():
-        if not class_folder.is_dir() or class_folder.name.startswith('test_') or class_folder.name == 'references':
-            continue
-        
-        for pdf_file in sorted(class_folder.glob('kaenguru*.pdf')):
-            pdf_info = parse_pdf_filename(pdf_file.name)
-            if pdf_info:
-                year, class_name = pdf_info
-                # Only process 1998-2011
+    # Find all PDF files for years 1998-2011
+    all_pdfs = []
+    for class_dir in data_dir.glob('Klasse*'):
+        for pdf in class_dir.glob('*.pdf'):
+            result = parse_pdf_filename(pdf.name)
+            if result:
+                year, class_name = result
                 if 1998 <= year <= 2011:
-                    pdf_files.append((pdf_file, year, class_name))
+                    all_pdfs.append((pdf, year, class_name))
     
-    print(f"Found {len(pdf_files)} PDFs to process (1998-2011)\n")
+    # Sort by year and class
+    all_pdfs.sort(key=lambda x: (x[1], x[2]))
     
-    # Process all PDFs
+    print(f"\n📄 Found {len(all_pdfs)} PDFs for years 1998-2011")
+    print(f"🎯 Starting extraction...\n")
+    
+    # Extract all items
     all_items = []
-    for pdf_path, year, class_name in pdf_files:
-        print(f"Processing {pdf_path.name} ({year}, {class_name})...")
-        
-        try:
-            items = extract_items_from_pdf(
-                pdf_path,
-                year,
-                class_name,
-                solutions,
-                output_dir
-            )
-            all_items.extend(items)
-            print(f"  ✓ Extracted {len(items)} tasks\n")
-        except Exception as e:
-            print(f"  ✗ Error: {e}\n")
+    for pdf_path, year, class_name in all_pdfs:
+        print(f"Processing: {pdf_path.name} ({year}, {class_name})")
+        items = extract_items_from_pdf(pdf_path, year, class_name, solutions, output_dir)
+        all_items.extend(items)
+        print(f"  ✓ Extracted {len(items)} tasks\n")
     
     # Write JSONL manifest
-    manifest_path = output_dir / 'tasks_manifest_1998_2011_test.jsonl'
-    with open(manifest_path, 'w', encoding='utf-8') as f:
+    print(f"\n💾 Writing manifest to {manifest_jsonl}...")
+    with open(manifest_jsonl, 'w', encoding='utf-8') as f:
         for item in all_items:
             f.write(json.dumps(item, ensure_ascii=False) + '\n')
     
-    print(f"\n✓ Done! Extracted {len(all_items)} tasks")
-    print(f"  Images: {output_dir}/")
-    print(f"  Manifest: {manifest_path}")
+    # Write CSV manifest
+    print(f"💾 Writing manifest to {manifest_csv}...")
+    csv_fields = ['year', 'class', 'task_id', 'answer', 'page_index', 'is_text_only', 'image_path']
+    with open(manifest_csv, 'w', encoding='utf-8', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=csv_fields)
+        writer.writeheader()
+        for item in all_items:
+            # Create a copy without the 'text' field for CSV
+            csv_item = {k: v for k, v in item.items() if k in csv_fields}
+            writer.writerow(csv_item)
+    
+    print(f"\n✅ Extraction complete!")
+    print(f"   Total items: {len(all_items)}")
+    print(f"   Output directory: {output_dir}")
+    print(f"   Manifest JSONL: {manifest_jsonl}")
+    print(f"   Manifest CSV: {manifest_csv}")
+    
+    # Summary by year
+    from collections import defaultdict
+    by_year = defaultdict(int)
+    for item in all_items:
+        by_year[item['year']] += 1
+    
+    print(f"\n📊 Summary by year:")
+    for year in sorted(by_year.keys()):
+        print(f"   {year}: {by_year[year]} tasks")
 
 
 if __name__ == '__main__':
