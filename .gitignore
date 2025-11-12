@@ -42,3 +42,6 @@ Thumbs.db
 kaenguru_loesungen_alle.pdf
 lösungen_backup.json
 loesungen_fehler.json
+
+# Extracted task images (keep only manifest)
+data/references/*.png
