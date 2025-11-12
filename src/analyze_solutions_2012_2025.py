@@ -2,24 +2,23 @@
 Analyse der Känguru-Lösungen und extrahierten Tasks (2012-2025).
 
 Dieses Skript analysiert:
-1. Die lösungen.json Datei für Jahre 2012-2025
-2. Die extrahierten Tasks aus tasks_manifest.jsonl
+1. Die lösungen_2012_2025.json Datei
+2. Die extrahierten Tasks aus tasks_manifest_2012_2025.jsonl
 3. Vergleicht Soll- vs. Ist-Zahlen
 4. Verteilung der Lösungsbuchstaben (A, B, C, D, E)
+5. Exportiert Ergebnisse nach Excel
 """
 
 import json
 from pathlib import Path
 from collections import defaultdict, Counter
+import pandas as pd
 
 
 def load_solutions(filepath: Path) -> list:
-    """Lädt die Lösungen aus der JSON-Datei (nur 2012-2025)."""
+    """Lädt die Lösungen aus der lösungen_2012_2025.json Datei."""
     with open(filepath, 'r', encoding='utf-8') as f:
-        all_solutions = json.load(f)
-    
-    # Filter nur 2012-2025
-    return [s for s in all_solutions if s['Jahr'] >= 2012]
+        return json.load(f)
 
 
 def load_extracted_tasks(filepath: Path) -> list:
@@ -334,7 +333,7 @@ def main():
     """Hauptfunktion."""
     # Pfade
     project_root = Path(__file__).parent.parent
-    solutions_file = project_root / 'lösungen.json'
+    solutions_file = project_root / 'lösungen_2012_2025.json'
     manifest_file = project_root / 'data' / 'references' / 'tasks_manifest_2012_2025.jsonl'
     
     if not solutions_file.exists():
@@ -373,9 +372,86 @@ def main():
     # Zeige erwartete Aufgabenanzahlen
     print_missing_tasks_info()
     
+    # Exportiere nach Excel
+    export_to_excel(solutions, extracted_tasks)
+    
     print("=" * 80)
     print("✓ Analyse abgeschlossen")
     print("=" * 80 + "\n")
+
+
+def export_to_excel(solutions: list, extracted_tasks: list):
+    """Exportiert Analyse-Ergebnisse nach Excel."""
+    output_path = Path('analyse_2012_2025.xlsx')
+    
+    # 1. Übersicht nach Jahr
+    years_data = []
+    tasks_by_year_class = defaultdict(lambda: defaultdict(set))
+    extracted_by_year_class = defaultdict(lambda: defaultdict(set))
+    
+    for sol in solutions:
+        tasks_by_year_class[sol['Jahr']][sol['Klasse']].add(sol['Aufgabe'])
+    
+    for task in extracted_tasks:
+        extracted_by_year_class[task['year']][task['class']].add(task['task_id'])
+    
+    expected_counts = {"3 und 4": 24, "5 und 6": 24, "7 und 8": 30, "9 und 10": 30, "11 bis 13": 30}
+    
+    for year in sorted(set(sol['Jahr'] for sol in solutions)):
+        year_expected = sum(expected_counts[cls] for cls in expected_counts.keys())
+        year_extracted = sum(len(extracted_by_year_class[year][cls]) for cls in expected_counts.keys())
+        
+        years_data.append({
+            'Jahr': year,
+            'Extrahiert': year_extracted,
+            'Erwartet': year_expected,
+            'Fehlend': year_expected - year_extracted,
+            'Prozent': f"{100*year_extracted/year_expected:.1f}%" if year_expected > 0 else "0%"
+        })
+    
+    # 2. Details nach Jahr und Klasse
+    details_data = []
+    for year in sorted(set(sol['Jahr'] for sol in solutions)):
+        for class_name in ['3 und 4', '5 und 6', '7 und 8', '9 und 10', '11 bis 13']:
+            expected = expected_counts[class_name]
+            extracted = extracted_by_year_class[year][class_name]
+            missing = tasks_by_year_class[year][class_name] - extracted
+            
+            details_data.append({
+                'Jahr': year,
+                'Klasse': class_name,
+                'Extrahiert': len(extracted),
+                'Erwartet': expected,
+                'Fehlend': len(missing),
+                'Fehlende_Aufgaben': ', '.join(sorted(missing)) if missing else ''
+            })
+    
+    # 3. Lösungsverteilung
+    distribution_data = []
+    overall_counter = Counter(sol['Lösung'] for sol in solutions)
+    total = sum(overall_counter.values())
+    
+    for letter in sorted(overall_counter.keys()):
+        count = overall_counter[letter]
+        percentage = (count / total * 100) if total > 0 else 0
+        
+        distribution_data.append({
+            'Lösung': letter,
+            'Anzahl': count,
+            'Prozent': f"{percentage:.2f}%",
+            'Abweichung_von_20%': f"{percentage - 20:.2f}%"
+        })
+    
+    # Schreibe in Excel
+    with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
+        pd.DataFrame(years_data).to_excel(writer, sheet_name='Übersicht', index=False)
+        pd.DataFrame(details_data).to_excel(writer, sheet_name='Details', index=False)
+        pd.DataFrame(distribution_data).to_excel(writer, sheet_name='Lösungsverteilung', index=False)
+    
+    print(f"\n💾 Excel-Datei erstellt: {output_path}")
+    print(f"   - Sheet 'Übersicht': Zusammenfassung nach Jahr")
+    print(f"   - Sheet 'Details': Detaillierte Aufschlüsselung nach Jahr und Klasse")
+    print(f"   - Sheet 'Lösungsverteilung': Verteilung der Lösungsbuchstaben A-E")
 
 
 if __name__ == "__main__":

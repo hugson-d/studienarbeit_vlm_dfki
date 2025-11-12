@@ -5,6 +5,11 @@ Diese älteren PDFs haben eine andere Struktur:
 - Nummerierung: 1. 2. 3. 4. etc. (statt A1, B1, etc.)
 - Aufgaben starten nach dem Marker "3-Punkte- Aufgaben" oder "3 Punkte-Aufgaben"
 - Labels sind auf gleicher vertikaler X-Position ausgerichtet
+
+Mapping zu lösungen.json:
+- lösungen.json verwendet A1-A10, B1-B10, C1-C10
+- PDFs verwenden 1-30 (sequentiell)
+- Mapping: 1-10 -> A1-A10, 11-20 -> B1-B10, 21-30 -> C1-C10
 """
 
 import json
@@ -13,6 +18,24 @@ from typing import Dict, List, Optional
 import re
 
 import fitz  # type: ignore[import]
+
+
+def map_sequential_to_abc(task_num: int) -> str:
+    """
+    Map sequential task number (1-30) to A1-C10 format for lösungen.json lookup.
+    
+    1-10 -> A1-A10
+    11-20 -> B1-B10
+    21-30 -> C1-C10
+    """
+    if 1 <= task_num <= 10:
+        return f"A{task_num}"
+    elif 11 <= task_num <= 20:
+        return f"B{task_num - 10}"
+    elif 21 <= task_num <= 30:
+        return f"C{task_num - 20}"
+    else:
+        raise ValueError(f"Task number {task_num} out of range (1-30)")
 
 
 def load_solutions(solutions_path: Path) -> Dict[tuple, str]:
