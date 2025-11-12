@@ -1,9 +1,11 @@
 """
-Analyse der Känguru-Lösungen.
+Analyse der Känguru-Lösungen und extrahierten Tasks (2012-2025).
 
-Dieses Skript analysiert die lösungen.json Datei und gibt folgende Statistiken aus:
-1. Anzahl der Aufgaben pro Jahr und Klassenstufe
-2. Verteilung der Lösungsbuchstaben (A, B, C, D, E)
+Dieses Skript analysiert:
+1. Die lösungen.json Datei für Jahre 2012-2025
+2. Die extrahierten Tasks aus tasks_manifest.jsonl
+3. Vergleicht Soll- vs. Ist-Zahlen
+4. Verteilung der Lösungsbuchstaben (A, B, C, D, E)
 """
 
 import json
@@ -12,9 +14,25 @@ from collections import defaultdict, Counter
 
 
 def load_solutions(filepath: Path) -> list:
-    """Lädt die Lösungen aus der JSON-Datei."""
+    """Lädt die Lösungen aus der JSON-Datei (nur 2012-2025)."""
     with open(filepath, 'r', encoding='utf-8') as f:
-        return json.load(f)
+        all_solutions = json.load(f)
+    
+    # Filter nur 2012-2025
+    return [s for s in all_solutions if s['Jahr'] >= 2012]
+
+
+def load_extracted_tasks(filepath: Path) -> list:
+    """Lädt die extrahierten Tasks aus der JSONL-Datei."""
+    tasks = []
+    if not filepath.exists():
+        return tasks
+    
+    with open(filepath, 'r', encoding='utf-8') as f:
+        for line in f:
+            tasks.append(json.loads(line))
+    
+    return tasks
 
 
 def analyze_tasks_per_year_and_class(solutions: list):
@@ -223,20 +241,93 @@ def analyze_tasks_per_year_detailed(solutions: list):
 def print_missing_tasks_info():
     """Gibt Informationen über erwartete Aufgabenanzahlen aus."""
     print("\n" + "=" * 80)
-    print("ERWARTETE AUFGABENANZAHLEN")
+    print("ERWARTETE AUFGABENANZAHLEN (2012-2025)")
     print("=" * 80)
     print("""
-Typische Aufgabenstruktur beim Känguru-Wettbewerb:
+Aufgabenstruktur beim Känguru-Wettbewerb:
 
-Klasse 3-4:    24 Aufgaben (A1-A8, B1-B8, C1-C8)
-Klasse 5-6:    24 Aufgaben (A1-A8, B1-B8, C1-C8)
-Klasse 7-8:    30 Aufgaben (A1-A10, B1-B10, C1-C10)
-Klasse 9-10:   30 Aufgaben (A1-A10, B1-B10, C1-C10)
-Klasse 11-13:  30 Aufgaben (A1-A10, B1-B10, C1-C10)
+Klasse 3 und 4:   24 Aufgaben (A1-A8, B1-B8, C1-C8)
+Klasse 5 und 6:   24 Aufgaben (A1-A8, B1-B8, C1-C8)
+Klasse 7 und 8:   30 Aufgaben (A1-A10, B1-B10, C1-C10)
+Klasse 9 und 10:  30 Aufgaben (A1-A10, B1-B10, C1-C10)
+Klasse 11 bis 13: 30 Aufgaben (A1-A10, B1-B10, C1-C10)
 
-Hinweis: Die Struktur kann in älteren Jahren abweichen.
-Vergleichen Sie die obige Tabelle mit diesen Erwartungen.
+Pro Jahr: 138 Aufgaben gesamt
+Zeitraum 2012-2025: 14 Jahre × 138 = 1932 Aufgaben
 """)
+
+
+def compare_extracted_vs_expected(extracted_tasks: list, solutions: list):
+    """Vergleicht extrahierte Tasks mit erwarteten Lösungen."""
+    print("\n" + "=" * 80)
+    print("VERGLEICH: EXTRAHIERTE TASKS vs. LÖSUNGEN (2012-2025)")
+    print("=" * 80)
+    
+    # Gruppiere extrahierte Tasks
+    extracted_count = defaultdict(lambda: defaultdict(int))
+    for task in extracted_tasks:
+        extracted_count[task['year']][task['class']] += 1
+    
+    # Gruppiere Lösungen
+    solutions_count = defaultdict(lambda: defaultdict(int))
+    for entry in solutions:
+        solutions_count[entry['Jahr']][entry['Klasse']] += 1
+    
+    # Erwartete Zahlen
+    expected = {
+        "3 und 4": 24,
+        "5 und 6": 24,
+        "7 und 8": 30,
+        "9 und 10": 30,
+        "11 bis 13": 30
+    }
+    
+    all_years = sorted(set(list(extracted_count.keys()) + list(solutions_count.keys())))
+    all_classes = sorted(expected.keys())
+    
+    print(f"\n{'Jahr':<8} {'Klasse':<15} {'Erwartet':>10} {'Lösungen':>10} {'Extrahiert':>12} {'Status':>10}")
+    print("-" * 80)
+    
+    total_expected = 0
+    total_solutions = 0
+    total_extracted = 0
+    
+    for year in all_years:
+        for i, klasse in enumerate(all_classes):
+            exp = expected[klasse]
+            sol = solutions_count[year].get(klasse, 0)
+            ext = extracted_count[year].get(klasse, 0)
+            
+            # Status
+            if ext == exp == sol:
+                status = "✓"
+            elif ext == exp and sol == exp:
+                status = "✓"
+            elif ext < exp:
+                status = f"⚠ -{exp-ext}"
+            else:
+                status = "⚠"
+            
+            year_str = str(year) if i == 0 else ""
+            print(f"{year_str:<8} {klasse:<15} {exp:>10} {sol:>10} {ext:>12} {status:>10}")
+            
+            total_expected += exp
+            total_solutions += sol
+            total_extracted += ext
+        
+        if year < max(all_years):
+            print()
+    
+    print("-" * 80)
+    print(f"{'GESAMT':<8} {'2012-2025':<15} {total_expected:>10} {total_solutions:>10} {total_extracted:>12}")
+    print()
+    
+    # Zusammenfassung
+    if total_extracted == total_expected:
+        print("✓ Alle erwarteten Tasks wurden extrahiert!")
+    else:
+        missing = total_expected - total_extracted
+        print(f"⚠ {missing} Tasks fehlen noch (von {total_expected} erwartet)")
 
 
 def main():
@@ -244,19 +335,29 @@ def main():
     # Pfade
     project_root = Path(__file__).parent.parent
     solutions_file = project_root / 'lösungen.json'
+    manifest_file = project_root / 'data' / 'references' / 'tasks_manifest_2012_2025.jsonl'
     
     if not solutions_file.exists():
         print(f"❌ Fehler: Datei nicht gefunden: {solutions_file}")
         return
     
     print("\n" + "=" * 80)
-    print("KÄNGURU-LÖSUNGEN ANALYSE")
+    print("KÄNGURU-ANALYSE: 2012-2025")
     print("=" * 80)
-    print(f"Datei: {solutions_file}")
+    print(f"Lösungen: {solutions_file}")
+    print(f"Manifest: {manifest_file}")
     
-    # Lade Lösungen
+    # Lade Lösungen (nur 2012-2025)
     solutions = load_solutions(solutions_file)
-    print(f"Geladene Einträge: {len(solutions)}")
+    print(f"\nLösungen geladen: {len(solutions)} (Jahre 2012-2025)")
+    
+    # Lade extrahierte Tasks
+    extracted_tasks = load_extracted_tasks(manifest_file)
+    print(f"Extrahierte Tasks: {len(extracted_tasks)}")
+    
+    # Vergleiche extrahierte vs. erwartete
+    if extracted_tasks:
+        compare_extracted_vs_expected(extracted_tasks, solutions)
     
     # Analysiere Aufgaben pro Jahr und Klasse
     tasks_count = analyze_tasks_per_year_and_class(solutions)
