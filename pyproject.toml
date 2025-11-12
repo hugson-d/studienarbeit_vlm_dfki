@@ -1,0 +1,14 @@
+[project]
+name = "studienarbeit-vlm-dfki"
+version = "0.1.0"
+description = "Utilities for processing Kangaroo competition solutions."
+readme = "README.md"
+authors = [
+  { name = "Dennis Hug" }
+]
+requires-python = ">=3.10"
+dependencies = [
+  "pymupdf>=1.24"
+]
+[tool.uv]
+

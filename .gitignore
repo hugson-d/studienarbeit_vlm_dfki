@@ -20,11 +20,12 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
+# Virtual Environment (managed by uv)
 .venv/
 venv/
 ENV/
 env/
+.python-version
 
 # IDEs
 .vscode/
