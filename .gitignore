@@ -21,7 +21,6 @@ wheels/
 *.egg
 
 # Virtual Environment (managed by uv)
-.venv/
 venv/
 ENV/
 env/
