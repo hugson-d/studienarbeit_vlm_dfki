@@ -195,7 +195,7 @@ def main():
     # Setup paths
     project_root = Path(__file__).parent.parent
     data_root = project_root / 'data'
-    solutions_path = project_root / 'lösungen.json'
+    solutions_path = project_root / 'lösungen_2012_2025.json'
     output_dir = project_root / 'data' / 'references'
     
     # Load solutions

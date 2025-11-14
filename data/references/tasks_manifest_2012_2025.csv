@@ -9982,8 +9982,11 @@ b
 b
 b
 b
-(D)
 b
+b
+b
+b"
+2021,9 und 10,A2,D,1,False,references/2021_9und10_A2.png,"(D)
 b
 b
 b
@@ -9993,8 +9996,7 @@ b
 b
 b
 b
-b"
-2021,9 und 10,A2,D,1,False,references/2021_9und10_A2.png,"A2 Welche der folgenden Rechnungen hat das größte Ergebnis?
+A2 Welche der folgenden Rechnungen hat das größte Ergebnis?
 (A) 202·1
 (B) 2021
 (C) 2·0·2·1
@@ -19031,15 +19033,10 @@ b
 b
 b
 b
-(D)
 b
 b
 b
 b
-b
-b
-b
-(E)
 b
 b
 b
@@ -19047,7 +19044,15 @@ b
 b
 b
 b"
-2021,11 bis 13,A2,B,1,False,references/2021_11bis13_A2.png,"A2 Ein Würfel mit Kantenlänge 1 m wird so halbiert, dass zwei gleich große Quader entstehen.
+2021,11 bis 13,A2,B,1,False,references/2021_11bis13_A2.png,"(D)
+b
+b
+b
+(E)
+b
+b
+b
+A2 Ein Würfel mit Kantenlänge 1 m wird so halbiert, dass zwei gleich große Quader entstehen.
 Wie groß ist der Oberﬂächeninhalt von einem solchen Quader?
 (A) 3 m2
 (B) 4 m2
