@@ -70,11 +70,9 @@ def main():
     project_root = Path(__file__).parent.parent
     dataset_final = project_root / 'data' / 'dataset_final'
     
-    # Load both solution files
-    solutions_1998_2011 = load_solutions(project_root / 'data' / 'lösungen_1998_2011.json')
+    # Load only 2012-2025 solution file
     solutions_2012_2025 = load_solutions(project_root / 'data' / 'lösungen_2012_2025.json')
     
-    print(f"📚 Loaded {len(solutions_1998_2011)} solutions from 1998-2011")
     print(f"📚 Loaded {len(solutions_2012_2025)} solutions from 2012-2025")
     
     # Process all PNG files in dataset_final
@@ -93,11 +91,8 @@ def main():
         # Create join key
         join_key = create_join_key(parsed['year'], parsed['class'], parsed['task_id'])
         
-        # Get solution
-        if parsed['period'] == '2012-2025':
-            solution = solutions_2012_2025.get(join_key)
-        else:
-            solution = solutions_1998_2011.get(join_key)
+        # Get solution - only use 2012-2025 solutions
+        solution = solutions_2012_2025.get(join_key)
         
         # Get answer, use empty string if no solution found
         if solution:
