@@ -199,7 +199,7 @@ def compare_datasets(stats1: dict, stats2: dict):
 def main():
     project_root = Path(__file__).parent.parent
     
-    dataset_final = project_root / 'dataset_final'
+    dataset_final = project_root / 'data' / 'dataset_final'
     dataset_not_used = project_root / 'data' / 'dataset_final_not_used'
     
     print("\n🔍 Analysiere Datensätze...\n")

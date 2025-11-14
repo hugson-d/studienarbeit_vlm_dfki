@@ -127,8 +127,8 @@ def extract_solutions_1998_2011(pdf_path: Path) -> list:
 def main():
     """Hauptfunktion."""
     # Pfade
-    pdf_path = Path("data/references/kaenguru_loesungen_alle.pdf")
-    output_path = Path("lösungen_1998_2011.json")
+    pdf_path = Path("data/kaenguru_loesungen_alle.pdf")
+    output_path = Path("data/lösungen_1998_2011.json")
     
     if not pdf_path.exists():
         print(f"❌ PDF-Datei nicht gefunden: {pdf_path}")
