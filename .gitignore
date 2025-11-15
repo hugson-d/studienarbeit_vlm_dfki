@@ -38,10 +38,17 @@ env/
 .DS_Store
 Thumbs.db
 
+# Environment variables
+.env
+
 # Project specific
 kaenguru_loesungen_alle.pdf
 lösungen_backup.json
 loesungen_fehler.json
+
+# Analysis cache files
+data/text_only_analysis_cache.json
+data/text_extraction_cache.json
 
 # Extracted task images (keep only manifest)
 data/references/*.png
