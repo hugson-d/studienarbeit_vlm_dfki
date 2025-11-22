@@ -136,10 +136,10 @@ def main():
     # Durch alle Einträge iterieren
     for i, entry in enumerate(dataset, 1):
         image_path_rel = entry.get("image_path")
-        current_category = entry.get("math_category", "unknown")
+        current_category = entry.get("math_category")
         
-        # Wenn bereits kategorisiert (nicht "unknown"), überspringen
-        if current_category != "unknown":
+        # Wenn bereits kategorisiert (nicht None/null und nicht "unknown"), überspringen
+        if current_category is not None and current_category != "unknown":
             print(f"⏭️  [{i}/{total}] {image_path_rel} bereits kategorisiert als '{current_category}'")
             stats[current_category] += 1
             skipped += 1
