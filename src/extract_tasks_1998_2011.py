@@ -14,8 +14,11 @@ import csv
 from pathlib import Path
 from typing import Dict, List, Optional
 import re
+import io
 
 import fitz  # type: ignore[import]
+import pytesseract  # type: ignore[import]
+from PIL import Image
 
 
 def load_solutions(solutions_path: Path) -> Dict[tuple, str]:
@@ -57,41 +60,42 @@ def parse_pdf_filename(filename: str) -> Optional[tuple]:
 
 
 def find_task_start_marker(doc):
-    """Find the page and position where tasks start (after '3-Punkte- Aufgaben' or '3 Punkte-Aufgaben')."""
+    """Find the page and position where tasks start using OCR."""
     markers = [
-        '3-Punkte- Aufgaben',
-        '3 Punkte-Aufgaben',
         '3-Punkte-Aufgaben',
+        '3 Punkte-Aufgaben',
+        '3-Punkte- Aufgaben',
         '3 Punkte Aufgaben',
-        '3-Punkte-',
-        '3 Punkte-',
-        '3-Punkt-',
-        '3 Punkt-'
     ]
     
     for page_idx, page in enumerate(doc):
-        text = page.get_text('text')
-        words = page.get_text('words')
-        
-        # Try direct text search first
-        for marker in markers:
-            if marker in text:
-                # Find y-position after this marker
-                # Look for the marker in words
-                for i, (x0, y0, x1, y1, w, *_) in enumerate(words):
-                    if marker[:5] in w:  # Look for start of marker (e.g., "3-Pun")
-                        # Find where this line ends
-                        line_y = y1
-                        return page_idx, line_y
-        
-        # Alternative: Look for pattern "3" followed by "Punkte" within a few words
-        for i, (x0, y0, x1, y1, w, *_) in enumerate(words):
-            if w.strip() == '3' or w.strip() == '3-Punkte-' or w.strip() == '3-Punkt-':
-                # Check next few words for "Punkte" or "Punkt"
-                for j in range(i+1, min(i+5, len(words))):
-                    next_word = words[j][4].lower()
-                    if 'punkt' in next_word and 'aufgabe' in text[text.find(w):text.find(w)+100].lower():
-                        return page_idx, words[j][3]  # y1 of "Punkte" word
+        try:
+            # Convert page to image
+            zoom = 2  # Higher resolution for better OCR
+            mat = fitz.Matrix(zoom, zoom)
+            pix = page.get_pixmap(matrix=mat, alpha=False)
+            
+            # Convert to PIL Image
+            img_data = pix.tobytes('png')
+            img = Image.open(io.BytesIO(img_data))
+            
+            # Run OCR with layout information
+            ocr_data = pytesseract.image_to_data(img, lang='deu', output_type=pytesseract.Output.DICT)
+            
+            # Search for marker in OCR results
+            for i, text_ocr in enumerate(ocr_data['text']):
+                if text_ocr:
+                    # Check if this text or nearby texts form the marker
+                    window = ' '.join([t for t in ocr_data['text'][i:i+5] if t])
+                    for marker in markers:
+                        if marker.replace('-', '').replace(' ', '') in window.replace('-', '').replace(' ', ''):
+                            # Found marker! Convert from image to PDF coordinates
+                            y_img = ocr_data['top'][i] + ocr_data['height'][i]
+                            y_pdf = y_img / zoom
+                            return page_idx, y_pdf
+        except Exception as e:
+            print(f"  ⚠ OCR failed for page {page_idx + 1}: {e}")
+            continue
     
     return None, None
 
@@ -120,31 +124,46 @@ def extract_items_from_pdf(pdf_path, year, class_code, output_dir):
     
     expected_labels = [str(i) for i in range(1, max_tasks + 1)]
     
-    # Collect ALL number occurrences across all pages (starting from start_page)
+    # Collect ALL number occurrences across all pages using OCR
     all_anchors = []
     for page_idx in range(start_page, len(doc)):
         page = doc[page_idx]
-        words = page.get_text('words')
+        page_start_y = start_y if page_idx == start_page else 0
         
-        for (x0, y0, x1, y1, w, *_) in words:
-            # Check if word is a task number followed by period (e.g., "1.", "2.", etc.)
-            w_stripped = w.strip()
+        try:
+            # Convert page to image
+            zoom = 2
+            mat = fitz.Matrix(zoom, zoom)
+            pix = page.get_pixmap(matrix=mat, alpha=False)
+            img_data = pix.tobytes('png')
+            img = Image.open(io.BytesIO(img_data))
             
-            # Must end with a period and the part before period must be a task number
-            if w_stripped.endswith('.'):
-                w_clean = w_stripped.rstrip('.')
-                if w_clean in expected_labels:
-                    # Skip if on first page and above start_y
-                    if page_idx == start_page and y0 < start_y:
-                        continue
-                        
-                    all_anchors.append({
-                        'label': w_clean,
-                        'page_idx': page_idx,
-                        'y_pos': y0,
-                        'x_pos': x0,
-                        'rect': fitz.Rect(x0, y0, x1, y1)
-                    })
+            # Run OCR
+            ocr_data = pytesseract.image_to_data(img, lang='deu', output_type=pytesseract.Output.DICT)
+            
+            # Find task numbers (pattern: digit followed by period)
+            pattern = re.compile(r'^(\d+)\.$')
+            for i, text_ocr in enumerate(ocr_data['text']):
+                if text_ocr:
+                    match = pattern.match(text_ocr.strip())
+                    if match:
+                        label = match.group(1)
+                        if label in expected_labels:
+                            # Convert from image to PDF coordinates
+                            x_img = ocr_data['left'][i]
+                            y_img = ocr_data['top'][i]
+                            x_pdf = x_img / zoom
+                            y_pdf = y_img / zoom
+                            
+                            if y_pdf >= page_start_y:
+                                all_anchors.append({
+                                    'label': label,
+                                    'page_idx': page_idx,
+                                    'y_pos': y_pdf,
+                                    'x_pos': x_pdf,
+                                })
+        except Exception as e:
+            print(f"  ⚠ OCR failed for page {page_idx + 1}: {e}")
     
     if not all_anchors:
         print(f"  ⚠ No task numbers found after marker")
