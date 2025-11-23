@@ -56,9 +56,9 @@ def parse_pdf_filename(filename: str) -> Optional[tuple]:
     return year, class_name
 
 
-def extract_items_from_pdf(pdf_path, year, class_code, solutions, output_dir):
+def extract_items_from_pdf(pdf_path, year, class_code, output_dir):
     """Extract individual task items from a PDF file."""
-    items = []
+    count = 0
     doc = fitz.open(pdf_path)
     
     # Define expected sequence based on class level
@@ -86,7 +86,7 @@ def extract_items_from_pdf(pdf_path, year, class_code, solutions, output_dir):
     
     if not all_anchors:
         doc.close()
-        return items
+        return count
     
     # Find the most common X position (= left margin where task labels are)
     # Group X positions with small tolerance (±10 points)
@@ -127,7 +127,6 @@ def extract_items_from_pdf(pdf_path, year, class_code, solutions, output_dir):
     
     # Extract items with margins
     TOP, BOTTOM, SIDE = 6.0, 4.0, 6.0
-    items = []
     
     for idx, anchor in enumerate(selected_anchors):
         page_idx = anchor['page_idx']
@@ -166,27 +165,10 @@ def extract_items_from_pdf(pdf_path, year, class_code, solutions, output_dir):
         item_path = output_dir / item_filename
         item_path.parent.mkdir(parents=True, exist_ok=True)
         item_path.write_bytes(pix.tobytes('png'))
-        
-        # Extract text
-        text = page.get_text('text', clip=clip)
-        
-        # Get solution
-        solution_key = (year, class_code, label)
-        answer = solutions.get(solution_key, 'UNKNOWN')
-        
-        items.append({
-            'year': year,
-            'class': class_code,
-            'task_id': label,
-            'answer': answer,
-            'page_index': page_idx + 1,
-            'is_text_only': False,
-            'image_path': str(item_path.relative_to(output_dir.parent)),
-            'text': (text or '').strip()
-        })
+        count += 1
     
     doc.close()
-    return items
+    return count
 
 
 def main():
@@ -195,13 +177,7 @@ def main():
     # Setup paths
     project_root = Path(__file__).parent.parent
     data_root = project_root / 'data'
-    solutions_path = project_root / 'lösungen_2012_2025.json'
     output_dir = project_root / 'data' / 'references'
-    
-    # Load solutions
-    print(f"Loading solutions from {solutions_path}...")
-    solutions = load_solutions(solutions_path)
-    print(f"Loaded {len(solutions)} solutions")
     
     # Find all PDFs
     pdf_files = []
@@ -220,42 +196,24 @@ def main():
     print(f"Found {len(pdf_files)} PDFs to process (2012+)")
     
     # Process all PDFs
-    all_items = []
+    total_count = 0
     for pdf_path, year, class_name in pdf_files:
         print(f"Processing {pdf_path.name} ({year}, {class_name})...")
         
         try:
-            items = extract_items_from_pdf(
+            count = extract_items_from_pdf(
                 pdf_path,
                 year,
                 class_name,
-                solutions,
                 output_dir
             )
-            all_items.extend(items)
-            print(f"  → Extracted {len(items)} tasks")
+            total_count += count
+            print(f"  → Extracted {count} tasks")
         except Exception as e:
             print(f"  ✗ Error: {e}")
     
-    # Write JSONL manifest
-    manifest_path = output_dir / 'tasks_manifest_2012_2025.jsonl'
-    with open(manifest_path, 'w', encoding='utf-8') as f:
-        for item in all_items:
-            f.write(json.dumps(item, ensure_ascii=False) + '\n')
-    
-    # Write CSV manifest
-    csv_path = output_dir / 'tasks_manifest_2012_2025.csv'
-    if all_items:
-        fieldnames = ['year', 'class', 'task_id', 'answer', 'page_index', 'is_text_only', 'image_path', 'text']
-        with open(csv_path, 'w', encoding='utf-8', newline='') as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(all_items)
-    
-    print(f"\n✓ Done! Extracted {len(all_items)} tasks")
+    print(f"\n✓ Done! Extracted {total_count} tasks")
     print(f"  Images: {output_dir}/")
-    print(f"  Manifest (JSONL): {manifest_path}")
-    print(f"  Manifest (CSV): {csv_path}")
 
 
 if __name__ == '__main__':

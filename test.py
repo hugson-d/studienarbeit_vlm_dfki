@@ -1,34 +1,19 @@
 """
-Extraktions-Skript für Känguru-Aufgaben 1998-2011.
+Test-Skript zum Extrahieren von Aufgaben aus einer einzelnen PDF.
 
-Diese älteren PDFs haben eine andere Struktur:
-- Nummerierung: 1. 2. 3. 4. etc. (sequentiell, nicht A1, B1, etc.)
-- Aufgaben starten nach dem Marker "3-Punkte- Aufgaben" oder "3 Punkte-Aufgaben"
-- Labels sind auf gleicher vertikaler X-Position ausgerichtet
-
-Verwendet lösungen_1998_2011.json mit sequentieller Nummerierung 1-30.
+Usage:
+    python test.py <path_to_pdf>
+    
+Example:
+    python test.py data/Klasse3-4/kaenguru2007_34.pdf
 """
 
-import json
-import csv
-from pathlib import Path
-from typing import Dict, List, Optional
+import sys
 import re
+from pathlib import Path
+from typing import Optional
 
 import fitz  # type: ignore[import]
-
-
-def load_solutions(solutions_path: Path) -> Dict[tuple, str]:
-    """Load solutions and create lookup dict: (year, class, task_id) -> answer."""
-    with open(solutions_path, 'r', encoding='utf-8') as f:
-        solutions = json.load(f)
-    
-    lookup = {}
-    for entry in solutions:
-        key = (entry['Jahr'], entry['Klasse'], entry['Aufgabe'])
-        lookup[key] = entry['Lösung']
-    
-    return lookup
 
 
 def parse_pdf_filename(filename: str) -> Optional[tuple]:
@@ -42,11 +27,11 @@ def parse_pdf_filename(filename: str) -> Optional[tuple]:
     
     # Map class code to standard format
     class_map = {
-        '34': '3 und 4',
-        '56': '5 und 6',
-        '78': '7 und 8',
-        '910': '9 und 10',
-        '1113': '11 bis 13'
+        '34': '3und4',
+        '56': '5und6',
+        '78': '7und8',
+        '910': '9und10',
+        '1113': '11bis13'
     }
     
     class_name = class_map.get(class_code)
@@ -98,7 +83,6 @@ def find_task_start_marker(doc):
 
 def extract_items_from_pdf(pdf_path, year, class_code, output_dir):
     """Extract individual task items from old-format PDF (1998-2011)."""
-    count = 0
     doc = fitz.open(pdf_path)
     
     # Find where tasks start (after marker)
@@ -106,14 +90,14 @@ def extract_items_from_pdf(pdf_path, year, class_code, output_dir):
     if start_page is None:
         print(f"  ⚠ Could not find task start marker")
         doc.close()
-        return count
+        return 0
     
     print(f"  Found task start at page {start_page + 1}, y={start_y:.1f}")
     
     # Expected task numbers for 1998-2011 format
-    # Klasse 3-4: 21 tasks
+    # Klasse 3-4: 21 tasks (for most years)
     # Klasse 5-6, 7-8, 9-10, 11-13: 30 tasks each
-    if class_code in ['3 und 4']:
+    if class_code in ['3und4']:
         max_tasks = 21
     else:
         max_tasks = 30
@@ -149,7 +133,7 @@ def extract_items_from_pdf(pdf_path, year, class_code, output_dir):
     if not all_anchors:
         print(f"  ⚠ No task numbers found after marker")
         doc.close()
-        return count
+        return 0
     
     print(f"  Found {len(all_anchors)} potential task labels")
     
@@ -228,52 +212,57 @@ def extract_items_from_pdf(pdf_path, year, class_code, output_dir):
         pix = page.get_pixmap(matrix=mat, clip=clip, alpha=False)
         
         # Create output path
-        item_filename = f"{year}_{class_code.replace(' ', '')}_{label}.png"
+        item_filename = f"{year}_{class_code}_{label}.png"
         item_path = output_dir / item_filename
         item_path.parent.mkdir(parents=True, exist_ok=True)
         item_path.write_bytes(pix.tobytes('png'))
-        count += 1
+        
+        print(f"  ✓ Created: {item_filename}")
     
     doc.close()
-    return count
+    return len(selected_anchors)
 
 
 def main():
     """Main function."""
-    # Paths
-    data_dir = Path('data')
-    output_dir = Path('data/references_1998_2011')
+    if len(sys.argv) != 2:
+        print("Usage: python test.py <path_to_pdf>")
+        print("Example: python test.py data/Klasse3-4/kaenguru2007_34.pdf")
+        sys.exit(1)
+    
+    pdf_path = Path(sys.argv[1])
+    
+    if not pdf_path.exists():
+        print(f"❌ Error: PDF file not found: {pdf_path}")
+        sys.exit(1)
+    
+    if not pdf_path.suffix.lower() == '.pdf':
+        print(f"❌ Error: File is not a PDF: {pdf_path}")
+        sys.exit(1)
+    
+    # Parse filename
+    result = parse_pdf_filename(pdf_path.name)
+    if not result:
+        print(f"❌ Error: Invalid filename format. Expected format: kaenguruYYYY_CC.pdf")
+        print(f"   Example: kaenguru2007_34.pdf, kaenguru2010_1113.pdf")
+        sys.exit(1)
+    
+    year, class_code = result
     
     # Create output directory
+    output_dir = Path('test_output')
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    # Find all PDF files for years 1998-2011
-    all_pdfs = []
-    for class_dir in data_dir.glob('Klasse*'):
-        for pdf in class_dir.glob('*.pdf'):
-            result = parse_pdf_filename(pdf.name)
-            if result:
-                year, class_name = result
-                if 1998 <= year <= 2011:
-                    all_pdfs.append((pdf, year, class_name))
+    print(f"\n📄 Processing: {pdf_path.name}")
+    print(f"   Year: {year}")
+    print(f"   Class: {class_code}")
+    print(f"   Output: {output_dir}/\n")
     
-    # Sort by year and class
-    all_pdfs.sort(key=lambda x: (x[1], x[2]))
-    
-    print(f"\n📄 Found {len(all_pdfs)} PDFs for years 1998-2011")
-    print(f"🎯 Starting extraction...\n")
-    
-    # Extract all items
-    total_count = 0
-    for pdf_path, year, class_name in all_pdfs:
-        print(f"Processing: {pdf_path.name} ({year}, {class_name})")
-        count = extract_items_from_pdf(pdf_path, year, class_name, output_dir)
-        total_count += count
-        print(f"  ✓ Extracted {count} tasks\n")
+    # Extract tasks
+    count = extract_items_from_pdf(pdf_path, year, class_code, output_dir)
     
     print(f"\n✅ Extraction complete!")
-    print(f"   Total items: {total_count}")
-    print(f"   Output directory: {output_dir}")
+    print(f"   Created {count} PNG files in {output_dir}/")
 
 
 if __name__ == '__main__':
