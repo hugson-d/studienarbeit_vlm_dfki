@@ -7518,6 +7518,2476 @@
     }
   },
   {
+    "image_path": "dataset_final/2007_3und4_1.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "A1",
+    "answer": "D",
+    "math_category": "unknown",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Wie viele Buchstaben des Wortes KAENGURU sind auch im Wort MATHEMATIK enthalten?",
+      "answer_options": [
+        "A) keine",
+        "B) einer",
+        "C) zwei",
+        "D) drei",
+        "E) vier"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_2.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "A2",
+    "answer": "C",
+    "math_category": "Stochastik",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "Bei einem Wettlauf ist eine Strecke mit Hindernissen zu passieren; links und rechts der Hindernisse liegen Dinge, von denen beim Vorbeilaufen genau 3 einzusammeln sind. Wenn nur vorwärts gelaufen werden darf, welche 3 Dinge können dann nicht zusammen ins Ziel getragen werden?",
+      "answer_options": [
+        "(A) Lineal, Dose, Ball",
+        "(B) Stein, Dose, Kamm",
+        "(C) Lineal, Ring, Stein",
+        "(D) Stein, Ring, Kamm",
+        "(E) Lineal, Ring, Ball"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_3.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "A3",
+    "answer": "B",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "3. 2007 + 1023 =",
+      "answer_options": [
+        "(A) 3303",
+        "(B) 3030",
+        "(C) 3300",
+        "(D) 3003",
+        "(E) 4030"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_4.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "A4",
+    "answer": "E",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Eines Tages ringt sich der Großvater durch, seine Sammlung von Matchboxautos aufzulösen und alle Autos seinen Enkeln zu schenken. Er stellt fest, dass er jedem der 6 Enkelkinder dieselbe Anzahl schenken kann, ohne dass etwas übrig bleibt. Wie viele Autos könnten in der großväterlichen Sammlung sein?",
+      "answer_options": [
+        "(A) 27",
+        "(B) 34",
+        "(C) 56",
+        "(D) 77",
+        "(E) 84"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_5.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "A5",
+    "answer": "C",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "5. In welcher Känguru-Figur sind die meisten kleinen Quadrate zu finden?",
+      "answer_options": [
+        "(A)",
+        "(B)",
+        "(C)",
+        "(D)",
+        "(E)"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_6.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "A6",
+    "answer": "E",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "6. Am Weg durch unseren kleinen Stadtpark stehen rechts – immer im selben Abstand voneinander - 9 Laternen. Meine kleine Nichte schafft es von einer zur nächsten mit 7 Hüpfern. Wie viele Hüpfler braucht sie von der ersten bis zur letzten Laterne?",
+      "answer_options": [
+        "(A) 72",
+        "(B) 81",
+        "(C) 49",
+        "(D) 63",
+        "(E) 56"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_7.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "A7",
+    "answer": "B",
+    "math_category": "Arithmetik",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "7. Welche Zahl muss in das erste Viereck geschrieben werden, damit nach den angegebenen Rechnungen schließlich 5 das Ergebnis ist?",
+      "answer_options": [
+        "(A) 0",
+        "(B) 5",
+        "(C) 7",
+        "(D) 10",
+        "(E) 12"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_8.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "B1",
+    "answer": "A",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Es ist 4 · 4 + 4 + 4 + 4 =",
+      "answer_options": [
+        "(A) 40",
+        "(B) 48",
+        "(C) 24",
+        "(D) 112",
+        "(E) 64"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_9.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "B2",
+    "answer": "E",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Als Kati ihre Spaghetti mit Tomatensoße fast aufgegessen und keinen rechten Hunger mehr hat, zählt sie noch 13 Spaghetti auf ihrem Teller. Sie beginnt, die Spaghetti hintereinander zu legen und fragt sich, wie lang die Schlange aus allen 13 Spaghetti wäre, wenn sie alle je 25 cm lang wären. Das wären",
+      "answer_options": [
+        "(A) 6,5 m",
+        "(B) 2,5 m",
+        "(C) 12,5 m",
+        "(D) 7,25 m",
+        "(E) 3,25 m"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_10.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "B3",
+    "answer": "C",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "Für die kleinen Würfel, mit denen Theo spielt, hat er einen großen Hohlwürfel, in den er sie nach dem Spielen zurücklegt. Einige hat er schon einsortiert (s. Zeichnung). Wie viele finden noch Platz?",
+      "answer_options": [
+        "A) 9",
+        "B) 13",
+        "C) 17",
+        "D) 21",
+        "E) 27"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_11.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "B4",
+    "answer": "D",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "11. Elsa feierte am 1. Januar 2000 ihren 4. Geburtstag. Sie ist ein Jahr und einen Tag älter als Lisa. Wann feierte Lisa ihren 4. Geburtstag?",
+      "answer_options": [
+        "A) am 31. Dezember 2001",
+        "B) am 31. Dezember 2000",
+        "C) am 2. Januar 1999",
+        "D) am 2. Januar 2001",
+        "E) am 31. Dezember 1999"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_12.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "B5",
+    "answer": "E",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "David geht mit einem 5-Euro-Schein zum Bäcker. Er soll 8 Brötchen, das Stück zu 40 Cent, einkaufen. Für den Rest darf er seine Lieblingskekse, das Stück zu 25 Cent, mitbringen. Wie viele Kekse kann er vom Restgeld höchstens kaufen?",
+      "answer_options": [
+        "(A) 3",
+        "(B) 4",
+        "(C) 5",
+        "(D) 6",
+        "(E) 7"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_13.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "B6",
+    "answer": "B",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "13. Welches Stückchen Karopapier bildet zusammen mit dem rechts gezeichneten ein Rechteck?",
+      "answer_options": [
+        "(A)",
+        "(B)",
+        "(C)",
+        "(D)",
+        "(E)"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_14.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "B7",
+    "answer": "B",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "14. Franziska denkt sich eine Zahl zwischen 1 und 9 und schreibt sie auf, dann schreibt sie eine Ziffer rechts daneben, wodurch eine 2-stellige Zahl entsteht. Sie addiert 19 und erhält 72. Welche Zahl hat sie zuerst aufgeschrieben?",
+      "answer_options": [
+        "(A) 2",
+        "(B) 5",
+        "(C) 6",
+        "(D) 7",
+        "(E) 9"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_15.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "C1",
+    "answer": "A",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "15. Ein Vater, 33 Jahre alt, hat zwei Töchter. Die Töchter sind 10 bzw. 11 Jahre alt. Wie viele Jahre vergehen, bis die beiden Mädchen zusammen genauso alt sind wie ihr Vater?",
+      "answer_options": [
+        "(A) 12",
+        "(B) 11",
+        "(C) 10",
+        "(D) 20",
+        "(E) 21"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_16.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "C2",
+    "answer": "D",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "16. Ali hat für seine Schwester Ida eine Sparbüchse gebaut, mit einem Sicherheitsverschluss mit 3 Knöpfen, wie bei einem Tresor. Jeden der 3 Knöpfe kann Ida in jede der 3 Stellungen ▲, ■ oder ● drehen. Ida soll festlegen, welches Zeichen die einzelnen Knöpfe fürs Öffnen zeigen sollen. Wie viele Möglichkeiten gibt es dafür?",
+      "answer_options": [
+        "(A) 6",
+        "(B) 9",
+        "(C) 18",
+        "(D) 27",
+        "(E) 30"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_17.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "C3",
+    "answer": "E",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "17. Eine Zahl, die vorwärts und rückwärts gelesen gleich lautet, heißt Palindromzahl. So sind z. B. 116611 und 707 Palindromzahlen. Wie groß ist der Unterschied zwischen der Palindromzahl 191 und der nächstgrößeren Palindromzahl?",
+      "answer_options": [
+        "(A) 10",
+        "(B) 101",
+        "(C) 21",
+        "(D) 210",
+        "(E) 11"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_18.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "C4",
+    "answer": "C",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "Nach seiner ersten Schlossbesichtigung träumt Caspar: Er geht durch eine alte Burg, die Zimmer werden von einem zum nächsten immer größer, und auf jeder der weißen Kacheln des Kachelfußbodens liegt ein Goldstück. Im ersten Zimmer sind es 8, im zweiten 21, im dritten 40 (s. Zeichnung). Da wird er wach und fragt sich, wie viele Goldstücke er im nächstgrößeren Zimmer gefunden hätte.",
+      "answer_options": [
+        "(A) 75",
+        "(B) 49",
+        "(C) 65",
+        "(D) 70",
+        "(E) 63"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_19.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "C5",
+    "answer": "A",
+    "math_category": "unknown",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "19. Janek, Jens, Jim, John und Justus stehen am Rand des Schwimmbeckens und springen dann alle, einer nach dem anderen, ins Wasser. Janek ist nach Jim gesprungen. Jens hüpfte vor Janek hinein, und zwar unmittelbar nach John. John war vor Jim im Wasser, ist aber nicht als Erster hineingesprungen. Als wievielter sprang Justus?",
+      "answer_options": [
+        "(A) als Erster",
+        "(B) als Zweiter",
+        "(C) als Dritter",
+        "(D) als Vierter",
+        "(E) als Letzter"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_20.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "C6",
+    "answer": "B",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "20. Beim Stadtfest gibt es in diesem Jahr auch ein kleines altertümliches Karussell. Die Gondeln sind in gleichen Abständen zueinander im Kreis angeordnet und fortlaufend mit 1, 2, 3 . . . nummeriert. Tilli und ihre Freundin Elli fahren damit und sitzen sich direkt gegenüber, Tilli sitzt in der Gondel Nr. 11, Elli in der Nr. 4. Wie viele Gondeln hat das Karussell insgesamt?",
+      "answer_options": [
+        "(A) 13",
+        "(B) 14",
+        "(C) 16",
+        "(D) 17",
+        "(E) 22"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_3und4_21.png",
+    "year": 2007,
+    "class": "3und4",
+    "task_id": "C7",
+    "answer": "E",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "21. Ich falte ein quadratisches Stück Papier zweimal (s. Zeichnung). Dann schneide ich eine der vier Ecken ab und falte das Papier wieder auseinander. Wie sieht das „Deckchen“ nun aus?",
+      "answer_options": [
+        "(A) ",
+        "(B) ",
+        "(C) ",
+        "(D) ",
+        "(E) alle abgebildeten Deckchen sind möglich"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_1.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "A1",
+    "answer": "E",
+    "math_category": "Stochastik",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "1. Beim Waldspaziergang entdecken wir am Wegesrand Pilze, die wir im Vorbeilaufen einsammeln (s. Zeichnung). Wenn wir immer vorwärts laufen, welche 3 Pilze können dann nicht im Korb sein?",
+      "answer_options": [
+        "A) Sandpilz, Steinpilz, Reizker",
+        "B) Marone, Ziegenlippe, Reizker",
+        "C) Marone, Steinpilz, Hallimasch",
+        "D) Sandpilz, Ziegenlippe, Hallimasch",
+        "E) Sandpilz, Steinpilz, Ziegenlippe"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_2.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "A2",
+    "answer": "C",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "2. Max, Meta, Mia, Morten und Myriam stehen im Kreis, Willi in der Mitte. Er zählt – bei Max beginnend – mit dem 13-stelligen Abzählreim „Ene–mene–acka–dacka–eia–weia–weg“ ab, ohne sich selbst mitzuzählen. Wer ist zuerst „weg“?",
+      "answer_options": [
+        "(A) Max",
+        "(B) Meta",
+        "(C) Mia",
+        "(D) Morten",
+        "(E) Myriam"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_3.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "A3",
+    "answer": "C",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Wie oft steht die 5 in der Rechnung 5 + 5 + ⋯ + 5, wenn 125 = 5³ das Ergebnis ist?",
+      "answer_options": [
+        "(A) 125-mal",
+        "(B) 3-mal",
+        "(C) 25-mal",
+        "(D) 100-mal",
+        "(E) 50-mal"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_4.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "A4",
+    "answer": "C",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "4. Die kernigen Kängurus aus Canberra brauchen nur 6 Sekunden, wenn sie hintereinander 4 Riesensprünge machen. Wie viele Sekunden brauchen sie, wenn sie hintereinander 10 solche Riesensprünge machen?",
+      "answer_options": [
+        "A) 10",
+        "B) 12",
+        "C) 15",
+        "D) 18",
+        "E) 20"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_5.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "A5",
+    "answer": "D",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "5. 2007 : (2 + 0 + 0 + 7) - (2 · 0 · 0 · 7) =",
+      "answer_options": [
+        "(A) 323",
+        "(B) 322",
+        "(C) 232",
+        "(D) 223",
+        "(E) 233"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_6.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "A6",
+    "answer": "A",
+    "math_category": "Geometrie",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "6. Im alten Schulhaus gibt es quadratische Schiebe fenster, jedes 95 cm × 95 cm groß. Ich habe ausprobiert, dass ich die Scheibe maximal um 80 cm nach links schieben kann, wo sie in der Wand verschwindet. Wie groß ist dann die Fläche des Teils der Fensterscheibe, der noch aus der Wand herausguckt?",
+      "answer_options": [
+        "A) 1425 cm²",
+        "B) 1550 cm²",
+        "C) 1575 cm²",
+        "D) 1625 cm²",
+        "E) 1775 cm²"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_7.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "A7",
+    "answer": "E",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "7. Jimmy ist ein knappes Jahr älter als Jonny, nämlich nur genau einen Tag weniger als ein ganzes Jahr. Welches Geburtsdatum hat Jonny, wenn Jimmy am Neujahrstag des Jahres 2001 geboren wurde ?",
+      "answer_options": [
+        "(A) 31.12.2003",
+        "(B) 2.1.2003",
+        "(C) 31.12.2002",
+        "(D) 2.1.2001",
+        "(E) 31.12.2001"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_8.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "A8",
+    "answer": "B",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "8. Ich zeichne zwei parallele Geraden und markiere auf der einen 5, auf der anderen 3 Punkte. Nun verbinde ich jeden der 5 Punkte auf der einen mit jedem der 3 Punkte auf der anderen Parallelen. Wie viele Strecken muss ich zeichnen?",
+      "answer_options": [
+        "(A) 8",
+        "(B) 15",
+        "(C) 16",
+        "(D) 18",
+        "(E) 25"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_9.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "A9",
+    "answer": "C",
+    "math_category": "Geometrie",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "9. Ein Würfel der Kantenlänge 10 cm besteht aus kleinen, lückenlos aufeinander geschichteten Würfeln der Kantenlänge 1 cm. Ließen sich alle kleinen Würfel – einer über dem anderen – zu einem Turm aufschichten, wie hoch wäre dieser Turm?",
+      "answer_options": [
+        "(A) 10 cm",
+        "(B) 100 cm",
+        "(C) 10 m",
+        "(D) 100 m",
+        "(E) 1 km"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_10.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "A10",
+    "answer": "A",
+    "math_category": "Stochastik",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "In einem 3 × 3-Feld will ich mit drei Sorten Steinen ● ◯ ⊗ ein solches Muster legen, dass alle Steine einer jeden Reihe und alle Steine einer jeden Spalte voneinander verschieden sind. Wenn drei Steine schon so liegen wie in der Zeichnung, wie viele Möglichkeiten gibt es dann, das Feld ganz aus-zulegen?",
+      "answer_options": [
+        "A) 1",
+        "B) 2",
+        "C) 3",
+        "D) 4",
+        "E) 5"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_11.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "B1",
+    "answer": "B",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Agnes ist jetzt 10 Jahre alt; ihr Vater Horst viermal so alt wie sie. Wie alt wird Horst sein, wenn Agnes doppelt so alt ist wie jetzt?",
+      "answer_options": [
+        "(A) 48",
+        "(B) 50",
+        "(C) 56",
+        "(D) 60",
+        "(E) 80"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_12.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "B2",
+    "answer": "D",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "12. Schreiben wir eine 2-stellige Zahl zweimal nebeneinander, so entsteht eine 4-stellige Zahl. Wievielmal so groß wie die 2-stellige Zahl ist diese 4-stellige Zahl?",
+      "answer_options": [
+        "(A) 100-mal",
+        "(B) 1000-mal",
+        "(C) 11-mal",
+        "(D) 101-mal",
+        "(E) 1001-mal"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_13.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "B3",
+    "answer": "E",
+    "math_category": "Geometrie",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "13. Ein Quadrat von 20 cm Umfang ist in zwei Rechtecke geteilt. Der Umfang des einen Rechtecks misst 16 cm. Wie lang ist der Umfang des anderen?",
+      "answer_options": [
+        "(A) 8 cm",
+        "(B) 9 cm",
+        "(C) 10 cm",
+        "(D) 12 cm",
+        "(E) 14 cm"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_14.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "B4",
+    "answer": "D",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "14. Die Zahlen 1, 2, 3, 4, 5, 6, 7, 8 sollen so in 2 Gruppen zu je 4 Zahlen aufgeteilt werden, dass die Summen in beiden Gruppen gleich sind. Ich habe eine Einteilung gefunden, bei der die Zahlen 1 und 3 in derselben Gruppe sind. Welche Zahl gehört noch in diese Gruppe?",
+      "answer_options": [
+        "(A) 2",
+        "(B) 4",
+        "(C) 5",
+        "(D) 6",
+        "(E) 7"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_15.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "B5",
+    "answer": "A",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "15. Welches der unten abgebildeten Flächenstücke lässt sich mit dem rechts abgebildeten Flächenstück lückenlos zu einem Rechteck zusammenfügen?",
+      "answer_options": [
+        "(A)",
+        "(B)",
+        "(C)",
+        "(D)",
+        "(E)"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_16.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "B6",
+    "answer": "E",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "16. Max lässt seine Brieftaube um 7:30 Uhr mit einer wichtigen Nachricht zu Moritz losfliegen. Die Brieftaube, von der wir wissen, dass sie so schnell ist, dass sie bis zum 4 km entfernten Haus von Max’ Freundin genau 5 Minuten braucht, lässt die Nachricht um 9:10 Uhr bei Moritz aus ihrem Schnabel fallen. Wie weit wohnen Max und Moritz auseinander?",
+      "answer_options": [
+        "(A) 20 km",
+        "(B) 40 km",
+        "(C) 50 km",
+        "(D) 60 km",
+        "(E) 80 km"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_17.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "B7",
+    "answer": "C",
+    "math_category": "Geometrie",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "17. Auf Kästchenpapier habe ich den Rand eines größeren Quadrats mit Rotstift markiert und alle Kästchen auf den beiden Diagonalen dieses Quadrats rot ausgemalt. Wenn ich insgesamt 9 Kästchen ausgemalt habe, wie viele Kästchen groß ist dann das Quadrat?",
+      "answer_options": [
+        "(A) 3 × 3",
+        "(B) 4 × 4",
+        "(C) 5 × 5",
+        "(D) 8 × 8",
+        "(E) 9 × 9"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_18.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "B8",
+    "answer": "D",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "18. Vater Igel hat gefeiert und leckere vergorene Äpfel genascht. Nun kann er den geraden Weg zum Bau nicht finden. Er torkelt etwas, allerdings als ein Igel, der für Mathematik schwärmt, stets entlang von Quadratsseiten. Wie lang ist sein „Quadrat“-Weg ABCDEFGHIJKL im Vergleich zum direkten Weg AL?",
+      "answer_options": [
+        "(A) das Andert-halbache",
+        "(B) das Zwei-halbache",
+        "(C) das Zweiein-halbache",
+        "(D) das Drei-fache",
+        "(E) das Dreiein-halbache"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_19.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "B9",
+    "answer": "C",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "19. Bert wohnt im Hochhaus, Berta schräg gegenüber, so dass sie Berts Fenster (s. Zeichnung) gut sehen kann. Sie vereinbaren, miteinander über Berts Fenster Botschaften auszutauschen. Bert will 2 der 6 Teilfenster mit 2 Lampen beleuchten. Jedem Muster, das er so erzeugt, soll eine Botschaft entsprechen. Wie viele verschiedene Botschaften sind möglich, wenn für jede stets beide Lampen angeschaltet werden sollen?",
+      "answer_options": [
+        "A) 6",
+        "B) 8",
+        "C) 15",
+        "D) 16",
+        "E) 30"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_20.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "B10",
+    "answer": "D",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "20. Isabell, Robert und Christian holen für uns am Kiosk Getränke. Sie kaufen 19 Halbliter-Flaschen – 8 mit Wasser, 7 mit Saft und 4 mit Eistee – und trinken unterwegs vor lauter Durst jedes eine Flasche leer. Was ist dann möglich?",
+      "answer_options": [
+        "A) Es ist kein Eistee mehr da.",
+        "B) Es ist weniger Saft als Eistee da.",
+        "C) Von jeder Sorte gibt es gleich viel.",
+        "D) Von genau 2 Sorten ist gleich viel da.",
+        "E) Die Zahl Wasserflaschen ist größer als die der Saft- und Eisteeflaschen zusammen."
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_21.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "C1",
+    "answer": "B",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "21. Wirft man die Münze, dann liegt nach dem Wurf entweder Zahl oder Wappen oben. Wenn eine Münze dreimal hintereinander geworfen wird, wie viele Möglichkeiten gibt es dann für die Abfolge von Zahl und Wappen?",
+      "answer_options": [
+        "(A) 3",
+        "(B) 8",
+        "(C) 9",
+        "(D) 12",
+        "(E) 15"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_22.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "C2",
+    "answer": "E",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "22. In unserer kleinen Schulbibliothek mit insgesamt 180 Büchern haben wir Abenteuer-, Märchen- und Sachbücher. Pablo, in dieser Woche der Bibliothekar, hat gezählt, dass 18 Abenteuer-, 24 Sach- und 12 Märchenbücher ausgeliehen worden sind. Vergnügt stellt er fest, dass er nun von jeder Sorte dieselbe Anzahl in der Bibliothek hat. Wie viele der 180 Bücher sind Sachbücher?",
+      "answer_options": [
+        "(A) 72",
+        "(B) 56",
+        "(C) 63",
+        "(D) 48",
+        "(E) 66"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_23.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "C3",
+    "answer": "A",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "23. Der kürzeste von vier Streifen gleicher Breite ist 10 cm lang; jeder weitere Streifen ist um 7 cm länger als der nächstkürzere. Die Streifen werden auf unterschiedliche Weise zusammengeschoben (s. Zeichnung). Wie viele Zentimeter ist der Umfang der Figur B länger als der von Figur A?",
+      "answer_options": [
+        "(A) 14 cm",
+        "(B) 28 cm",
+        "(C) 0 cm",
+        "(D) 35 cm",
+        "(E) 20 cm"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_24.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "C4",
+    "answer": "A",
+    "math_category": "Geometrie",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "24. Ein 2,20 m langes, 1,40 m breites Tischtuch soll so oft gefaltet werden, dass es in das 40 cm × 60 cm große Fach im Wäscheschrank passt. Wie oft muss man mindestens falten?",
+      "answer_options": [
+        "A) 4-mal",
+        "B) 5-mal",
+        "C) 6-mal",
+        "D) 7-mal",
+        "E) 8-mal"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_25.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "C5",
+    "answer": "C",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "25. Ein Rechteck mit den Seitenlängen 3 cm und 27 cm wird durch drei Senkrechte zur längeren Seite in vier kleinere Rechtecke zerteilt. Wie lang ist die Summe der Längen der zwei Verbindungsstrecken zwischen den Mitten der beiden linken und der beiden rechten Rechtecke (s. Zeichnung)?",
+      "answer_options": [
+        "A) 15 cm",
+        "B) 7,5 cm",
+        "C) 13,5 cm",
+        "D) 24 cm",
+        "E) 12 cm"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_26.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "C6",
+    "answer": "C",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "26. Als Aschenputtel die Erbsen aus der Asche lesen musste, halfen ihr die Tauben. Besonders fleißig war die erste Taube, die blitzschnell ein Viertel der Erbsen rauspickte, ehe sie fortflog. Die nächsten 3 Tauben pickten gemeinsam die Hälfte der restlichen Erbsen heraus und flogen fort. Schließlich kamen noch 48 Tauben, und jede pickte 5 Erbsen aus der Asche, dann war die Arbeit getan. Wie viele Erbsen waren zu Beginn in der Asche?",
+      "answer_options": [
+        "(A) 880",
+        "(B) 660",
+        "(C) 640",
+        "(D) 600",
+        "(E) 480"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_27.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "C7",
+    "answer": "E",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "27. Auf drei benachbarten Seitenflächen eines Würfels wurde je eine Diagonale gemäß der nebenstehenden Skizze aufgemalt. Welches der Würfelnetze passt zum abgebildeten Würfel?",
+      "answer_options": [
+        "A)",
+        "B)",
+        "C)",
+        "D)",
+        "E)"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_28.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "C8",
+    "answer": "B",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Kurt denkt sich irgendeine natürliche Zahl und sagt sie Lea. Lea multipliziert diese Zahl entweder mit 5 oder mit 6. Nina zählt zu Leas Resultat entweder 5 oder 6, ganz nach ihrer Laune. Patrick zieht von Ninas Resultat nun 5 oder 6 ab, wie er will. Das Ergebnis ist 73. Welche Zahl hatte sich Kurt ausgedacht?",
+      "answer_options": [
+        "A) 9",
+        "B) 12",
+        "C) 14",
+        "D) 16",
+        "E) 19"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_29.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "C9",
+    "answer": "A",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "29. Beim Spielwürfel liegt die 1 der 6, die 2 der 5, die 3 der 4 gegenüber. Es wurden 4 gänzlich gleiche Spielwürfel so zusammengelegt, dass auf den gemeinsamen Seitenflächen – d.h. jenen, wo sich zwei Würfel berühren – die Augenzahlen übereinstimmen. In der Zeichnung sind nicht alle Augenzahlen angegeben. Welche Augenzahl steht auf der grauen Seitenfläche?",
+      "answer_options": [
+        "(A) 5",
+        "(B) 6",
+        "(C) 2",
+        "(D) 3",
+        "(E) 4"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_5und6_30.png",
+    "year": 2007,
+    "class": "5und6",
+    "task_id": "C10",
+    "answer": "C",
+    "math_category": "Arithmetik",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "30. In der Multiplikationsaufgabe □ □ ? □ × □ □ = 7632 kommt jede Ziffer von 1 bis 9 genau einmal vor. Welche Ziffer gehört an die Stelle des Fragezeichens?",
+      "answer_options": [
+        "(A) 9",
+        "(B) 8",
+        "(C) 5",
+        "(D) 4",
+        "(E) 1"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_1.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "A1",
+    "answer": "C",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "2 + 0 + 0 + 7 - 2 · 0 · 7 =\n\n2007",
+      "answer_options": [
+        "(A) 1/30",
+        "(B) 1/1003",
+        "(C) 1/223",
+        "(D) 1/72",
+        "(E) 1/207"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_2.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "A2",
+    "answer": "D",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "2. Jemand hat von KANGAROO, dem englischen Wort für Känguru, fünf Buchstaben weg gestrichen und die restlichen in umgekehrter Reihenfolge nebeneinander wieder hingeschrieben. Was kann so entstanden sein?",
+      "answer_options": [
+        "A) RAGN",
+        "B) OGR",
+        "C) RNO",
+        "D) RAN",
+        "E) ANG"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_3.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "A3",
+    "answer": "E",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "3. Eine kleine Spielzeug-Elektromaus rennt stets so lange geradeaus, bis sie an ein Hindernis kommt. Dort wendet sie sich nach rechts, rennt bis zum nächsten Hindernis, wendet sich nach rechts usw. Ich habe sie bei A2 ins Spielfeld gesetzt, wo sie in Pfeilrichtung losrennt. Der Feldrand und die dunklen Kästchen sind für die Maus ein Hindernis. Wo hält sie an?",
+      "answer_options": [
+        "(A) B2",
+        "(B) A1",
+        "(C) E4",
+        "(D) C3",
+        "(E) nirgendwo"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_4.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "A4",
+    "answer": "D",
+    "math_category": "Stochastik",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "4. Zwei Spielwürfel liegen so, dass genau 5 ihrer 12 Seitenflächen sichtbar sind (s. Abb.). Wie groß ist die Summe der Augenzahlen auf den im Bild nicht sichtbaren Seitenflächen der beiden Würfel? Hinweis: Bei Spielwürfeln liegt der 1 die 6, der 2 die 5 und der 3 die 4 gegenüber.",
+      "answer_options": [
+        "A) 15",
+        "B) 12",
+        "C) 7",
+        "D) 25",
+        "E) 24"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_5.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "A5",
+    "answer": "B",
+    "math_category": "Geometrie",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "5. In einem x, y-Koordinatensystem sind die 5 Punkte A = (2006; 2007), B = (2007; 2006), C = (−2006; −2007), D = (2006; −2007) und E = (2007; −2006) eingezeichnet. Welche der folgenden Geraden ist dann parallel zur x-Achse?",
+      "answer_options": [
+        "(A) BE",
+        "(B) CD",
+        "(C) AE",
+        "(D) BD",
+        "(E) CE"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_6.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "A6",
+    "answer": "D",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "6. 2007 − 20,07 =",
+      "answer_options": [
+        "(A) 1997,83",
+        "(B) 1987,7",
+        "(C) 1888,83",
+        "(D) 1986,93",
+        "(E) 1897,93"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_7.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "A7",
+    "answer": "A",
+    "math_category": "Stochastik",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "Wähle aus dem 3 × 3-Feld 3 Zahlen aus, so dass du aus jeder Zeile und jeder Spalte genau eine gewählt hast, und addiere die 3 Zahlen. Dann ist die größtmögliche Summe",
+      "answer_options": [
+        "(A) 15",
+        "(B) 16",
+        "(C) 19",
+        "(D) 21",
+        "(E) 23"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_8.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "A8",
+    "answer": "A",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "8. Eine Palindromzahl ist eine Zahl, die vorwärts und rückwärts gelesen gleich lautet; z. B. sind 1551 und 2207022 Palindromzahlen. Was erhalte ich, wenn ich von der größten 6-stelligen Palindromzahl die kleinste 5-stellige Palindromzahl subtrahiere?",
+      "answer_options": [
+        "(A) 989998",
+        "(B) 989989",
+        "(C) 98999",
+        "(D) 909990",
+        "(E) 988888"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_9.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "A9",
+    "answer": "C",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "9. In einer kleinen Manufaktur werden Bienenwachskerzen mit kreisrundem Querschnitt hergestellt und zu je 10 Stück in einen Karton mit durchsichtigem Deckel verpackt. Das Etikett zu dieser Ware soll über die Mitten aller 10 Kerzen verlaufen (s. Zeichnung). Welche Maße muss es haben, wenn der Karton für die 10 Kerzen einen Umfang von 63 hat? (Alle Angaben in cm.)",
+      "answer_options": [
+        "(A) 4 × 12",
+        "(B) 3,5 × 14",
+        "(C) 4,5 × 18",
+        "(D) 4,5 × 22",
+        "(E) 5 × 12,5"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_10.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "A10",
+    "answer": "C",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "10. Es sei x < -1. Welche der folgenden Zahlen ist dann am größten?",
+      "answer_options": [
+        "A) x + 1",
+        "B) 2x",
+        "C) -2x",
+        "D) 6x + 2",
+        "E) x - 2"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_11.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "B1",
+    "answer": "A",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "11. Ein kleines Quadrat ist, wie in der Zeichnung dargestellt, in ein großes einbeschrieben. Wie groß ist der Flächeninhalt des kleinen Quadrats, wenn die kleinen Kästchen einen Flächeninhalt von 1 cm² haben?",
+      "answer_options": [
+        "A) 53 cm²",
+        "B) 49 cm²",
+        "C) 56 cm²",
+        "D) 45 cm²",
+        "E) 64 cm²"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_12.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "B2",
+    "answer": "B",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "12. Stell dir zwei parallele Geraden vor und auf einer dieser Geraden vier, auf der anderen zwei Punkte. Wie viele Dreiecke lassen sich zeichnen, deren Ecken mit jeweils drei dieser sechs Punkte zusammenfallen?",
+      "answer_options": [
+        "A) 6",
+        "B) 16",
+        "C) 15",
+        "D) 12",
+        "E) 21"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_16.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "B6",
+    "answer": "A",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "16. Betrachte alle natürlichen Zahlen 1, 2, 3, ..., 9999, 10000. Wie viel Prozent dieser Zahlen sind Quadratzahlen?",
+      "answer_options": [
+        "A) 1%",
+        "B) 10%",
+        "C) 1,5%",
+        "D) 2%",
+        "E) 1,2%"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_17.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "B7",
+    "answer": "D",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "17. Zeichnet man von 9 Geraden 5 waagerecht und 4 senkrecht, so bilden diese 12 Zellen; hätte man 6 waagerecht und die restlichen 3 senkrecht gezeichnet, wären nur 10 Zellen entstanden (s. Zeichnungen). Wie viele Zellen lassen sich maximal mit 15 Geraden bilden?",
+      "answer_options": [
+        "(A) 22",
+        "(B) 30",
+        "(C) 36",
+        "(D) 42",
+        "(E) 48"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_18.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "B8",
+    "answer": "B",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "18. Welcher oder welche der unten abgebildeten Körper sind aus dem rechts abgebildeten durch Drehung hervorgegangen?",
+      "answer_options": [
+        "A) nur II und IV",
+        "B) nur I und III",
+        "C) nur III",
+        "D) I, II und IV",
+        "E) keiner"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_19.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "B9",
+    "answer": "C",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "19. Theodoras Taschenrechner ist kaputt. Die 1 lässt sich nicht eintippen. Wenn sie auf die 1 tippt, um sie einzugeben, erscheint nicht einmal eine Leerstelle. Ohne das zu bemerken, hatte ihr Banknachbar eine 6-stellige Zahl eingetippt, und auf dem Display erschien 8773. Wie viele verschiedene 6-stellige Zahlen könnte er eingegeben haben?",
+      "answer_options": [
+        "(A) 20",
+        "(B) 16",
+        "(C) 15",
+        "(D) 12",
+        "(E) 9"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_20.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "B10",
+    "answer": "D",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "20. Wie viele der weißen Kästchen müssen mindestens noch geschwärzt werden, damit eine Figur entsteht, die eine Symmetrieachse besitzt?",
+      "answer_options": [
+        "A) 6",
+        "B) 5",
+        "C) 4",
+        "D) 3",
+        "E) 2"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_21.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "C1",
+    "answer": "A",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "21. Stell dir vor, du hast die Summe der Ziffern des Quadrates einer Zahl auszurechnen, die größer als 2007 ist. Welches ist der kleinstmögliche Wert dieser Summe?",
+      "answer_options": [
+        "(A) 1",
+        "(B) 2",
+        "(C) 13",
+        "(D) 27",
+        "(E) 32"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_22.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "C2",
+    "answer": "A",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "22. Alex, Benno, Clara, Delia, Elise und Franz wippen auf dem Spielplatz. Alex und Benno sind zusammen leichter als Clara und Delia, Clara und Elise leichter als Franz und Benno. Welche der folgenden Aussagen stimmt dann gewiss?",
+      "answer_options": [
+        "(A) Alex und Elise sind zusammen leichter als Franz und Delia.",
+        "(B) Delia und Elise sind zusammen schwerer als Clara und Franz.",
+        "(C) Delia und Franz sind zusammen schwerer als Alex und Clara.",
+        "(D) Alex und Benno sind zusammen leichter als Clara und Franz.",
+        "(E) Alex, Benno und Clara sind zusammen genauso schwer wie Delia, Elise und Franz."
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_23.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "C3",
+    "answer": "E",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "23. Wenn man 36 zu 37 addiert, erhält man 73, die Addition von 36 hat also ein Vertrauen der beiden Ziffern der Zahl 37 bewirkt. Wie viele 2-stellige Zahlen gibt es, für die die Zahl, die beim Vertauschen der beiden Ziffern entsteht, die Summe aus dieser gewählten Zahl und 36 ist?",
+      "answer_options": [
+        "(A) 11",
+        "(B) 10",
+        "(C) 8",
+        "(D) 6",
+        "(E) 5"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_24.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "C4",
+    "answer": "D",
+    "math_category": "Geometrie",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "24. Zwei Quadrate mit den Seitenlängen 7 cm bzw. 24 cm sind geschickt zerschnitten worden, so dass sich aus den Teilen ein neues, größeres Quadrat zusammensetzen lässt. Welche Seitenlänge hat dieses Quadrat?",
+      "answer_options": [
+        "(A) 27 cm",
+        "(B) 30 cm",
+        "(C) 31 cm",
+        "(D) 25 cm",
+        "(E) 32 cm"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_28.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "C8",
+    "answer": "D",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "28. Ein Wanderer ist insgesamt 2 Stunden unterwegs. Zuerst wandert er auf einem ebenen Wegabschnitt, dann muss er hochsteigen. Nach der Umkehr geht es andersherum, erst abwärtssteigen, dann folgt der ebene Weg. Stolz teilt er mit, dass er auf dem ebenen Abschnitt mit 4 km/h unterwegs war und dass er mit immerhin 3 km/h aufwärts und mit 6 km/h abwärts gewandert ist. Aber wie lang war seine Tour?",
+      "answer_options": [
+        "(A) nicht ermittelbar",
+        "(B) 6 km",
+        "(C) 7,5 km",
+        "(D) 8 km",
+        "(E) 13 km"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_29.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "C9",
+    "answer": "A",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "29. Wie viele 3-stellige Zahlen haben die Eigenschaft, dass die Summe ihrer Ziffern um 9 größer ist als die Summe der Ziffern der durch 9 dividierten Zahl?",
+      "answer_options": [
+        "(A) 5",
+        "(B) 1",
+        "(C) 11",
+        "(D) 8",
+        "(E) 3"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_7und8_30.png",
+    "year": 2007,
+    "class": "7und8",
+    "task_id": "C10",
+    "answer": "E",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "30. Als wir im Keller ein 80 cm × 80 cm großes Wandstück über einem Wasserhahn fliesen wollen, finden wir noch genügend 20 cm × 20 cm große Fliesen derselben Sorte. Jede Fliese verzieren zwei Kurvenstücke, die die Mitten benachbarter Seiten der Fliesen miteinander verbinden. Legt man die Fliesen geeignet aneinander – dabei dürfen die Fliesen auch um 90° gedreht werden – ergibt sich ein längerer Kurvenzug (s. Abb.). Wie viele Kurvenstücke lassen sich maximal in dem fertigen 80 cm × 80 cm großen Stück zu einem durchgängigen Kurvenzug verbinden?",
+      "answer_options": [
+        "(A) 16",
+        "(B) 18",
+        "(C) 19",
+        "(D) 21",
+        "(E) 22"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_1.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "A1",
+    "answer": "D",
+    "math_category": "Arithmetik",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "1. Zwei Spielwürfel liegen so, dass genau 5 ihrer 12 Seitenflächen sichtbar sind (s. Abb.). Wie groß ist die Summe der Augenzahlen der im Bild nicht sichtbaren Seitenflächen der beiden Würfel? Hinweis: Bei Spielwürfeln liegt der 1 die 6, der 2 die 5, der 3 die 4 gegenüber.",
+      "answer_options": [
+        "(A) 15",
+        "(B) 9",
+        "(C) 27",
+        "(D) 29",
+        "(E) eine andere Zahl"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_2.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "A2",
+    "answer": "A",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "2. Anna, Ben und Clea haben zusammen 30 Kaugummis. Gäbe Ben der Clea 5, Clea der Anna 4 und Anna dem Ben 2 Kaugummis, so hätten alle drei gleich viele. Wie viele Kaugummis hat Anna?",
+      "answer_options": [
+        "(A) 8",
+        "(B) 9",
+        "(C) 11",
+        "(D) 13",
+        "(E) 15"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_3.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "A3",
+    "answer": "B",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "3. Im Mathecamp gibt es eine Lotterie. Allerdings gewinnen dort von den gezogenen Losen nur diejenigen, deren Nummer mindestens 5-stellig ist und bei denen sich unter den Ziffern höchstens 3 finden, die größer sind als 2. Wie viele der nachfolgenden Lose sind danach Gewinnlose?",
+      "answer_options": [
+        "(A) 1",
+        "(B) 2",
+        "(C) 3",
+        "(D) 4",
+        "(E) 5"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_4.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "A4",
+    "answer": "D",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Um wie viel Prozent ist B größer als A, wenn A um 20% kleiner ist als B?",
+      "answer_options": [
+        "A) um 22,5%",
+        "B) um 27,5%",
+        "C) um 20%",
+        "D) um 25%",
+        "E) um 30%"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_5.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "A5",
+    "answer": "A",
+    "math_category": "unknown",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "5. Die nebenstehende Tafel ist mit Sternchen und Herzen zu füllen, und zwar sollen in jeder Zeile und in jeder Spalte zwei ★ und zwei ♡ zu liegen kommen. Welche Symbole müssen an die Stellen X und Y gesetzt werden?",
+      "answer_options": [
+        "(A) X = ★; Y = ★",
+        "(B) X = ★; Y = ♡",
+        "(C) X = ♡; Y = ★",
+        "(D) X = ♡; Y = ♡",
+        "(E) nicht eindeutig bestimmt"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_6.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "A6",
+    "answer": "B",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "6. Werden in einem Dreieck von 2 Eckpunkten aus je 2 Linien zu den gegenüberliegenden Seiten gezeichnet, so zerlegen diese das Dreieck in 9 Teilflächen (s. Abb.). Wie viele Teilflächen würden entstehen, wenn man von 2 Eckpunkten aus je 4 Linien zu den gegenüberliegenden Seiten zeichnen würde?",
+      "answer_options": [
+        "(A) 16",
+        "(B) 25",
+        "(C) 36",
+        "(D) 42",
+        "(E) 49"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_7.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "A7",
+    "answer": "E",
+    "math_category": "Stochastik",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "7. Wie viele Wege mit minimaler Anzahl Schritte gibt es, um eine Spielfigur von A nach B zu bewegen, wenn sich die Figur bei jedem Schritt in eines ihrer Nachbarfelder (horizontal, vertikal oder diagonal) bewegen darf?",
+      "answer_options": [
+        "A) 35",
+        "B) 20",
+        "C) 16",
+        "D) 7",
+        "E) 4"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_8.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "A8",
+    "answer": "D",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Für das Nüssesammeln in ihrem Garten schenkt die Großmutter den drei beteiligten Enkeln Adrian, Florian und Fabian je die gleiche Summe Geldes zum Dank. Adrian, der nur kurzzeitig mitgemacht hat, gibt dem Hauptakteur Fabian 2/3 seines Geldes. Die Beträge, die Adrian und Fabian nun haben, verhalten sich dann zueinander wie",
+      "answer_options": [
+        "A) 1 : 2",
+        "B) 1 : 3",
+        "C) 2 : 3",
+        "D) 1 : 5",
+        "E) 3 : 2"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_9.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "A9",
+    "answer": "C",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "9. Verschiedene Buchstaben stehen für verschiedene Ziffern. Welches ist der kleinste Wert, der mit der mehrfachen Subtraktion 2007 – KAN – GA – ROO gebildet werden kann?",
+      "answer_options": [
+        "A) 100",
+        "B) 109",
+        "C) 110",
+        "D) 119",
+        "E) 129"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_10.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "A10",
+    "answer": "C",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Unsere Schülerzeitung hat zur Zeit 64 Abonnenten. Kristin aus unserer Klasse ist neue Chefin der Zeitung und sehr aktiv. Sie hat sich vorgenommen, in den kommenden Monaten die Abonnentenzahl pro Monat um 25% zu steigern. Wie viele Abonnenten hat die Zeitung in einem Vierteljahr, falls ihr dies gelingt?",
+      "answer_options": [
+        "A) 182",
+        "B) 142",
+        "C) 125",
+        "D) 96",
+        "E) 80"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_11.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "B1",
+    "answer": "E",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "11. Die Buchstabenfolge KANGAROOKANGAROO...KANGAROO besteht 20-mal aus dem englischen Wort für Känguru. Aus dieser Folge werden alle Buchstaben mit ungerader Positionsnummer durchgestrichen. Bei der übrig bleibenden Buchstabenfolge werden wiederum alle mit ungerader Positionsnummer gestrichen, und dies wird so lange fortgesetzt, bis nur noch ein Buchstabe übrig bleibt. Welcher ist es?",
+      "answer_options": [
+        "(A) K",
+        "(B) A",
+        "(C) N",
+        "(D) G",
+        "(E) O"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_13.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "B3",
+    "answer": "D",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "13. Sammy Schneck fordert Susi Schnecke zu einem Rennen heraus. Er schafft als Wettkampfleistung über die Gesamtdistanz 1,8 m/h, Susi schafft 60 cm/h weniger. Als Gentleschneck räumt er Susi ein, 1 h 40 min vor ihm loszukriechen. Das Rennen endet an einer Hausmauer, die beide exakt zeitgleich erreichen. Über welche Distanz wurde das Rennen ausgetragen?",
+      "answer_options": [
+        "(A) 0,9 m",
+        "(B) 3 m",
+        "(C) 2,5 m",
+        "(D) 6 m",
+        "(E) 4,5 m"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_14.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "B4",
+    "answer": "D",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "14. Die Summe von 5 aufeinanderfolgenden ganzen Zahlen ist gleich der Summe der drei anschließenden aufeinanderfolgenden ganzen Zahlen. Dann ist die größte der 8 Zahlen.",
+      "answer_options": [
+        "(A) 4",
+        "(B) 8",
+        "(C) 9",
+        "(D) 11",
+        "(E) 12"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_15.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "B5",
+    "answer": "A",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "15. Mit welchem Exponenten muss man 4^4 potenzieren, um 8^8 zu erhalten?",
+      "answer_options": [
+        "A) 3",
+        "B) 4",
+        "C) 7",
+        "D) 8",
+        "E) 16"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_17.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "B7",
+    "answer": "B",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "17. Fügen wir einem Trapez, das aus einem gleichseitigen Dreieck D durch Abschneiden einer Ecke entstanden ist, ein dazu kongruentes an, entsteht ein Parallelogramm (s. Abb.). Wie groß ist der Umfang des Dreiecks D, wenn der des Parallelogramms um 10 cm länger ist?",
+      "answer_options": [
+        "(A) 10 cm",
+        "(B) 30 cm",
+        "(C) 40 cm",
+        "(D) 60 cm",
+        "(E) mit diesen Angaben nicht lösbar"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_18.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "B8",
+    "answer": "E",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Heinz bucht einen Flug von Zürich nach Singapore und erhält von seinem Reisebüro folgende Übersicht:\n\nAbflug (Ortszeit)  Ankunft (Ortszeit)\n12. März 17:00 Zürich  13. März 11:00 Singapore\n6. April 23:00 Singapore  7. April 06:00 Zürich\n\nWenn bekannt ist, dass die Flugzeit für Hin- und Rückflug dieselbe ist und dass in der Schweiz am 25. März 2007 die Sommerzeit beginnt (Vorstellen der Uhren um 1 Stunde), lässt sich ausrechnen, wie lange der Flug von Zürich nach Singapore dauert. Er dauert",
+      "answer_options": [
+        "(A) 11 h 30 min",
+        "(B) 12 h",
+        "(C) 12 h 20 min",
+        "(D) 12 h 40 min",
+        "(E) 13 h"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_19.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "B9",
+    "answer": "D",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "19. Die Familien Kurz und Klein, jeweils aus Mutter, Vater und zwei Kindern bestehend, sind begeisterte Tischtennisspieler. Es wird ein Turnier im Doppel ausgetragen, bei dem jedes mögliche Paar der Familie Kurz gegen jedes mögliche Paar der Familie Klein antritt. Wie viele Spiele hat jedes einzelne Familienmitglied zu absolvieren?",
+      "answer_options": [
+        "(A) 8",
+        "(B) 12",
+        "(C) 16",
+        "(D) 18",
+        "(E) 24"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_20.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "B10",
+    "answer": "C",
+    "math_category": "Geometrie",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "20. Eine Münze mit Durchmesser 1 rollt auf einem regelmäßigen Sechseck mit Seitenlänge 1 ein einziges Mal außen herum. Wie lang ist der Weg, den der Mittelpunkt der Münze dabei zurücklegt? Alle Längenangaben sind in cm. (Der Umfang u eines Kreises mit dem Radius r beträgt u = 2πr.)",
+      "answer_options": [
+        "A) 6 + \\frac{\\pi}{2}",
+        "B) 12 + \\pi",
+        "C) 6 + \\pi",
+        "D) 6 + 2\\pi",
+        "E) 12 + 2\\pi"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_21.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "C1",
+    "answer": "B",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Es ist 21 Uhr, und ich fahre mit einer konstanten Geschwindigkeit von 100 km/h. Wenn ich diese Geschwindigkeit beibehalte, reicht das Benzin nur für 80 km. Die nächste Tankstelle ist 100 km entfernt. Der Benzinverbrauch pro Kilometer ist proportional zur Geschwindigkeit. Um welche Zeit kann ich die Tankstelle frühestmöglich erreichen, wenn ich mit konstanter Geschwindigkeit fahren will?",
+      "answer_options": [
+        "A) um 22:12",
+        "B) um 22:15",
+        "C) um 22:20",
+        "D) um 22:25",
+        "E) um 22:30"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_22.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "C2",
+    "answer": "B",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "22. Die Diagonalen zerlegen die Fläche des Vierecks in vier Dreiecke. Von drei Dreiecken ist der Flächeninhalt bekannt (s. Zeichnung). Welchen Flächeninhalt hat das vierte Dreieck?",
+      "answer_options": [
+        "(A) 5",
+        "(B) 6",
+        "(C) 4√2",
+        "(D) 7",
+        "(E) 7√2"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_23.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "C3",
+    "answer": "D",
+    "math_category": "Geometrie",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "23. Gegeben ist ein Quadrat ABCD. Dann ist die Anzahl der Quadrate, von deren Eckpunkten genau zwei mit Eckpunkten von ABCD zusammenfallen, gleich",
+      "answer_options": [
+        "(A) 4",
+        "(B) 6",
+        "(C) 8",
+        "(D) 12",
+        "(E) 16"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_24.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "C4",
+    "answer": "A",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Zum geistigen Aufwärmen beginnt der Unterricht bisweilen mit Rechnen. Einmal war eine gegebene 4-stellige Zahl zu jener 4-stelligen Zahl zu addieren, die entsteht, wenn die 1. Ziffer der gegebenen Zahl „nach hinten“, d.h. an die Einerstelle, gesetzt wird. Wir kriegten bei der schnellen Rechnerei 5 verschiedene Ergebnisse. Eines davon war richtig. Welches?",
+      "answer_options": [
+        "A) 4587",
+        "B) 4597",
+        "C) 5587",
+        "D) 4497",
+        "E) 4577"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_25.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "C5",
+    "answer": "C",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "25. Wir denken uns eine von Schurken und Rittern bewohnte Insel. Schurken lügen immer, Ritter sprechen immer die Wahrheit. Eines Tages kommen 12 Inselbewohner zusammen, unter denen mindestens ein Ritter und mindestens ein Schurke ist. 2 von ihnen sagen: Genau 2 von uns 12 sind Schurken. Und die verbleibenden 6 sagen: Genau 6 unter uns 12 sind Schurken. Wie viele dieser 12 sind tatsächlich Schurken?",
+      "answer_options": [
+        "(A) 2",
+        "(B) 4",
+        "(C) 6",
+        "(D) 7",
+        "(E) 11"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_26.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "C6",
+    "answer": "D",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "26. Die Lösungen der quadratischen Gleichung x² - 3x + 1 = 0 seien a und b. Welchen Wert hat a³ + b³?",
+      "answer_options": [
+        "(A) 12",
+        "(B) 14",
+        "(C) 16",
+        "(D) 18",
+        "(E) 24"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_28.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "C8",
+    "answer": "A",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "28. Es sei a die kleinste natürliche Zahl derart, dass 10a eine Quadratzahl und 6a eine Kubikzahl ist. Wie viele Teiler hat die Zahl a?",
+      "answer_options": [
+        "(A) 72",
+        "(B) 36",
+        "(C) 60",
+        "(D) 45",
+        "(E) 108"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_29.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "C9",
+    "answer": "C",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "29. Als ich mit meinen vier Freunden nach dem Erledigen der Hausaufgaben in die Stube zurückkehrte, wussten wir nicht mehr sicher, wer welches unserer 5 herumstehenden Trinkgläser benutzt hatte. Nun überlegten wir uns, auf wie viele Arten es möglich ist, dass keiner von uns fünf sein eigenes Glas bekommt. Wie viele Möglichkeiten gibt es?",
+      "answer_options": [
+        "A) 5",
+        "B) 20",
+        "C) 44",
+        "D) 57",
+        "E) 125"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_9und10_30.png",
+    "year": 2007,
+    "class": "9und10",
+    "task_id": "C10",
+    "answer": "D",
+    "math_category": "Geometrie",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "30. Der Abstand zweier räumlich gegenüberliegender Kanten eines regulären Tetraeders betrage 6 cm. Wie groß ist sein Volumen?",
+      "answer_options": [
+        "(A) 18 cm³",
+        "(B) 36 cm³",
+        "(C) 48 cm³",
+        "(D) 72 cm³",
+        "(E) 144 cm³"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_1.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "A1",
+    "answer": "E",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "Welcher oder welche der unten abgebildeten Körper sind aus dem rechts abgebildeten durch Drehung hervorgegangen?",
+      "answer_options": [
+        "A) nur I und IV",
+        "B) nur I und III",
+        "C) nur IV",
+        "D) nur I, II und III",
+        "E) nur I"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_2.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "A2",
+    "answer": "D",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Meine drei Brüder besitzen zusammen 57 „Herr der Ringe“-Sammelkarten. Beim Tausch gibt Matti 7 seiner Karten an Nico, Nico gibt 4 seiner Karten an Ole und Ole 6 der seinen an Matti. Nun hat jeder gleich viele. Wie viele Karten hatte Ole zu Beginn?",
+      "answer_options": [
+        "(A) 13",
+        "(B) 17",
+        "(C) 18",
+        "(D) 21",
+        "(E) 23"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_3.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "A3",
+    "answer": "A",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "3. Der Inhalt des Dreiecks AOC, wobei O Mittelpunkt des Kreises ist, beträgt √3. Dann beträgt der Flächeninhalt des Dreiecks ABC",
+      "answer_options": [
+        "(A) 2√3",
+        "(B) 2",
+        "(C) 5",
+        "(D) 4",
+        "(E) 4√3"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_4.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "A4",
+    "answer": "C",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Just an dem Tage, als ihr Vater 20 Jahre alt wurde, erblickte Gisa das Licht der Welt. Neulich fragte sie ihn verschmitzt: Wie oft ist – seit meiner Geburt – mein Alter ein Teiler deines Alters, wenn wir beide ausreichend lang leben? Die richtige Antwort ist:",
+      "answer_options": [
+        "(A) 4-mal",
+        "(B) 5-mal",
+        "(C) 6-mal",
+        "(D) 7-mal",
+        "(E) 8-mal"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_5.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "A5",
+    "answer": "D",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "5. Eine Billardkugel trifft die erste Bande AD exakt unter einem Winkel von 45°. Der bärenstarke Bruno hat sie mit enormer Wucht in Bewegung gesetzt. In welches Loch wird sie fallen?",
+      "answer_options": [
+        "(A) A",
+        "(B) B",
+        "(C) C",
+        "(D) D",
+        "(E) In keines der Löcher"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_6.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "A6",
+    "answer": "C",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Wie viele Hamster müssen mindestens in einem Käfig sein, damit die folgende Aussage zutrifft: Es gibt mindestens zwei Männchen oder mindestens zwei Weibchen, die im selben Monat geboren wurden?",
+      "answer_options": [
+        "(A) 13",
+        "(B) 16",
+        "(C) 25",
+        "(D) 32",
+        "(E) 48"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_8.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "A8",
+    "answer": "C",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "8. Verschiedene Buchstaben stehen für verschiedene Ziffern; keine Ziffer darf 0 sein. Welcher größte Wert kann mit der mehrfachen Subtraktion 2007 – KA – ENG – URU gebildet werden?",
+      "answer_options": [
+        "A) 1572",
+        "B) 1863",
+        "C) 1573",
+        "D) 1865",
+        "E) 1574"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_9.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "A9",
+    "answer": "E",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "9. B, C und D zerlegen die Strecke AE in vier gleichlange Teilstrecken. AE, AD und DE sind Durchmesser von Halbkreisen. Entlang dieser Halbkreise gibt es zwei Wege von A nach E (s. Abb.). Das Verhältnis aus der Länge des oberen und der Länge des unteren Weges ist gleich",
+      "answer_options": [
+        "(A) 1 : 2",
+        "(B) 2 : 3",
+        "(C) 2 : 1",
+        "(D) 3 : 2",
+        "(E) 1 : 1"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_10.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "A10",
+    "answer": "B",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "10. Seit jeher züchtet die Frühlingsfee Schmetterlinge. Dies Jahr – so versichert sie ihrer Freundin – schlüpfen mindestens 80% der Schmetterlingspuppen. Bei dem Wetter! Es sind auch schon aus 10 der Puppen prächtige Falter geschlüpft. Als sie jedoch 5 vertrocknete Puppen findet, ist ihr klar, dass sie die 80% nur noch erreichen kann, wenn alle übrigen Puppen zu Schmetterlingen werden. Wie viele Schmetterlingspuppen hatte sie insgesamt?",
+      "answer_options": [
+        "(A) 20",
+        "(B) 25",
+        "(C) 30",
+        "(D) 35",
+        "(E) 40"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_11.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "B1",
+    "answer": "B",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "11. Welchen größten Wert kann der Quotient aus einer dreistelligen Zahl und der Summe ihrer Ziffern annehmen?",
+      "answer_options": [
+        "A) 99",
+        "B) 100",
+        "C) 109",
+        "D) 110",
+        "E) 111"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_12.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "B2",
+    "answer": "E",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "12. Bei einer Bilanzrechnung zeigt sich: Der Ertrag β ist um 5% kleiner als der Ertrag γ und um 10% größer als der Ertrag α. Dann ist γ um x größer als α, und es ist x",
+      "answer_options": [
+        "(A) ca. 50%",
+        "(B) gleich 7,5%",
+        "(C) ca. 2%",
+        "(D) gleich 25%",
+        "(E) knapp 16%"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_13.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "B3",
+    "answer": "A",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "13. Gegeben ist die Gleichung 2^{x+1} + 2^{x} = 3^{y+2} - 3y, wobei x und y ganzzahlig sind. Dann ist x gleich",
+      "answer_options": [
+        "(A) 3",
+        "(B) 2",
+        "(C) 1",
+        "(D) 0",
+        "(E) -1"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_14.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "B4",
+    "answer": "A",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "14. Gegeben ist ein Quadrat ABCD mit Seitenlänge 1. Welches ist die Summe der Flächeninhalte aller Quadrate, die mit ABCD genau 2 Eckpunkte gemeinsam haben?",
+      "answer_options": [
+        "A) 14",
+        "B) 12",
+        "C) 6",
+        "D) 17",
+        "E) 10"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_15.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "B5",
+    "answer": "C",
+    "math_category": "Geometrie",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "15. Das schraffierte Gebiet wird durch zwei Halbkreise begrenzt (s. Abb.). Die Sehne CD ist parallel zum Durchmesser AB des großen Halbkreises, berührt den kleineren Halbkreis und hat die Länge 4. Dann ist der Inhalt des schraffierten Gebiets",
+      "answer_options": [
+        "(A) π",
+        "(B) 1,5π",
+        "(C) 2π",
+        "(D) 3π",
+        "(E) 2,5π"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_17.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "B7",
+    "answer": "D",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "17. Der Wert der Summe cos 1° + cos 2° + cos 3° + ⋯ + cos 358° + cos 359° ist gleich",
+      "answer_options": [
+        "(A) 1",
+        "(B) π",
+        "(C) 0",
+        "(D) -1",
+        "(E) 10"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_18.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "B8",
+    "answer": "E",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Eine ferne Insel wird von lügnerischen Lumpen (lL), die stets die Unwahrheit, und wahrheitsliebenden Weisen (wW), die stets die Wahrheit sprechen, bewohnt. Ein junger Mathematiker, dem dieses Phänomen wohlbekannt ist, strandet auf der Insel, und sein Blick fällt auf zwei am Strand weilende Schönheiten, eine groß, die andere klein. An näherer Bekanntschaft interessiert, fragt er die Kleine, die sein Herz am meisten bewegt, zu welcher der Gruppen sie gehört, worauf sie ihm antwortet: „Mindestens eine von uns beiden gehört zu den lügnerischen Lumpen.“ Welcher der folgenden Sätze ist dann wahr?",
+      "answer_options": [
+        "A) Die Kleine kann diesen Satz nicht aussprechen, weil sie sonst weder zu den lL noch zu den wW gehören würde.",
+        "B) Beide sind lL.",
+        "C) Beide sind wW.",
+        "D) Die Kleine gehört zu den lL, die Große zu den wW.",
+        "E) Die Große gehört zu den lL, die Kleine zu den wW."
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_19.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "B9",
+    "answer": "A",
+    "math_category": "Geometrie",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "19. Wie viele ganzzahlige Tripel (x; y; z) sind Lösung der Gleichung x² + y² + z² = 9? Anmerkung: Den Lösungen entsprechen im kartesischen Koordinatensystem Punkte mit ganzzahligen Koordinaten auf der Oberfläche einer Kugel mit dem Radius 3.",
+      "answer_options": [
+        "(A) 30",
+        "(B) 24",
+        "(C) 12",
+        "(D) 6",
+        "(E) 3"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_20.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "B10",
+    "answer": "D",
+    "math_category": "Algebra",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "20. Welcher Graph gehört zur Funktion y = √|(1 + x)(1 - |x|)| ?",
+      "answer_options": [
+        "(A)",
+        "(B)",
+        "(C)",
+        "(D)",
+        "(E)"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_21.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "C1",
+    "answer": "D",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "21. Welche der folgenden Zahlen lässt sich nicht in der Form x + √x schreiben, wobei x eine ganze Zahl bezeichnet?",
+      "answer_options": [
+        "(A) 870",
+        "(B) 110",
+        "(C) 90",
+        "(D) 60",
+        "(E) 30"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_22.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "C2",
+    "answer": "A",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "22. Es gilt: f(x) = \\frac{2x}{3x + 4}. Wenn f(g(x)) = x gelten soll, dann ist g(x) gleich",
+      "answer_options": [
+        "(A) \\frac{4x}{2 - 3x}",
+        "(B) \\frac{3x}{2x + 4}",
+        "(C) \\frac{2x + 4}{4x}",
+        "(D) \\frac{3x + 4}{2x}",
+        "(E) \\frac{3x}{2x - 4}"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_23.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "C3",
+    "answer": "E",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "23. Ann, Belinda und Charles werfen nacheinander einen Würfel. Ann gewinnt, wenn sie eine 1, 2 oder 3 wirft. Belinda gewinnt, wenn sie 4 oder eine 5 wirft. Charles gewinnt, wenn er eine 6 wirft. Ann beginnt und gibt den Würfel an Belinda, diese gibt ihn an Charles, Charles gibt ihn an Ann usw., solange, bis jemand zum ersten Mal gewinnt. Wie groß ist die Wahrscheinlichkeit, dass der offenbar benachteiligte Charles gewinnt?",
+      "answer_options": [
+        "A) \\frac{1}{6}",
+        "B) \\frac{3}{23}",
+        "C) \\frac{1}{11}",
+        "D) \\frac{3}{38}",
+        "E) \\frac{1}{13}"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_24.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "C4",
+    "answer": "C",
+    "math_category": "Geometrie",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "Wie groß ist der spitze Winkel eines Rhombus (auch Raute genannt), dessen Seite gleich dem geometrischen Mittel seiner Diagonalen ist? Hinweis: Das geometrische Mittel zweier positiver Zahlen a und b ist \\sqrt{a \\cdot b}.",
+      "answer_options": [
+        "A) 15°",
+        "B) 22,5°",
+        "C) 30°",
+        "D) 37,5°",
+        "E) 45°"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_25.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "C5",
+    "answer": "B",
+    "math_category": "Algebra",
+    "is_text_only": false,
+    "extracted_text": {
+      "question": "25. Die Figur zeigt einen Ausschnitt des Graphen zur Funktion f(x) = x³ + bx² + cx + d. Dann gilt: b ≈",
+      "answer_options": [
+        "(A) −4",
+        "(B) −2",
+        "(C) 0",
+        "(D) 0,5",
+        "(E) 2,5"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_26.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "C6",
+    "answer": "D",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "26. Bestimme die Anzahl der verschiedenen Werte für a so, dass die quadratische Gleichung x² + ax + 2007 = 0 zwei ganzzahlige Lösungen für x hat.",
+      "answer_options": [
+        "(A) 3",
+        "(B) 4",
+        "(C) 8",
+        "(D) 6",
+        "(E) 0"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_27.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "C7",
+    "answer": "C",
+    "math_category": "Arithmetik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "27. Teilen wir eine dreistellige Zahl durch die Summe ihrer Ziffern (Quersumme), so entsteht bei dieser Division in der Regel ein Rest. Wie groß ist der größtmögliche Rest?",
+      "answer_options": [
+        "(A) 20",
+        "(B) 22",
+        "(C) 24",
+        "(D) 25",
+        "(E) 26"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_28.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "C8",
+    "answer": "B",
+    "math_category": "Stochastik",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "28. Nach ihrem anstrengenden Lauf-Training ziehen die 5 Sportler ihre Trikots aus, werfen sie auf einen Haufen und stürzen unter die Dusche. Wie viele Möglichkeiten gibt es dafür, dass bei zufälligem Aufteilen der Trikots keiner der 5 sein eigenes zurück erhält?",
+      "answer_options": [
+        "(A) 16",
+        "(B) 44",
+        "(C) 57",
+        "(D) 64",
+        "(E) 125"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_29.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "C9",
+    "answer": "A",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "29. \\frac{1}{2\\sqrt{1} + 1\\sqrt{2}} + \\frac{1}{3\\sqrt{2} + 2\\sqrt{3}} + \\cdots + \\frac{1}{100\\sqrt{99} + 99\\sqrt{100}} =",
+      "answer_options": [
+        "(A) \\frac{9}{10}",
+        "(B) \\frac{99}{100}",
+        "(C) \\frac{999}{1000}",
+        "(D) 9",
+        "(E) 1"
+      ]
+    }
+  },
+  {
+    "image_path": "dataset_final/2007_11bis13_30.png",
+    "year": 2007,
+    "class": "11bis13",
+    "task_id": "C10",
+    "answer": "D",
+    "math_category": "Algebra",
+    "is_text_only": true,
+    "extracted_text": {
+      "question": "30. Die wachsende Zahlenfolge 1, 3, 4, 9, 10, 12, 13, ... (= 3^0, 3^1, 3^2, 3^0 + 3^1, 3^2, 3^0 + 3^2, 3^1 + 3^2, ...) besteht aus den Potenzen der Zahl 3 sowie aus allen möglichen Summen verschiedener solcher Potenzen. Dann ist die hundertste Zahl der Folge gleich",
+      "answer_options": [
+        "(A) 1008",
+        "(B) 977",
+        "(C) 729",
+        "(D) 981",
+        "(E) 3^9"
+      ]
+    }
+  },
+  {
     "image_path": "dataset_final/2010_3und4_1.png",
     "year": 2010,
     "class": "3und4",
