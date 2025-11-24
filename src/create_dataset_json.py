@@ -13,6 +13,12 @@ def load_solutions(solutions_path: Path) -> dict:
     with open(solutions_path, 'r', encoding='utf-8') as f:
         solutions = json.load(f)
     
+    # Check if it's the new flat format (dict) or old array format
+    if isinstance(solutions, dict):
+        # New format: already a flat key-value dict like {"2012_11bis13_A1": "C"}
+        return solutions
+    
+    # Old format: array of objects with join_key
     solutions_dict = {}
     for solution in solutions:
         join_key = solution.get('join_key')
@@ -154,12 +160,17 @@ def main():
         # Create join key for new entry
         join_key = create_join_key(parsed['year'], parsed['class'], parsed['task_id'])
         
-        # Get solution - only use 2012-2025 solutions
+        # Get solution from appropriate solutions file
         solution = solutions_2012_2025.get(join_key)
         
-        # Get answer, use empty string if no solution found
+        # Get answer - handle both new flat format (string) and old format (dict)
         if solution:
-            answer = solution.get('Lösung', '')
+            if isinstance(solution, str):
+                # New format: solution is already the answer string
+                answer = solution
+            else:
+                # Old format: solution is a dict with 'Lösung' key
+                answer = solution.get('Lösung', '')
         else:
             print(f"⚠️  No solution found for {image_file.name} (join_key: {join_key})")
             answer = ''

@@ -1,11 +1,11 @@
 # Känguru-Wettbewerb Dataset Statistiken
-*Automatisch generiert am 23.11.2025 um 22:00 Uhr*
+*Automatisch generiert am 23.11.2025 um 23:45 Uhr*
 ---
 ## 📊 Übersicht
-- **Gesamt verfügbare Aufgaben**: 2,817
-- **Verwendbare Aufgaben** (dataset_final): 2,632
-- **Nicht verwendbare Aufgaben** (dataset_final_not_used): 185
-- **Nutzungsrate**: 93.4%
+- **Gesamt verfügbare Aufgaben**: 3,046
+- **Verwendbare Aufgaben** (dataset_final): 2,852
+- **Nicht verwendbare Aufgaben** (dataset_final_not_used): 194
+- **Nutzungsrate**: 93.6%
 - **Zeitraum**: 1999–2025
 - **Klassenstufen**: 3-4, 5-6, 7-8, 9-10, 11-13
 
@@ -13,11 +13,11 @@
 | Jahr | Dataset Final | Not Used | Gesamt | Nutzungsrate |
 |------|--------------|----------|--------|-------------|
 | 1999 | 133 | 2 | 135 | 98.5% |
-| 2002 | 25 | 4 | 29 | 86.2% |
+| 2002 | 129 | 8 | 137 | 94.2% |
 | 2003 | 133 | 8 | 141 | 94.3% |
-| 2004 | 21 | 0 | 21 | 100.0% |
+| 2004 | 137 | 4 | 141 | 97.2% |
 | 2006 | 130 | 11 | 141 | 92.2% |
-| 2007 | 130 | 11 | 141 | 92.2% |
+| 2007 | 130 | 12 | 142 | 91.5% |
 | 2010 | 125 | 13 | 138 | 90.6% |
 | 2011 | 134 | 5 | 139 | 96.4% |
 | 2012 | 131 | 7 | 138 | 94.9% |
@@ -38,27 +38,27 @@
 ## 🎓 Verteilung nach Klassenstufen
 | Klassenstufe | Dataset Final | Not Used | Gesamt | Nutzungsrate |
 |--------------|--------------|----------|--------|-------------|
-| Klasse 3-4 | 454 | 30 | 484 | 93.8% |
-| Klasse 5-6 | 470 | 34 | 504 | 93.3% |
-| Klasse 7-8 | 565 | 35 | 600 | 94.2% |
-| Klasse 9-10 | 556 | 44 | 600 | 92.7% |
-| Klasse 11-13 | 587 | 42 | 629 | 93.3% |
+| Klasse 3-4 | 475 | 30 | 505 | 94.1% |
+| Klasse 5-6 | 530 | 34 | 564 | 94.0% |
+| Klasse 7-8 | 619 | 39 | 658 | 94.1% |
+| Klasse 9-10 | 612 | 47 | 659 | 92.9% |
+| Klasse 11-13 | 616 | 44 | 660 | 93.3% |
 
 ## ⭐ Verteilung nach Schwierigkeitsgrad
 | Schwierigkeit | Dataset Final | Not Used | Gesamt | Anteil (Final) |
 |---------------|--------------|----------|--------|----------------|
-| A (Leicht) | 880 | 58 | 938 | 33.4% |
-| B (Mittel) | 867 | 70 | 937 | 32.9% |
-| C (Schwer) | 885 | 57 | 942 | 33.6% |
+| A (Leicht) | 949 | 64 | 1013 | 33.3% |
+| B (Mittel) | 937 | 73 | 1010 | 32.9% |
+| C (Schwer) | 966 | 57 | 1023 | 33.9% |
 
 ## 📋 Detaillierte Verteilung (Jahr × Klassenstufe)
 ### Dataset Final
 | Jahr | Klasse 3-4 | Klasse 5-6 | Klasse 7-8 | Klasse 9-10 | Klasse 11-13 | Gesamt |
 |------|-----------|-----------|-----------|------------|-------------|--------|
 | 1999 | 15 | 29 | 30 | 30 | 29 | 133 |
-| 2002 | 0 | 0 | 0 | 0 | 25 | 25 |
+| 2002 | 21 | 30 | 26 | 27 | 25 | 129 |
 | 2003 | 21 | 26 | 29 | 28 | 29 | 133 |
-| 2004 | 21 | 0 | 0 | 0 | 0 | 21 |
+| 2004 | 21 | 30 | 28 | 29 | 29 | 137 |
 | 2006 | 20 | 25 | 29 | 29 | 27 | 130 |
 | 2007 | 21 | 30 | 24 | 27 | 28 | 130 |
 | 2010 | 23 | 21 | 26 | 28 | 27 | 125 |
@@ -77,19 +77,19 @@
 | 2023 | 23 | 23 | 30 | 27 | 28 | 131 |
 | 2024 | 21 | 22 | 28 | 25 | 28 | 124 |
 | 2025 | 24 | 23 | 28 | 29 | 28 | 132 |
-| **Total** | **454** | **470** | **565** | **556** | **587** | **2632** |
+| **Total** | **475** | **530** | **619** | **612** | **616** | **2852** |
 
 ## 💡 Erkenntnisse
-- **Jahr mit den meisten Aufgaben**: 2015 (135 Aufgaben)
-- **Jahr mit den wenigsten Aufgaben**: 2004 (21 Aufgaben)
-- **Klassenstufe mit den meisten Aufgaben**: 11-13 (587 Aufgaben)
-- **Klassenstufe mit den wenigsten Aufgaben**: 3-4 (454 Aufgaben)
+- **Jahr mit den meisten Aufgaben**: 2004 (137 Aufgaben)
+- **Jahr mit den wenigsten Aufgaben**: 2019 (122 Aufgaben)
+- **Klassenstufe mit den meisten Aufgaben**: 7-8 (619 Aufgaben)
+- **Klassenstufe mit den wenigsten Aufgaben**: 3-4 (475 Aufgaben)
 - **Balance-Verhältnis**: 0.77 (1.0 = perfekt ausgewogen)
 
 ### Schwierigkeitsverteilung (Dataset Final)
-- **A (Leicht)**: 880 (33.4%)
-- **B (Mittel)**: 867 (32.9%)
-- **C (Schwer)**: 885 (33.6%)
+- **A (Leicht)**: 949 (33.3%)
+- **B (Mittel)**: 937 (32.9%)
+- **C (Schwer)**: 966 (33.9%)
 
 ## 🔄 Schwierigkeitsgrad-Mapping (1998-2011)
 Für Aufgaben von 1998-2011 (numerische Task-IDs) gilt:
