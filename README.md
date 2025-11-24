@@ -1,12 +1,12 @@
 # Känguru-Wettbewerb VLM Dataset
 
-Structured dataset and tooling for evaluating Vision Language Models (VLMs) on German Känguru math competition tasks (2010-2025).
+Structured dataset and tooling for evaluating Vision Language Models (VLMs) on German Känguru math competition tasks (1998-2025).
 
 ## 📊 Dataset Overview
 
-- **2,060 tasks** ready for VLM evaluation (`dataset_final/`)
-- **149 excluded tasks** (visual/quality issues) in `dataset_final_not_used/`
-- **16 years** of competition data (2010-2025)
+- **3,557 tasks** ready for VLM evaluation (`dataset_final/`)
+- **235 excluded tasks** (visual/quality issues) in `dataset_final_not_used/`
+- **28 years** of competition data (1998-2025)
 - **5 grade levels**: 3-4, 5-6, 7-8, 9-10, 11-13
 - **3 difficulty levels**: A (easy), B (medium), C (hard) - balanced at ~33% each
 
@@ -92,14 +92,19 @@ Extracts question text and answer options using GPT-4o-mini.
 
 ### Utility Scripts
 
-**Map solutions from 1998-2011** (fills `answer` field):
+**Create main dataset JSON:**
 ```bash
-uv run python src/util_mapping.py
+uv run python src/create_dataset_json.py
 ```
+Combines task images with solutions and generates `dataset_final.json`.
 
-**Convert numeric task IDs to ABC format** (for consistency):
+**Extract tasks from PDFs:**
 ```bash
-uv run python src/util_convert_task_ids.py
+# For 2012-2025 (direct extraction)
+uv run python src/extract_tasks_2012_2025.py
+
+# For 1998-2011 (OCR-based extraction)
+uv run python src/extract_tasks_1998_2011.py
 ```
 
 ## 📋 Task ID Format
@@ -126,31 +131,49 @@ See [MAPPING_LOGIC.md](MAPPING_LOGIC.md) for detailed conversion rules.
 - B (Medium): Tasks 11-20 → B1-B10
 - C (Hard): Tasks 21-30 → C1-C10
 
+**Note:** 1998 uses "Punkte-Fragen" format instead of "Punkte-Aufgaben" (different terminology).
+
+## 🔄 Data Extraction
+
+The dataset was built using multiple extraction methods:
+
+1. **2012-2025:** Direct PDF extraction with PyMuPDF
+2. **1998-2011:** OCR-based extraction (PDFs have encoding issues)
+   - Uses Tesseract OCR with German language support
+   - Marker detection: "3-Punkte-Fragen" (1998) or "3-Punkte-Aufgaben" (2000+)
+   - Special case: 1998 Grade 3-4 starts with "6-Punkte-Fragen"
+
 ## 🗃️ Repository Structure
 
 ```
-├── dataset_final.json          # Main dataset (2060 tasks)
+├── dataset_final.json          # Main dataset (3557 tasks)
 ├── DATASET_STATS.md            # Auto-generated statistics
 ├── MAPPING_LOGIC.md            # Task ID conversion documentation
 ├── data/
 │   ├── dataset_final/          # Task images (for evaluation)
-│   ├── dataset_final_not_used/ # Excluded task images
-│   ├── lösungen_1998_2011.json # Solutions 1998-2011
+│   ├── dataset_final_not_used/ # Excluded task images (235)
+│   ├── kanguru_pdfs/           # Processed PDF files (1998-2009)
+│   ├── lösungen_1998_2011.json # Solutions 1998-2011 (sorted by year)
 │   └── lösungen_2012_2025.json # Solutions 2012-2025
 └── src/
     ├── analyze_dataset_distribution.py
     ├── categorize_math_tasks.py
     ├── analyze_text_only.py
     ├── extract_text.py
-    ├── util_mapping.py
-    └── util_convert_task_ids.py
+    ├── extract_tasks_1998_2011.py  # OCR-based extraction
+    ├── extract_tasks_2012_2025.py  # Direct PDF extraction
+    ├── create_dataset_json.py      # Dataset builder
+    └── create_solutions_*.py       # Solution file generators
 ```
 
-## 🎯 Usage Rate
+## 🎯 Dataset Quality
 
-- **93.3%** of available tasks are usable for VLM evaluation
-- Quality filtering removes tasks with visual artifacts, poor scans, or complex layouts
-- See comparison in DATASET_STATS.md
+- **93.8%** usable rate (3,557 out of 3,792 extracted tasks)
+- Quality filtering removes tasks with:
+  - Visual artifacts or poor scan quality
+  - Complex multi-page layouts
+  - OCR detection failures
+- See detailed statistics in [DATASET_STATS.md](DATASET_STATS.md)
 
 ## 📚 Documentation
 
@@ -160,9 +183,23 @@ See [MAPPING_LOGIC.md](MAPPING_LOGIC.md) for detailed conversion rules.
 ## 🤖 VLM Evaluation
 
 This dataset is designed for evaluating Vision Language Models on:
-- Mathematical reasoning
-- Visual understanding (diagrams, graphs)
+- Mathematical reasoning across 28 years (1998-2025)
+- Visual understanding (diagrams, graphs, geometric figures)
 - German language comprehension
-- Multi-choice question answering
+- Multi-choice question answering (5 options: A-E)
+- Age-appropriate difficulty levels (grades 3-13)
 
 All tasks include ground truth answers for automated evaluation.
+
+## 🔍 Technical Notes
+
+### PDF Extraction Challenges (1998-2011)
+- **Encoding issues:** PDFs have non-standard character encoding
+- **Solution:** OCR-based extraction using Tesseract with German language support
+- **Marker detection:** Different terminology between years:
+  - 1998: "3-Punkte-Fragen" or "6-Punkte-Fragen" (Grade 3-4)
+  - 2000-2011: "3-Punkte-Aufgaben"
+- **Known issues:** Some tasks missing due to OCR detection failures
+
+### Dataset Completeness
+See [FEHLENDE_LÖSUNGEN.md](FEHLENDE_LÖSUNGEN.md) and [FEHLENDE_AUFGABEN_1998_2011.md](FEHLENDE_AUFGABEN_1998_2011.md) for documentation of missing data.
