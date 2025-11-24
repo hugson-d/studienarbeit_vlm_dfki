@@ -70,26 +70,6 @@ uv run python src/analyze_dataset_distribution.py
 
 Shows distribution by year, class, difficulty and generates markdown statistics.
 
-### OpenAI Vision API Tools
-
-**Categorize math tasks** (adds `math_category` field):
-```bash
-uv run python src/categorize_math_tasks.py
-```
-Categories: Arithmetik, Algebra, Geometrie, Logik, Kombinatorik, etc.
-
-**Analyze text-only tasks** (adds `is_text_only` field):
-```bash
-uv run python src/analyze_text_only.py
-```
-Determines if task can be solved without visual elements.
-
-**Extract text from images** (adds `extracted_text` field):
-```bash
-uv run python src/extract_text.py
-```
-Extracts question text and answer options using GPT-4o-mini.
-
 ### Utility Scripts
 
 **Create main dataset JSON:**
