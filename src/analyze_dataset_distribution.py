@@ -1,433 +1,584 @@
 #!/usr/bin/env python3
 """
-Analyzes the distribution of tasks in dataset_final and dataset_final_not_used folders.
-Shows distribution by year, class level, and task difficulty (A/B/C categories).
+Akademische Analyse des Känguru-Datasets für die Studienarbeit.
+Erstellt DATASET_ANALYSIS.md mit detaillierten Statistiken und Visualisierungen.
 """
 
-from pathlib import Path
-from collections import defaultdict
+import json
+import statistics
 import re
+import string
+from pathlib import Path
+from collections import defaultdict, Counter
+from datetime import datetime
 
-def parse_filename(filename: str) -> dict | None:
-    """
-    Parse filename to extract year, class, and task info.
-    Format: YYYY_class_taskID.png
-    Examples: 2024_11bis13_A1.png, 2012_7und8_B5.png, 2010_3und4_15.png
-    """
-    # Try format with A/B/C difficulty (2012-2025)
-    pattern_abc = r'(\d{4})_([^_]+)_([ABC]\d+)\.png'
-    match = re.match(pattern_abc, filename)
-    
-    if match:
-        year, class_level, task_id = match.groups()
-        difficulty = task_id[0]  # A, B, or C
-        task_number = int(task_id[1:])  # numeric part
-        
-        return {
-            'year': int(year),
-            'class': class_level,
-            'task_id': task_id,
-            'difficulty': difficulty,
-            'task_number': task_number
-        }
-    
-    # Try format with numeric ID only (1998-2011)
-    pattern_numeric = r'(\d{4})_([^_]+)_(\d+)\.png'
-    match = re.match(pattern_numeric, filename)
-    
-    if match:
-        year, class_level, task_id = match.groups()
-        task_num = int(task_id)
-        
-        # Map numeric IDs to difficulty levels for 1998-2011
-        # Klassenstufen 3und4 und 5und6: 1-8=A, 9-16=B, 17-24=C
-        # Klassenstufen 7und8, 9und10, 11bis13: 1-10=A, 11-20=B, 21-30=C
-        if class_level in ['3und4', '5und6']:
-            if task_num <= 8:
-                difficulty = 'A'
-            elif task_num <= 16:
-                difficulty = 'B'
-            else:  # 17-24
-                difficulty = 'C'
-        else:  # 7und8, 9und10, 11bis13
-            if task_num <= 10:
-                difficulty = 'A'
-            elif task_num <= 20:
-                difficulty = 'B'
-            else:  # 21-30
-                difficulty = 'C'
-        
-        return {
-            'year': int(year),
-            'class': class_level,
-            'task_id': task_id,
-            'difficulty': difficulty,
-            'task_number': task_num
-        }
-    
-    return None
+# Externe Bibliotheken für linguistische Analyse
+try:
+    import nltk
+    from nltk.corpus import stopwords
+    from nltk.stem.snowball import GermanStemmer
+    from wordcloud import WordCloud
+    import matplotlib.pyplot as plt
+    import ssl
 
-def analyze_directory(directory_path: Path) -> dict:
-    """Analyze all PNG files in a directory."""
+    # SSL-Verifizierung für NLTK-Download umgehen (macOS Fix)
+    try:
+        _create_unverified_https_context = ssl._create_unverified_context
+    except AttributeError:
+        pass
+    else:
+        ssl._create_default_https_context = _create_unverified_https_context
+    
+    # NLTK Ressourcen laden (falls nicht vorhanden)
+    try:
+        nltk.data.find('corpora/stopwords')
+    except LookupError:
+        print("⬇️  Lade NLTK Stopwords...")
+        nltk.download('stopwords')
+    
+    HAS_NLP = True
+except ImportError:
+    print("⚠️  Warnung: NLTK, WordCloud oder Matplotlib nicht gefunden. Linguistische Analyse eingeschränkt.")
+    HAS_NLP = False
+
+def load_dataset(json_path: Path) -> list:
+    """Lädt das Dataset aus der JSON-Datei."""
+    with open(json_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def analyze_text_content(text_list: list, output_dir: Path) -> dict:
+    """
+    Führt eine linguistische Analyse der Aufgabentexte durch.
+    Inklusive Stopword-Removal, Stemming und WordCloud-Generierung.
+    """
+    if not HAS_NLP or not text_list:
+        return {'top_words': [], 'wordcloud_path': None}
+    
+    print("   ...starte linguistische Analyse...")
+    
+    # 1. Preprocessing Setup
+    stop_words = set(stopwords.words('german'))
+    # Zusätzliche domänenspezifische Stopwörter
+    custom_stops = {'dass', 'wurde', 'wurden', 'gibt', 'beim', 'dabei', 'wer', 'wie', 'was', 'wo', 'wann'}
+    stop_words.update(custom_stops)
+    
+    stemmer = GermanStemmer()
+    
+    processed_words = []
+    
+    # 2. Text Processing
+    for text in text_list:
+        # Lowercase & Punctuation removal
+        text = text.lower()
+        text = re.sub(f'[{re.escape(string.punctuation)}]', '', text)
+        text = re.sub(r'\d+', '', text) # Zahlen entfernen
+        
+        words = text.split()
+        
+        for word in words:
+            if word not in stop_words and len(word) > 2:
+                # Stemming anwenden
+                stemmed = stemmer.stem(word)
+                processed_words.append(stemmed)
+                # Alternativ: Originalwort behalten für bessere Lesbarkeit in WordCloud
+                # processed_words.append(word) 
+    
+    # Wir nutzen hier die Originalwörter (gefiltert) für die WordCloud, 
+    # da gestemmte Wörter oft schwer lesbar sind (z.B. "rechn" statt "rechnen")
+    # Für die Frequenzanalyse nutzen wir ebenfalls die ungestemmten, aber normalisierten Wörter
+    
+    display_words = []
+    for text in text_list:
+        text = text.lower()
+        text = re.sub(f'[{re.escape(string.punctuation)}]', '', text)
+        text = re.sub(r'\d+', '', text)
+        words = text.split()
+        display_words.extend([w for w in words if w not in stop_words and len(w) > 2])
+    
+    word_counts = Counter(display_words)
+    top_words = word_counts.most_common(25)
+    
+    # 3. WordCloud Generierung
+    wordcloud = WordCloud(
+        width=1600, 
+        height=800, 
+        background_color='white', 
+        colormap='viridis',
+        max_words=200
+    ).generate_from_frequencies(word_counts)
+    
+    wc_path = output_dir / "wordcloud.png"
+    plt.figure(figsize=(20,10))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.tight_layout(pad=0)
+    plt.savefig(wc_path)
+    plt.close()
+    
+    return {
+        'top_words': top_words,
+        'wordcloud_path': "wordcloud.png"
+    }
+
+def load_solutions(base_dir: Path) -> dict:
+    """Lädt die erwarteten Lösungen aus den JSON-Dateien."""
+    solutions = {}
+    
+    # 1998-2011
+    path1 = base_dir / "data" / "lösungen_1998_2011.json"
+    if path1.exists():
+        with open(path1, 'r', encoding='utf-8') as f:
+            solutions.update(json.load(f))
+            
+    # 2012-2025
+    path2 = base_dir / "data" / "lösungen_2012_2025.json"
+    if path2.exists():
+        with open(path2, 'r', encoding='utf-8') as f:
+            solutions.update(json.load(f))
+            
+    return solutions
+
+def calculate_statistics(data: list, base_dir: Path) -> dict:
+    """Berechnet umfassende Statistiken für die akademische Analyse."""
     stats = {
-        'total_files': 0,
+        'total_tasks': len(data),
+        'years': set(),
+        'classes': set(),
         'by_year': defaultdict(int),
         'by_class': defaultdict(int),
         'by_difficulty': defaultdict(int),
-        'by_year_class': defaultdict(lambda: defaultdict(int)),
-        'by_year_difficulty': defaultdict(lambda: defaultdict(int)),
-        'years': set(),
-        'classes': set(),
+        'by_category': defaultdict(int),
+        'by_modality': {'text_only': 0, 'visual': 0, 'unknown': 0},
+        'by_answer': defaultdict(int),
+        'cross_category_class': defaultdict(lambda: defaultdict(int)),
+        'cross_modality_category': defaultdict(lambda: defaultdict(int)),
+        'cross_modality_difficulty': {'text_only': defaultdict(int), 'visual': defaultdict(int)},
+        'cross_modality_answer': {'text_only': defaultdict(int), 'visual': defaultdict(int)},
+        'cross_difficulty_category': defaultdict(lambda: defaultdict(int)),
+        'text_stats': {'lengths': [], 'options_counts': []},
+        'all_questions': [],
+        'found_per_year_class': defaultdict(int),
+        'completeness': {'missing': [], 'extra': [], 'coverage': 0.0}
     }
-    
-    if not directory_path.exists():
-        return stats
-    
-    for file_path in directory_path.glob('*.png'):
-        parsed = parse_filename(file_path.name)
+
+    # Load expected tasks from solutions
+    expected_tasks = set(load_solutions(base_dir).keys())
+    found_tasks = set()
+
+    for entry in data:
+        # Basis-Informationen
+        year = entry.get('year')
+        cls = entry.get('class')
+        task_id = entry.get('task_id', '')
         
-        if parsed:
-            stats['total_files'] += 1
-            stats['by_year'][parsed['year']] += 1
-            stats['by_class'][parsed['class']] += 1
-            stats['by_difficulty'][parsed['difficulty']] += 1
-            stats['by_year_class'][parsed['year']][parsed['class']] += 1
-            stats['by_year_difficulty'][parsed['year']][parsed['difficulty']] += 1
-            stats['years'].add(parsed['year'])
-            stats['classes'].add(parsed['class'])
+        # Task Key für Abgleich rekonstruieren
+        # Format im Dataset: image_path="dataset_final/1998_3und4_1.png"
+        # Format in Lösungen: "1998_3und4_1"
+        img_path = entry.get('image_path', '')
+        task_key = Path(img_path).stem # "1998_3und4_1"
+        found_tasks.add(task_key)
+        
+        if year:
+            stats['years'].add(year)
+            stats['by_year'][year] += 1
+        
+        if cls:
+            stats['classes'].add(cls)
+            stats['by_class'][cls] += 1
+            
+        if year and cls:
+            stats['found_per_year_class'][(str(year), str(cls))] += 1
+        
+        # Schwierigkeitsgrad (A/B/C)
+        if task_id and len(task_id) > 0:
+            diff = task_id[0]
+            if diff in ['A', 'B', 'C']:
+                stats['by_difficulty'][diff] += 1
+                
+                # Cross: Difficulty vs Category
+                cat = entry.get('math_category', 'unknown')
+                if not cat: cat = 'unknown'
+                stats['cross_difficulty_category'][diff][cat] += 1
+        
+        # Antwortverteilung (Bias-Check)
+        answer = entry.get('answer')
+        if answer and answer in ['A', 'B', 'C', 'D', 'E']:
+            stats['by_answer'][answer] += 1
+        
+        # Kategorie
+        cat = entry.get('math_category', 'unknown')
+        if not cat: cat = 'unknown'
+        stats['by_category'][cat] += 1
+        stats['cross_category_class'][cls][cat] += 1
+        
+        # Modalität
+        is_text = entry.get('is_text_only')
+        modality_key = None
+        
+        if is_text is True:
+            stats['by_modality']['text_only'] += 1
+            stats['cross_modality_category'][cat]['text_only'] += 1
+            modality_key = 'text_only'
+        elif is_text is False:
+            stats['by_modality']['visual'] += 1
+            stats['cross_modality_category'][cat]['visual'] += 1
+            modality_key = 'visual'
+        else:
+            stats['by_modality']['unknown'] += 1
+            
+        if modality_key:
+            # Difficulty per Modality
+            if task_id and len(task_id) > 0:
+                diff = task_id[0]
+                if diff in ['A', 'B', 'C']:
+                    stats['cross_modality_difficulty'][modality_key][diff] += 1
+            
+            # Answer per Modality
+            if answer and answer in ['A', 'B', 'C', 'D', 'E']:
+                stats['cross_modality_answer'][modality_key][answer] += 1
+            
+        # Text-Statistiken
+        extracted = entry.get('extracted_text')
+        if extracted and isinstance(extracted, dict):
+            q = extracted.get('question', '')
+            if q:
+                # Wortanzahl
+                stats['text_stats']['lengths'].append(len(q.split()))
+                stats['all_questions'].append(q)
+            
+            opts = extracted.get('answer_options', [])
+            if opts:
+                stats['text_stats']['options_counts'].append(len(opts))
+
+    # Completeness Analysis
+    missing = expected_tasks - found_tasks
+    extra = found_tasks - expected_tasks
     
+    stats['completeness']['missing'] = sorted(list(missing))
+    stats['completeness']['extra'] = sorted(list(extra))
+    stats['completeness']['expected_count'] = len(expected_tasks)
+    stats['completeness']['found_count'] = len(found_tasks)
+    
+    if len(expected_tasks) > 0:
+        stats['completeness']['coverage'] = len(found_tasks & expected_tasks) / len(expected_tasks)
+
+    # Detailed Completeness (Year x Class)
+    expected_counts = defaultdict(int)
+    for key in expected_tasks:
+        # key format: YYYY_Class_ID
+        parts = key.split('_')
+        if len(parts) >= 2:
+            y, c = parts[0], parts[1]
+            expected_counts[(y, c)] += 1
+            
+    detailed_rows = []
+    sorted_years = sorted(list(stats['years']), key=lambda x: int(x))
+    sorted_classes = ['3und4', '5und6', '7und8', '9und10', '11bis13']
+    
+    for y in sorted_years:
+        for c in sorted_classes:
+            exp = expected_counts.get((str(y), c), 0)
+            fnd = stats['found_per_year_class'].get((str(y), c), 0)
+            if exp > 0:
+                detailed_rows.append({
+                    'year': y,
+                    'class': c,
+                    'found': fnd,
+                    'expected': exp,
+                    'missing': exp - fnd,
+                    'rate': (fnd/exp*100)
+                })
+    stats['detailed_completeness'] = detailed_rows
+
+    # Linguistische Analyse durchführen
+    stats['linguistics'] = analyze_text_content(stats['all_questions'], output_dir=base_dir)
+
     return stats
 
-def print_distribution(stats: dict, title: str):
-    """Print distribution statistics in a formatted way."""
-    print(f"\n{'='*80}")
-    print(f"{title:^80}")
-    print(f"{'='*80}\n")
+def generate_markdown_report(stats: dict, output_path: Path):
+    """Generiert den Markdown-Bericht auf akademischem Niveau."""
     
-    print(f"📊 Gesamt: {stats['total_files']} Aufgaben\n")
-    
-    # Distribution by year
-    print("📅 Verteilung nach Jahren:")
-    print("-" * 60)
-    if stats['by_year']:
-        years_sorted = sorted(stats['by_year'].keys())
-        for year in years_sorted:
-            count = stats['by_year'][year]
-            percentage = (count / stats['total_files'] * 100) if stats['total_files'] > 0 else 0
-            bar = '█' * int(percentage / 2)
-            print(f"  {year}: {count:4d} ({percentage:5.1f}%) {bar}")
-        
-        # Year statistics
-        counts = list(stats['by_year'].values())
-        avg = sum(counts) / len(counts) if counts else 0
-        print(f"\n  📈 Durchschnitt pro Jahr: {avg:.1f}")
-        print(f"  📉 Min: {min(counts)} | Max: {max(counts)} | Spanne: {max(counts) - min(counts)}")
-    else:
-        print("  Keine Daten")
-    
-    # Distribution by class level
-    print(f"\n🎓 Verteilung nach Klassenstufen:")
-    print("-" * 60)
-    if stats['by_class']:
-        class_order = ['3und4', '5und6', '7und8', '9und10', '11bis13']
-        for class_level in class_order:
-            if class_level in stats['by_class']:
-                count = stats['by_class'][class_level]
-                percentage = (count / stats['total_files'] * 100) if stats['total_files'] > 0 else 0
-                bar = '█' * int(percentage / 2)
-                print(f"  {class_level:10s}: {count:4d} ({percentage:5.1f}%) {bar}")
-    else:
-        print("  Keine Daten")
-    
-    # Distribution by difficulty
-    print(f"\n⭐ Verteilung nach Schwierigkeitsgrad:")
-    print("-" * 60)
-    if stats['by_difficulty']:
-        difficulty_labels = {'A': 'A (Leicht)', 'B': 'B (Mittel)', 'C': 'C (Schwer)'}
-        for diff in ['A', 'B', 'C']:
-            if diff in stats['by_difficulty']:
-                count = stats['by_difficulty'][diff]
-                percentage = (count / stats['total_files'] * 100) if stats['total_files'] > 0 else 0
-                bar = '█' * int(percentage / 2)
-                print(f"  {difficulty_labels[diff]:12s}: {count:4d} ({percentage:5.1f}%) {bar}")
-    else:
-        print("  Keine Daten")
-    
-    # Year x Class matrix
-    if stats['by_year_class']:
-        print(f"\n📋 Detaillierte Verteilung (Jahr × Klassenstufe):")
-        print("-" * 80)
-        
-        class_order = ['3und4', '5und6', '7und8', '9und10', '11bis13']
-        years_sorted = sorted(stats['by_year_class'].keys())
-        
-        # Header
-        print(f"  {'Jahr':<6}", end='')
-        for class_level in class_order:
-            print(f"{class_level:>10}", end='')
-        print(f"  {'Gesamt':>10}")
-        print("  " + "-" * 76)
-        
-        # Rows
-        for year in years_sorted:
-            print(f"  {year:<6}", end='')
-            year_total = 0
-            for class_level in class_order:
-                count = stats['by_year_class'][year].get(class_level, 0)
-                year_total += count
-                if count > 0:
-                    print(f"{count:>10}", end='')
-                else:
-                    print(f"{'—':>10}", end='')
-            print(f"  {year_total:>10}")
-        
-        # Footer totals
-        print("  " + "-" * 76)
-        print(f"  {'Total':<6}", end='')
-        for class_level in class_order:
-            total = sum(stats['by_year_class'][year].get(class_level, 0) for year in years_sorted)
-            print(f"{total:>10}", end='')
-        print(f"  {stats['total_files']:>10}")
+    # Hilfsfunktionen für Formatierung
+    def pct(value, total):
+        return f"{(value / total * 100):.1f}%" if total > 0 else "0.0%"
 
-def compare_datasets(stats1: dict, stats2: dict):
-    """Compare two datasets and show differences."""
-    print(f"\n{'='*80}")
-    print(f"{'VERGLEICH: dataset_final vs. dataset_final_not_used':^80}")
-    print(f"{'='*80}\n")
-    
-    total1 = stats1['total_files']
-    total2 = stats2['total_files']
-    
-    print(f"📊 Gesamtübersicht:")
-    print(f"  • dataset_final:          {total1:4d} Aufgaben (für Evaluation)")
-    print(f"  • dataset_final_not_used: {total2:4d} Aufgaben (nicht tauglich)")
-    print(f"  • Gesamt verfügbar:       {total1 + total2:4d} Aufgaben")
-    print(f"  • Nutzungsrate:           {total1 / (total1 + total2) * 100:.1f}%")
-    
-    # Compare years
-    all_years = sorted(set(stats1['years']) | set(stats2['years']))
-    if all_years:
-        print(f"\n📅 Jahresvergleich:")
-        print(f"  {'Jahr':<6} {'Genutzt':>10} {'Nicht genutzt':>15} {'Total':>10} {'Rate':>8}")
-        print("  " + "-" * 56)
-        
-        for year in all_years:
-            used = stats1['by_year'].get(year, 0)
-            unused = stats2['by_year'].get(year, 0)
-            total = used + unused
-            rate = (used / total * 100) if total > 0 else 0
-            print(f"  {year:<6} {used:>10} {unused:>15} {total:>10} {rate:>7.1f}%")
-    
-    # Compare classes
-    all_classes = ['3und4', '5und6', '7und8', '9und10', '11bis13']
-    print(f"\n🎓 Klassenstufenvergleich:")
-    print(f"  {'Klasse':<12} {'Genutzt':>10} {'Nicht genutzt':>15} {'Total':>10} {'Rate':>8}")
-    print("  " + "-" * 62)
-    
-    for class_level in all_classes:
-        used = stats1['by_class'].get(class_level, 0)
-        unused = stats2['by_class'].get(class_level, 0)
-        total = used + unused
-        rate = (used / total * 100) if total > 0 else 0
-        if total > 0:
-            print(f"  {class_level:<12} {used:>10} {unused:>15} {total:>10} {rate:>7.1f}%")
-
-def generate_readme(stats_final: dict, stats_not_used: dict, readme_path: Path):
-    """Generate DATASET_STATS.md with all distribution information."""
-    from datetime import datetime
+    total = stats['total_tasks']
+    years = sorted(list(stats['years']))
+    classes = sorted(list(stats['classes']), key=lambda x: {'3und4': 1, '5und6': 2, '7und8': 3, '9und10': 4, '11bis13': 5}.get(x, 99))
     
     content = []
-    content.append("# Känguru-Wettbewerb Dataset Statistiken\n")
-    content.append(f"*Automatisch generiert am {datetime.now().strftime('%d.%m.%Y um %H:%M Uhr')}*\n")
-    content.append("---\n")
+    content.append("# Analyse des Känguru-Mathematik-Datasets\n")
+    content.append(f"*Generiert am {datetime.now().strftime('%d.%m.%Y')}*\n")
     
-    # Overview
-    total_final = stats_final['total_files']
-    total_not_used = stats_not_used['total_files']
-    total_all = total_final + total_not_used
-    usage_rate = (total_final / total_all * 100) if total_all > 0 else 0
+    # 1. Einleitung
+    content.append("## 1. Einleitung und Datensatzbeschreibung\n")
+    content.append(f"Der vorliegende Datensatz umfasst insgesamt **{total:,}** Mathematikaufgaben aus dem Känguru-Wettbewerb ")
+    content.append(f"der Jahre **{min(years)} bis {max(years)}**. ")
+    content.append("Der Datensatz wurde für die Evaluation von Vision-Language-Models (VLMs) kuratiert und enthält ")
+    content.append("sowohl die visuellen Repräsentationen (Bilder) als auch semantische Metadaten.\n")
     
-    content.append("## 📊 Übersicht\n")
-    content.append(f"- **Gesamt verfügbare Aufgaben**: {total_all:,}\n")
-    content.append(f"- **Verwendbare Aufgaben** (dataset_final): {total_final:,}\n")
-    content.append(f"- **Nicht verwendbare Aufgaben** (dataset_final_not_used): {total_not_used:,}\n")
-    content.append(f"- **Nutzungsrate**: {usage_rate:.1f}%\n")
-    content.append(f"- **Zeitraum**: {min(stats_final['years'])}–{max(stats_final['years'])}\n")
-    content.append(f"- **Klassenstufen**: 3-4, 5-6, 7-8, 9-10, 11-13\n\n")
+    # 2. Temporale und Strukturelle Verteilung
+    content.append("## 2. Temporale und Strukturelle Verteilung\n")
     
-    # Year distribution
-    content.append("## 📅 Verteilung nach Jahren\n")
-    content.append("| Jahr | Dataset Final | Not Used | Gesamt | Nutzungsrate |\n")
-    content.append("|------|--------------|----------|--------|-------------|\n")
+    # Jahre
+    content.append("### 2.1 Zeitliche Abdeckung\n")
+    content.append("Die Verteilung der Aufgaben über den Erfassungszeitraum ist wie folgt:\n")
+    content.append("| Jahr | Anzahl Aufgaben | Anteil |\n")
+    content.append("|------|-----------------|--------|\n")
+    for year in years:
+        count = stats['by_year'][year]
+        content.append(f"| {year} | {count} | {pct(count, total)} |\n")
     
-    all_years = sorted(set(stats_final['years']) | set(stats_not_used['years']))
-    for year in all_years:
-        used = stats_final['by_year'].get(year, 0)
-        unused = stats_not_used['by_year'].get(year, 0)
-        total = used + unused
-        rate = (used / total * 100) if total > 0 else 0
-        content.append(f"| {year} | {used} | {unused} | {total} | {rate:.1f}% |\n")
-    
-    # Class distribution
-    content.append("\n## 🎓 Verteilung nach Klassenstufen\n")
-    content.append("| Klassenstufe | Dataset Final | Not Used | Gesamt | Nutzungsrate |\n")
-    content.append("|--------------|--------------|----------|--------|-------------|\n")
-    
-    class_order = ['3und4', '5und6', '7und8', '9und10', '11bis13']
-    class_labels = {'3und4': '3-4', '5und6': '5-6', '7und8': '7-8', '9und10': '9-10', '11bis13': '11-13'}
-    
-    for class_level in class_order:
-        used = stats_final['by_class'].get(class_level, 0)
-        unused = stats_not_used['by_class'].get(class_level, 0)
-        total = used + unused
-        rate = (used / total * 100) if total > 0 else 0
-        label = class_labels[class_level]
-        content.append(f"| Klasse {label} | {used} | {unused} | {total} | {rate:.1f}% |\n")
-    
-    # Difficulty distribution
-    content.append("\n## ⭐ Verteilung nach Schwierigkeitsgrad\n")
-    content.append("| Schwierigkeit | Dataset Final | Not Used | Gesamt | Anteil (Final) |\n")
-    content.append("|---------------|--------------|----------|--------|----------------|\n")
-    
-    difficulty_labels = {'A': 'A (Leicht)', 'B': 'B (Mittel)', 'C': 'C (Schwer)'}
+    # Klassenstufen
+    content.append("\n### 2.2 Verteilung nach Klassenstufen\n")
+    content.append("Der Datensatz deckt alle relevanten Altersgruppen des Wettbewerbs ab:\n")
+    content.append("| Klassenstufe | Anzahl Aufgaben | Anteil |\n")
+    content.append("|--------------|-----------------|--------|\n")
+    class_labels = {'3und4': '3./4. Klasse', '5und6': '5./6. Klasse', '7und8': '7./8. Klasse', '9und10': '9./10. Klasse', '11bis13': '11.-13. Klasse'}
+    for cls in classes:
+        count = stats['by_class'][cls]
+        label = class_labels.get(cls, cls)
+        content.append(f"| {label} | {count} | {pct(count, total)} |\n")
+        
+    # Schwierigkeitsgrad
+    content.append("\n### 2.3 Komplexitätsverteilung (Schwierigkeitsgrad)\n")
+    content.append("Die Aufgaben sind in drei Schwierigkeitsgrade unterteilt (A: 3 Punkte, B: 4 Punkte, C: 5 Punkte):\n")
+    content.append("| Schwierigkeitsgrad | Anzahl Aufgaben | Anteil |\n")
+    content.append("|--------------------|-----------------|--------|\n")
+    diff_labels = {'A': 'A (Leicht / 3 Pkt)', 'B': 'B (Mittel / 4 Pkt)', 'C': 'C (Schwer / 5 Pkt)'}
     for diff in ['A', 'B', 'C']:
-        used = stats_final['by_difficulty'].get(diff, 0)
-        unused = stats_not_used['by_difficulty'].get(diff, 0)
-        total = used + unused
-        pct = (used / total_final * 100) if total_final > 0 else 0
-        content.append(f"| {difficulty_labels[diff]} | {used} | {unused} | {total} | {pct:.1f}% |\n")
+        count = stats['by_difficulty'][diff]
+        content.append(f"| {diff_labels[diff]} | {count} | {pct(count, total)} |\n")
+
+    # 3. Inhaltliche Analyse
+    content.append("\n## 3. Inhaltliche Analyse (Mathematische Teilgebiete)\n")
+    content.append("Die Aufgaben wurden mittels GPT-4o Vision in vier mathematische Hauptkategorien klassifiziert:\n")
+    content.append("| Kategorie | Anzahl Aufgaben | Anteil |\n")
+    content.append("|-----------|-----------------|--------|\n")
     
-    # Detailed matrix
-    content.append("\n## 📋 Detaillierte Verteilung (Jahr × Klassenstufe)\n")
-    content.append("### Dataset Final\n")
-    content.append("| Jahr | Klasse 3-4 | Klasse 5-6 | Klasse 7-8 | Klasse 9-10 | Klasse 11-13 | Gesamt |\n")
-    content.append("|------|-----------|-----------|-----------|------------|-------------|--------|\n")
+    cats = ['Arithmetik', 'Geometrie', 'Algebra', 'Stochastik', 'unknown']
+    # Sort cats by count desc
+    cats_sorted = sorted(cats, key=lambda x: stats['by_category'][x], reverse=True)
     
-    years_sorted = sorted(stats_final['by_year_class'].keys())
-    for year in years_sorted:
-        row = f"| {year} |"
-        year_total = 0
-        for class_level in class_order:
-            count = stats_final['by_year_class'][year].get(class_level, 0)
-            year_total += count
+    for cat in cats_sorted:
+        count = stats['by_category'][cat]
+        content.append(f"| {cat} | {count} | {pct(count, total)} |\n")
+        
+    # Cross-Tab: Category vs Class
+    content.append("\n### 3.1 Themenverteilung nach Klassenstufe\n")
+    content.append("Die folgende Matrix zeigt die thematischen Schwerpunkte je Altersgruppe:\n")
+    content.append("| Klassenstufe | " + " | ".join(cats_sorted[:4]) + " |\n")
+    content.append("|--------------|" + "|".join(["---"] * 4) + "|\n")
+    
+    for cls in classes:
+        row = f"| {class_labels.get(cls, cls)} |"
+        cls_total = stats['by_class'][cls]
+        for cat in cats_sorted[:4]:
+            count = stats['cross_category_class'][cls][cat]
+            # row += f" {count} ({pct(count, cls_total)}) |" # Too wide maybe?
             row += f" {count} |"
-        row += f" {year_total} |"
         content.append(row + "\n")
+
+    # 4. Modalitätsanalyse
+    content.append("\n## 4. Modalitätsanalyse (Text vs. Visuell)\n")
+    content.append("Ein zentraler Aspekt für die VLM-Evaluation ist die Unterscheidung zwischen Aufgaben, ")
+    content.append("die rein textbasiert lösbar sind, und solchen, die visuelle Elemente erfordern.\n")
     
-    # Totals
-    content.append("| **Total** |")
-    for class_level in class_order:
-        total = sum(stats_final['by_year_class'][year].get(class_level, 0) for year in years_sorted)
-        content.append(f" **{total}** |")
-    content.append(f" **{total_final}** |\n")
+    t_only = stats['by_modality']['text_only']
+    vis = stats['by_modality']['visual']
+    unk = stats['by_modality']['unknown']
+    analyzed_total = t_only + vis
     
-    # Insights
-    content.append("\n## 💡 Erkenntnisse\n")
-    
-    if stats_final['total_files'] > 0:
-        years = stats_final['by_year']
-        if years:
-            max_year = max(years.items(), key=lambda x: x[1])
-            min_year = min(years.items(), key=lambda x: x[1])
-            content.append(f"- **Jahr mit den meisten Aufgaben**: {max_year[0]} ({max_year[1]} Aufgaben)\n")
-            content.append(f"- **Jahr mit den wenigsten Aufgaben**: {min_year[0]} ({min_year[1]} Aufgaben)\n")
+    content.append(f"- **Text-Only Aufgaben**: {t_only} ({pct(t_only, analyzed_total)} der analysierten Aufgaben)\n")
+    content.append(f"- **Visuell-Notwendige Aufgaben**: {vis} ({pct(vis, analyzed_total)} der analysierten Aufgaben)\n")
+    if unk > 0:
+        content.append(f"- *Nicht analysiert*: {unk}\n")
         
-        classes = stats_final['by_class']
-        if classes:
-            max_class = max(classes.items(), key=lambda x: x[1])
-            min_class = min(classes.items(), key=lambda x: x[1])
-            balance_ratio = min_class[1] / max_class[1] if max_class[1] > 0 else 0
-            content.append(f"- **Klassenstufe mit den meisten Aufgaben**: {class_labels[max_class[0]]} ({max_class[1]} Aufgaben)\n")
-            content.append(f"- **Klassenstufe mit den wenigsten Aufgaben**: {class_labels[min_class[0]]} ({min_class[1]} Aufgaben)\n")
-            content.append(f"- **Balance-Verhältnis**: {balance_ratio:.2f} (1.0 = perfekt ausgewogen)\n")
+    # Cross-Tab: Modality vs Category
+    content.append("\n### 4.1 Visuelle Abhängigkeit nach Kategorie\n")
+    content.append("| Kategorie | Text-Only | Visuell | Visueller Anteil |\n")
+    content.append("|-----------|-----------|---------|------------------|\n")
+    
+    for cat in cats_sorted[:4]:
+        t = stats['cross_modality_category'][cat]['text_only']
+        v = stats['cross_modality_category'][cat]['visual']
+        cat_total = t + v
+        vis_rate = (v / cat_total * 100) if cat_total > 0 else 0
+        content.append(f"| {cat} | {t} | {v} | **{vis_rate:.1f}%** |\n")
         
-        difficulties = stats_final['by_difficulty']
-        if difficulties:
-            content.append(f"\n### Schwierigkeitsverteilung (Dataset Final)\n")
-            total = sum(difficulties.values())
-            for diff in ['A', 'B', 'C']:
-                if diff in difficulties:
-                    count = difficulties[diff]
-                    pct = count / total * 100
-                    content.append(f"- **{difficulty_labels[diff]}**: {count} ({pct:.1f}%)\n")
+    # 4.2 Visuelle Aufgaben: Schwierigkeit und Antwortverteilung
+    content.append("\n### 4.2 Visuelle Aufgaben: Schwierigkeit und Antwortverteilung\n")
+    content.append("Um sicherzustellen, dass visuelle Aufgaben nicht systematisch schwerer oder leichter sind, ")
+    content.append("wird hier die Verteilung für die Teilmenge der visuell-notwendigen Aufgaben betrachtet.\n")
     
-    # Mapping information
-    content.append("\n## 🔄 Schwierigkeitsgrad-Mapping (1998-2011)\n")
-    content.append("Für Aufgaben von 1998-2011 (numerische Task-IDs) gilt:\n\n")
-    content.append("**Klassenstufen 3-4 und 5-6:**\n")
-    content.append("- A (Leicht): Aufgaben 1-8\n")
-    content.append("- B (Mittel): Aufgaben 9-16\n")
-    content.append("- C (Schwer): Aufgaben 17-24\n\n")
-    content.append("**Klassenstufen 7-8, 9-10 und 11-13:**\n")
-    content.append("- A (Leicht): Aufgaben 1-10\n")
-    content.append("- B (Mittel): Aufgaben 11-20\n")
-    content.append("- C (Schwer): Aufgaben 21-30\n\n")
-    content.append("**Ab 2012:** Task-IDs enthalten bereits den Schwierigkeitsgrad (z.B. A1, B15, C30)\n")
+    # Difficulty Table
+    content.append("#### Schwierigkeitsgrad (Visuell)\n")
+    content.append("| Schwierigkeitsgrad | Anzahl (Visuell) | Anteil |\n")
+    content.append("|--------------------|------------------|--------|\n")
     
-    # Write to file
-    readme_path.write_text(''.join(content), encoding='utf-8')
+    vis_diff_stats = stats['cross_modality_difficulty']['visual']
+    total_vis_diff = sum(vis_diff_stats.values())
+    
+    for diff in ['A', 'B', 'C']:
+        count = vis_diff_stats[diff]
+        content.append(f"| {diff_labels[diff]} | {count} | {pct(count, total_vis_diff)} |\n")
+        
+    # Answer Table
+    content.append("\n#### Antwortverteilung (Visuell)\n")
+    content.append("| Antwort | Anzahl (Visuell) | Anteil |\n")
+    content.append("|---------|------------------|--------|\n")
+    
+    vis_ans_stats = stats['cross_modality_answer']['visual']
+    total_vis_ans = sum(vis_ans_stats.values())
+    
+    for ans in ['A', 'B', 'C', 'D', 'E']:
+        count = vis_ans_stats[ans]
+        content.append(f"| {ans} | {count} | {pct(count, total_vis_ans)} |\n")
+
+    # Category Table (Visual)
+    content.append("\n#### Mathematische Kategorien (Visuell)\n")
+    content.append("| Kategorie | Anzahl (Visuell) | Anteil |\n")
+    content.append("|-----------|------------------|--------|\n")
+    
+    # Calculate total visual tasks for categories
+    total_vis_cat = 0
+    vis_cat_counts = {}
+    for cat in cats_sorted[:4]:
+        c = stats['cross_modality_category'][cat]['visual']
+        vis_cat_counts[cat] = c
+        total_vis_cat += c
+        
+    for cat in cats_sorted[:4]:
+        count = vis_cat_counts[cat]
+        content.append(f"| {cat} | {count} | {pct(count, total_vis_cat)} |\n")
+
+    # 5. Textuelle Eigenschaften
+    content.append("\n## 5. Textuelle Eigenschaften\n")
+    lengths = stats['text_stats']['lengths']
+    if lengths:
+        avg_len = statistics.mean(lengths)
+        median_len = statistics.median(lengths)
+        content.append(f"- **Durchschnittliche Wortanzahl pro Frage**: {avg_len:.1f} Wörter\n")
+        content.append(f"- **Median der Wortanzahl**: {median_len:.1f} Wörter\n")
+        content.append(f"- **Min/Max**: {min(lengths)} / {max(lengths)} Wörter\n")
+    
+    # 6. Antwortverteilung (Bias-Check)
+    content.append("\n## 6. Antwortverteilung (Bias-Check)\n")
+    content.append("Um sicherzustellen, dass das Modell nicht durch Raten einer häufigsten Antwort (z.B. immer 'C') ")
+    content.append("eine künstlich hohe Performance erzielt, wurde die Verteilung der korrekten Antwortbuchstaben analysiert.\n")
+    
+    content.append("| Antwort | Anzahl | Anteil |\n")
+    content.append("|---------|--------|--------|\n")
+    
+    total_answers = sum(stats['by_answer'].values())
+    for ans in ['A', 'B', 'C', 'D', 'E']:
+        count = stats['by_answer'][ans]
+        content.append(f"| {ans} | {count} | {pct(count, total_answers)} |\n")
+        
+    # 7. Linguistische Analyse
+    content.append("\n## 7. Linguistische Analyse\n")
+    content.append("### 7.1 Methodik\n")
+    content.append("Für die Analyse der häufigsten Begriffe wurden folgende Vorverarbeitungsschritte durchgeführt:\n")
+    content.append("1. **Normalisierung**: Umwandlung in Kleinschreibung.\n")
+    content.append("2. **Bereinigung**: Entfernung von Satzzeichen und Zahlen.\n")
+    content.append("3. **Stopword-Removal**: Entfernung häufiger deutscher Füllwörter (basierend auf NLTK 'german' corpus) sowie domänenspezifischer Begriffe (z.B. 'dass', 'wurde').\n")
+    content.append("4. **Filterung**: Ausschluss von Wörtern mit weniger als 3 Buchstaben.\n")
+    
+    content.append("\n### 7.2 Häufigste Begriffe (Top 25)\n")
+    content.append("| Rang | Begriff | Häufigkeit |\n")
+    content.append("|------|---------|------------|\n")
+    
+    top_words = stats.get('linguistics', {}).get('top_words', [])
+    for i, (word, count) in enumerate(top_words, 1):
+        content.append(f"| {i} | {word} | {count} |\n")
+        
+    wc_path = stats.get('linguistics', {}).get('wordcloud_path')
+    if wc_path:
+        content.append("\n### 7.3 WordCloud\n")
+        content.append(f"![WordCloud der häufigsten Begriffe]({wc_path})\n")
+    
+    # 8. Vollständigkeitsanalyse
+    content.append("\n## 8. Vollständigkeitsanalyse\n")
+    comp = stats.get('completeness', {})
+    expected = comp.get('expected_count', 0)
+    found = comp.get('found_count', 0)
+    coverage = comp.get('coverage', 0)
+    missing = comp.get('missing', [])
+    extra = comp.get('extra', [])
+    
+    content.append(f"Der Datensatz wurde gegen die offiziellen Lösungsschlüssel abgeglichen, um die Vollständigkeit zu verifizieren.\n")
+    content.append(f"- **Erwartete Aufgaben**: {expected}\n")
+    content.append(f"- **Gefundene Aufgaben**: {found}\n")
+    content.append(f"- **Abdeckung (Coverage)**: {coverage*100:.1f}%\n")
+    
+    if missing:
+        content.append(f"\n### 8.1 Fehlende Aufgaben ({len(missing)})\n")
+        content.append("Folgende Aufgaben sind im Lösungsschlüssel verzeichnet, konnten aber nicht extrahiert werden (z.B. aufgrund von PDF-Fehlern oder fehlenden Seiten):\n")
+        # Zeige nur die ersten 10 und die letzten 10 wenn es viele sind
+        if len(missing) > 20:
+            content.append(", ".join(missing[:10]) + " ... " + ", ".join(missing[-10:]) + "\n")
+        else:
+            content.append(", ".join(missing) + "\n")
+            
+    # 8.2 Detaillierte Abdeckung nach Jahr und Klasse
+    content.append("\n### 8.2 Detaillierte Abdeckung nach Jahr und Klasse\n")
+    content.append("Die folgende Tabelle zeigt die Anzahl der extrahierten Aufgaben im Vergleich zu den erwarteten Aufgaben für jede Jahrgangsstufe und jedes Jahr.\n")
+    content.append("| Jahr | Klasse | Gefunden | Erwartet | Fehlend | Quote |\n")
+    content.append("| :--- | :--- | :--- | :--- | :--- | :--- |\n")
+    
+    for row in stats.get('detailed_completeness', []):
+        y = row['year']
+        c = row['class']
+        f = row['found']
+        e = row['expected']
+        m = row['missing']
+        r = row['rate']
+        
+        # Highlight rows with missing items or 0% coverage
+        y_str = f"**{y}**" if m > 0 else str(y)
+        c_str = f"**{c}**" if r < 10.0 else str(c)
+        m_str = f"**{m}**" if m > 0 else str(m)
+        r_str = f"**{r:.1f}%**" if r < 10.0 else f"{r:.1f}%"
+        
+        # Only bold the whole row if it's really bad (0%)
+        if r == 0:
+             content.append(f"| {y_str} | **{c}** | {f} | **{e}** | **{m}** | **{r:.1f}%** |\n")
+        else:
+             content.append(f"| {y_str} | {c} | {f} | {e} | {m_str} | {r_str} |\n")
+
+    if extra:
+        content.append(f"\n### 8.3 Zusätzliche Aufgaben ({len(extra)})\n")
+        content.append("Folgende Aufgaben wurden extrahiert, sind aber nicht im Lösungsschlüssel enthalten (z.B. Aufgaben aus Jahren ohne Lösungsdaten):\n")
+        if len(extra) > 20:
+            content.append(", ".join(extra[:10]) + " ... " + ", ".join(extra[-10:]) + "\n")
+        else:
+            content.append(", ".join(extra) + "\n")
+
+    content.append("\n---\n")
+    content.append("Diese Analyse dient als Grundlage für die differenzierte Auswertung der Modell-Leistungen in der Studienarbeit.")
+    
+    output_path.write_text(''.join(content), encoding='utf-8')
 
 def main():
-    project_root = Path(__file__).parent.parent
+    base_dir = Path(__file__).parent.parent
+    json_path = base_dir / "dataset_final.json"
+    output_path = base_dir / "DATASET_ANALYSIS.md"
     
-    dataset_final = project_root / 'data' / 'dataset_final'
-    dataset_not_used = project_root / 'data' / 'dataset_final_not_used'
-    readme_path = project_root / 'DATASET_STATS.md'
-    
-    print("\n🔍 Analysiere Datensätze...\n")
-    
-    # Analyze both directories
-    stats_final = analyze_directory(dataset_final)
-    stats_not_used = analyze_directory(dataset_not_used)
-    
-    # Print individual statistics
-    print_distribution(stats_final, "DATASET_FINAL (Für VLM Evaluation)")
-    print_distribution(stats_not_used, "DATASET_FINAL_NOT_USED (Nicht tauglich)")
-    
-    # Compare datasets
-    compare_datasets(stats_final, stats_not_used)
-    
-    # Generate README
-    print("\n📝 Generiere DATASET_STATS.md...\n")
-    generate_readme(stats_final, stats_not_used, readme_path)
-    print(f"✅ DATASET_STATS.md erfolgreich aktualisiert!\n")
-    
-    # Insights
-    print(f"\n{'='*80}")
-    print(f"{'💡 ERKENNTNISSE':^80}")
-    print(f"{'='*80}\n")
-    
-    if stats_final['total_files'] > 0:
-        # Year with most/least tasks
-        years = stats_final['by_year']
-        if years:
-            max_year = max(years.items(), key=lambda x: x[1])
-            min_year = min(years.items(), key=lambda x: x[1])
-            print(f"📈 Jahr mit den meisten Aufgaben: {max_year[0]} ({max_year[1]} Aufgaben)")
-            print(f"📉 Jahr mit den wenigsten Aufgaben: {min_year[0]} ({min_year[1]} Aufgaben)")
+    print(f"📂 Lade Dataset von {json_path}...")
+    if not json_path.exists():
+        print("❌ Datei nicht gefunden!")
+        return
         
-        # Class balance
-        classes = stats_final['by_class']
-        if classes:
-            max_class = max(classes.items(), key=lambda x: x[1])
-            min_class = min(classes.items(), key=lambda x: x[1])
-            balance_ratio = min_class[1] / max_class[1] if max_class[1] > 0 else 0
-            print(f"\n🎓 Klassenstufe mit den meisten Aufgaben: {max_class[0]} ({max_class[1]} Aufgaben)")
-            print(f"🎓 Klassenstufe mit den wenigsten Aufgaben: {min_class[0]} ({min_class[1]} Aufgaben)")
-            print(f"⚖️  Balance-Verhältnis: {balance_ratio:.2f} (1.0 = perfekt ausgewogen)")
-        
-        # Difficulty balance
-        difficulties = stats_final['by_difficulty']
-        if difficulties:
-            print(f"\n⭐ Schwierigkeitsverteilung:")
-            total = sum(difficulties.values())
-            for diff in ['A', 'B', 'C']:
-                if diff in difficulties:
-                    count = difficulties[diff]
-                    pct = count / total * 100
-                    print(f"   {diff}: {count} ({pct:.1f}%)")
+    data = load_dataset(json_path)
+    print(f"✅ {len(data)} Einträge geladen.")
     
-    print(f"\n{'='*80}\n")
+    print("📊 Berechne Statistiken...")
+    stats = calculate_statistics(data, base_dir)
+    
+    print("📝 Generiere Bericht...")
+    generate_markdown_report(stats, output_path)
+    
+    print(f"✅ Analyse abgeschlossen! Bericht gespeichert unter:\n   {output_path}")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
