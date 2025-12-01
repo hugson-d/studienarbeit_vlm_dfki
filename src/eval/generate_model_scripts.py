@@ -47,15 +47,17 @@ from pydantic import BaseModel, ValidationError, Field
 _script_path = Path(__file__).resolve()
 PROJECT_ROOT = Path(os.environ.get("VLM_PROJECT_ROOT", _script_path.parent.parent.parent))
 
-# .env aus PROJECT_ROOT laden
-from dotenv import load_dotenv
-_env_file = PROJECT_ROOT / ".env"
-if _env_file.exists():
-    load_dotenv(_env_file)
-    print(f"✅ .env geladen aus: {{_env_file}}")
-else:
-    load_dotenv()  # Fallback: aktuelles Verzeichnis
-    print(f"⚠️ Keine .env gefunden in {{PROJECT_ROOT}}")
+# .env laden (optional - HF_TOKEN kann auch aus Umgebung kommen)
+try:
+    from dotenv import load_dotenv
+    _env_file = PROJECT_ROOT / ".env"
+    if _env_file.exists():
+        load_dotenv(_env_file)
+        print(f"✅ .env geladen aus: {{_env_file}}")
+    else:
+        load_dotenv()  # Fallback: aktuelles Verzeichnis
+except ImportError:
+    print("ℹ️ python-dotenv nicht installiert - nutze Umgebungsvariablen")
 
 # HuggingFace Login
 from huggingface_hub import login
