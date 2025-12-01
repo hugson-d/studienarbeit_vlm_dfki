@@ -15,16 +15,23 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 # Logs-Verzeichnis erstellen
 mkdir -p "$PROJECT_ROOT/evaluation_results/logs"
 
+# HF_TOKEN aus .env laden (falls vorhanden)
+if [ -f "$PROJECT_ROOT/.env" ]; then
+    export $(grep -v '^#' "$PROJECT_ROOT/.env" | xargs)
+fi
+
 srun \
   --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
   --container-workdir="$PROJECT_ROOT" \
   --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
+  --export=ALL \
   bash -c '
     echo "=========================================="
     echo "🚀 VLM Benchmark: InternVL3-8B"
     echo "=========================================="
     echo "Start: $(date)"
     echo "Working Directory: $(pwd)"
+    echo "HF_TOKEN: ${HF_TOKEN:+gesetzt}"
     echo "GPU:"
     nvidia-smi --query-gpu=name,memory.total --format=csv
     echo ""
