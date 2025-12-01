@@ -40,17 +40,28 @@ trap "mv ${SLURM_JOB_NAME}_${SLURM_JOB_ID}.out $PROJECT_ROOT/evaluation_results/
 
 # HF_TOKEN aus .env laden
 if [ -f "$PROJECT_ROOT/.env" ]; then
-    export $(grep -v '^#' "$PROJECT_ROOT/.env" | xargs)
+    set -a
+    source "$PROJECT_ROOT/.env"
+    set +a
+fi
+
+# Debug: Token prüfen
+if [ -z "$HF_TOKEN" ]; then
+    echo "⚠️ WARNUNG: HF_TOKEN nicht gesetzt! Gated Models werden fehlschlagen."
+    echo "   Erstelle .env Datei mit: HF_TOKEN=hf_xxx..."
+else
+    echo "✅ HF_TOKEN geladen"
 fi
 
 # Projekt-Root als Umgebungsvariable für Python-Skripte
 export VLM_PROJECT_ROOT="$PROJECT_ROOT"
+export HF_TOKEN
 
 # Container starten
 srun \
   --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
   --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
-  --export=ALL \
+  --export=ALL,HF_TOKEN,VLM_PROJECT_ROOT \
   bash -c "
     echo '=========================================='
     echo '🚀 VLM Benchmark: Ovis2.5-2B'
