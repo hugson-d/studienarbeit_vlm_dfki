@@ -51,3 +51,5 @@ data/text_extraction_cache.json
 
 # Extracted task images (keep only manifest)
 data/references/*.png
+secrets.sh
+.hf_token

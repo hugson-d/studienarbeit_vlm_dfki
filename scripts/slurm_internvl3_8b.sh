@@ -38,17 +38,19 @@ mkdir -p "$PROJECT_ROOT/evaluation_results/logs"
 # Outputs verschieben nach Job-Ende
 trap "mv ${SLURM_JOB_NAME}_${SLURM_JOB_ID}.out $PROJECT_ROOT/evaluation_results/logs/ 2>/dev/null; mv ${SLURM_JOB_NAME}_${SLURM_JOB_ID}.err $PROJECT_ROOT/evaluation_results/logs/ 2>/dev/null" EXIT
 
-# HF_TOKEN aus .env laden
-if [ -f "$PROJECT_ROOT/.env" ]; then
-    set -a
-    source "$PROJECT_ROOT/.env"
-    set +a
-fi
+# HF_TOKEN aus .env oder secrets.sh laden
+for SECRET_FILE in "$PROJECT_ROOT/.env" "$PROJECT_ROOT/secrets.sh" "$HOME/.hf_token"; do
+    if [ -f "$SECRET_FILE" ]; then
+        set -a
+        source "$SECRET_FILE"
+        set +a
+        break
+    fi
+done
 
 # Debug: Token prüfen
 if [ -z "$HF_TOKEN" ]; then
     echo "⚠️ WARNUNG: HF_TOKEN nicht gesetzt! Gated Models werden fehlschlagen."
-    echo "   Erstelle .env Datei mit: HF_TOKEN=hf_xxx..."
 else
     echo "✅ HF_TOKEN geladen"
 fi

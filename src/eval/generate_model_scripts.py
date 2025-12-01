@@ -42,13 +42,29 @@ from pathlib import Path
 from tqdm import tqdm
 
 from pydantic import BaseModel, ValidationError, Field
-from dotenv import load_dotenv
-load_dotenv()
 
+# Projekt-Root ZUERST ermitteln (vor dotenv laden)
+_script_path = Path(__file__).resolve()
+PROJECT_ROOT = Path(os.environ.get("VLM_PROJECT_ROOT", _script_path.parent.parent.parent))
+
+# .env aus PROJECT_ROOT laden
+from dotenv import load_dotenv
+_env_file = PROJECT_ROOT / ".env"
+if _env_file.exists():
+    load_dotenv(_env_file)
+    print(f"✅ .env geladen aus: {{_env_file}}")
+else:
+    load_dotenv()  # Fallback: aktuelles Verzeichnis
+    print(f"⚠️ Keine .env gefunden in {{PROJECT_ROOT}}")
+
+# HuggingFace Login
 from huggingface_hub import login
 HF_TOKEN = os.getenv("HF_TOKEN")
 if HF_TOKEN:
     login(token=HF_TOKEN)
+    print(f"✅ HuggingFace Login erfolgreich")
+else:
+    print("⚠️ HF_TOKEN nicht gesetzt - gated models werden fehlschlagen!")
 
 from transformers import (
     AutoProcessor, 
@@ -70,13 +86,8 @@ QUANT_THRESHOLD_B = 40
 USE_QUANTIZATION = MODEL_PARAMS_B > QUANT_THRESHOLD_B
 
 # ============================================================================
-# PFADE
+# PFADE (PROJECT_ROOT bereits oben definiert)
 # ============================================================================
-
-# Projekt-Root ermitteln (3 Ebenen hoch von src/eval/models/)
-# Oder über Umgebungsvariable falls gesetzt
-_script_path = Path(__file__).resolve()
-PROJECT_ROOT = Path(os.environ.get("VLM_PROJECT_ROOT", _script_path.parent.parent.parent))
 
 # Validierung: dataset_final.json muss existieren
 DATASET_PATH = PROJECT_ROOT / "dataset_final.json"

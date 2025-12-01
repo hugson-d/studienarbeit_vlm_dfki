@@ -30,12 +30,15 @@ if [[ ! -f "$PROJECT_ROOT/dataset_final.json" ]]; then
     exit 1
 fi
 
-# HF_TOKEN aus .env laden
-if [ -f "$PROJECT_ROOT/.env" ]; then
-    set -a
-    source "$PROJECT_ROOT/.env"
-    set +a
-fi
+# HF_TOKEN aus .env oder secrets.sh laden
+for SECRET_FILE in "$PROJECT_ROOT/.env" "$PROJECT_ROOT/secrets.sh" "$HOME/.hf_token"; do
+    if [ -f "$SECRET_FILE" ]; then
+        set -a
+        source "$SECRET_FILE"
+        set +a
+        break
+    fi
+done
 
 if [ -z "$HF_TOKEN" ]; then
     echo "⚠️ WARNUNG: HF_TOKEN nicht gesetzt!"
