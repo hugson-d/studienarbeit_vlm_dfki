@@ -103,6 +103,10 @@ srun \\
     # Python-Pakete installieren
     echo '📦 Installiere Python-Pakete...'
     
+    # Erst torchvision neu installieren (Kompatibilitätsproblem im Container)
+    pip install --quiet --no-warn-script-location --force-reinstall \\
+      'torchvision>=0.16.0' 2>&1 | tail -1 || true
+    
     # Transformers von GitHub (neueste Version für Qwen2.5-VL)
     pip install --quiet --no-warn-script-location \\
       'git+https://github.com/huggingface/transformers' \\
