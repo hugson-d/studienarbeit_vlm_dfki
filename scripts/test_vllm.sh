@@ -10,6 +10,7 @@
 
 # ============================================
 # vLLM Test für Qwen2.5-VL-7B
+# Vorher: sbatch scripts/setup_venv.sh
 # ============================================
 
 # Projekt-Root = SLURM_SUBMIT_DIR (wo sbatch aufgerufen wurde)
@@ -20,6 +21,9 @@ if [[ "$(basename $PROJECT_ROOT)" == "scripts" ]]; then
     PROJECT_ROOT="$(dirname $PROJECT_ROOT)"
 fi
 
+# WICHTIG: venv auf /netscratch (nicht $HOME oder Projekt-Root!)
+VENV_PATH="/netscratch/$USER/vlm_venv"
+
 echo "=========================================="
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
@@ -27,6 +31,13 @@ echo "=========================================="
 # Prüfen ob Projekt existiert
 if [[ ! -f "$PROJECT_ROOT/dataset_final.json" ]]; then
     echo "❌ FEHLER: dataset_final.json nicht gefunden in $PROJECT_ROOT"
+    exit 1
+fi
+
+# Prüfen ob venv existiert
+if [[ ! -d "$VENV_PATH" ]]; then
+    echo "❌ FEHLER: venv nicht gefunden in $VENV_PATH"
+    echo "Bitte erst ausführen: sbatch scripts/setup_venv.sh"
     exit 1
 fi
 
@@ -65,18 +76,13 @@ srun \
     
     cd $PROJECT_ROOT
     
-    # vLLM und Dependencies installieren
-    echo '📦 Installiere vLLM und Dependencies...'
+    # Virtual Environment aktivieren
+    echo '🐍 Aktiviere .venv...'
+    source $VENV_PATH/bin/activate
+    echo 'Python:' \$(which python)
     
-    # NumPy 1.x beibehalten (Container-Module sind damit kompiliert)
-    pip install --quiet --no-warn-script-location 'numpy<2' 2>&1 | tail -1 || true
-    
-    pip install --quiet --no-warn-script-location \
-      vllm \
-      pillow \
-      python-dotenv \
-      huggingface_hub \
-      2>&1 | grep -v 'dependency resolver' | grep -v 'incompatible' || true
+    # vLLM nachinstallieren falls nicht vorhanden
+    pip show vllm > /dev/null 2>&1 || pip install --quiet vllm
     
     echo ''
     echo '🏃 Starte Test...'

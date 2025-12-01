@@ -31,8 +31,9 @@ SLURM_TEMPLATE = '''#!/bin/bash
 #SBATCH --error=%x_%j.err
 
 # ============================================
-# WICHTIG: Job aus Projekt-Root starten mit:
-#   sbatch scripts/slurm_xxx.sh
+# WICHTIG: 
+# 1. Erst einmalig: sbatch scripts/setup_venv.sh
+# 2. Dann Jobs starten: sbatch scripts/slurm_xxx.sh
 # ============================================
 
 # Projekt-Root = SLURM_SUBMIT_DIR (wo sbatch aufgerufen wurde)
@@ -43,6 +44,9 @@ if [[ "$(basename $PROJECT_ROOT)" == "scripts" ]]; then
     PROJECT_ROOT="$(dirname $PROJECT_ROOT)"
 fi
 
+# WICHTIG: venv auf /netscratch (nicht $HOME oder Projekt-Root!)
+VENV_PATH="/netscratch/$USER/vlm_venv"
+
 echo "=========================================="
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
@@ -51,6 +55,13 @@ echo "=========================================="
 if [[ ! -f "$PROJECT_ROOT/dataset_final.json" ]]; then
     echo "❌ FEHLER: dataset_final.json nicht gefunden in $PROJECT_ROOT"
     echo "Bitte starte den Job aus dem Projekt-Root: sbatch scripts/{script_name}"
+    exit 1
+fi
+
+# Prüfen ob .venv existiert
+if [[ ! -d "$VENV_PATH" ]]; then
+    echo "❌ FEHLER: venv nicht gefunden in $VENV_PATH"
+    echo "Bitte erst ausführen: sbatch scripts/setup_venv.sh"
     exit 1
 fi
 
@@ -98,39 +109,13 @@ srun \\
     
     # In Projektverzeichnis wechseln
     cd $PROJECT_ROOT
-    echo 'Working Directory:' \\$(pwd)
     
-    # Python-Pakete installieren
-    echo '📦 Installiere Python-Pakete...'
-    
-    # NumPy 1.x beibehalten (Container-Module sind damit kompiliert)
-    pip install --quiet --no-warn-script-location 'numpy<2' 2>&1 | tail -1 || true
-    
-    # torchvision neu installieren - PyTorch 2.2.0 braucht torchvision 0.17.x
-    pip install --quiet --no-warn-script-location --force-reinstall \\
-      'torchvision==0.17.0' 2>&1 | tail -1 || true
-    
-    # Transformers von GitHub (neueste Version für Qwen2.5-VL)
-    pip install --quiet --no-warn-script-location \\
-      'git+https://github.com/huggingface/transformers' \\
-      'accelerate>=0.34.0' \\
-      'qwen-vl-utils[decord]>=0.0.8' \\
-      'bitsandbytes>=0.43.0' \\
-      'pillow>=10.0.0' \\
-      'pydantic>=2.0.0' \\
-      'pandas<1.6' \\
-      'openpyxl>=3.1.0' \\
-      'python-dotenv>=1.0.0' \\
-      'huggingface_hub>=0.24.0' \\
-      'tqdm>=4.66.0' \\
-      'safetensors>=0.4.0' \\
-      'tokenizers>=0.19.0' \\
-      2>&1 | grep -v 'dependency resolver' | grep -v 'incompatible' || true
-    
-    # Flash Attention (optional)
-    pip install --quiet flash-attn --no-build-isolation 2>/dev/null || echo '⚠️ Flash Attention nicht installiert (optional)'
-    
+    # Virtual Environment aktivieren
+    echo '🐍 Aktiviere .venv...'
+    source $VENV_PATH/bin/activate
+    echo 'Python:' \\$(which python)
     echo ''
+    
     echo '🏃 Starte Benchmark...'
     python $PROJECT_ROOT/src/eval/models/{python_script}
     
