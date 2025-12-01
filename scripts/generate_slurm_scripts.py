@@ -23,7 +23,7 @@ MODELS = {
 SLURM_TEMPLATE = '''#!/bin/bash
 #SBATCH --job-name=vlm_{job_name}
 #SBATCH --partition=H100
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:{gpu_type}
 #SBATCH --mem={mem}G
 #SBATCH --cpus-per-task=8
 #SBATCH --time={time}:00:00
@@ -31,7 +31,7 @@ SLURM_TEMPLATE = '''#!/bin/bash
 #SBATCH --error=%x_%j.err
 
 # ============================================
-# WICHTIG: 
+# WICHTIG:
 # 1. Erst einmalig: sbatch scripts/setup_venv.sh
 # 2. Dann Jobs starten: sbatch scripts/slurm_xxx.sh
 # ============================================
@@ -148,7 +148,7 @@ def generate_slurm_scripts():
         
         # Ressourcen basierend auf Modellgröße
         if config["large"]:
-            gpu_type = "a100:1"
+            gpu_type = "h100:1"
             mem = 128
             time = 48
         else:
@@ -181,8 +181,10 @@ def generate_slurm_scripts():
         print(f"  ✅ slurm_{job_name}.sh ({config['params_b']}B, {quant}, {gpu_info})")
     
     print(f"\n🎉 {len(MODELS)} SLURM-Skripte erstellt!")
-    print("\nAusführung:")
-    print("  sbatch scripts/slurm_ovis2_4b.sh")
+    example_job = next(iter(MODELS))
+    example_name = example_job.lower().replace(".", "_").replace("-", "_")
+    print("\nAusführung (Beispiel):")
+    print(f"  sbatch scripts/slurm_{example_name}.sh")
     print("\nAlle Jobs starten:")
     print("  for f in scripts/slurm_*.sh; do sbatch $f; done")
 

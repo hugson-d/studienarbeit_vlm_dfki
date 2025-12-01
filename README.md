@@ -173,30 +173,35 @@ All tasks include ground truth answers for automated evaluation.
 
 ### Benchmark Setup (Linux Cluster)
 
-**1. Initial Setup:**
+**1. Virtuelles Environment auf /netscratch vorbereiten (einmalig):**
 ```bash
-./scripts/setup_cluster.sh
+sbatch scripts/setup_venv.sh
 ```
-Installs uv, creates virtual environment, and installs all dependencies.
+Legt ein venv unter `/netscratch/$USER/vlm_venv` an und installiert Torch/Transformers/BitsAndBytes sowie die Projektdépendencys.
 
-**2. Configure HuggingFace Token:**
+**2. HuggingFace Token konfigurieren:**
 ```bash
 echo 'HF_TOKEN=hf_your_token_here' > .env
 ```
 
-**3. Submit all SLURM Jobs:**
+**3. SLURM-Skripte für die Modelle erzeugen:**
 ```bash
-./scripts/submit_all_jobs.sh
+python scripts/generate_slurm_scripts.py
 ```
-Starts 14 parallel jobs (one per model).
+Erstellt `scripts/slurm_*.sh` für alle Qwen- und InternVL-Modelle.
 
-**4. Monitor Progress:**
+**4. Jobs einreichen (Beispiel für Qwen2.5-VL-3B):**
+```bash
+sbatch scripts/slurm_qwen2_5_vl_3b.sh
+```
+Logfiles landen automatisch in `evaluation_results/logs/`.
+
+**5. Fortschritt überwachen:**
 ```bash
 squeue -u $USER
-# Logs: evaluation_results/logs/
 ```
 
-**5. Combine Results:**
+**6. Ergebnisse kombinieren:**
 ```bash
 python src/eval/combine_results.py
 ```
