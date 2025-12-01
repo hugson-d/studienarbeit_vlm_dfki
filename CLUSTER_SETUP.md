@@ -43,6 +43,30 @@ cd /pfad/zu/studienarbeit_vlm_dfki
 sbatch scripts/run_qwen2_5_vl_3b.sh
 ```
 
+### Schritt-für-Schritt: `run_qwen2_5_vl_3b.sh` ausführen
+
+1. **Auf den Login-Knoten wechseln und ins Projektverzeichnis gehen**
+   ```bash
+   cd /pfad/zu/studienarbeit_vlm_dfki
+   ```
+2. **Hugging Face Token bereitstellen** (eine der Optionen oben wählen, z. B. `.env` im Projekt):
+   ```bash
+   echo 'HF_TOKEN="dein_token_hier"' > .env
+   ```
+3. **Job absenden** – standardmäßig auf H100, für H200 Partition überschreiben:
+   ```bash
+   sbatch scripts/run_qwen2_5_vl_3b.sh          # H100
+   sbatch -p H200 scripts/run_qwen2_5_vl_3b.sh  # H200
+   ```
+4. **Status prüfen**
+   ```bash
+   squeue -u $USER
+   ```
+5. **Logs ansehen** (werden im Submit-Verzeichnis als `vlm_qwen2_5_vl_3b_<jobid>.out/.err` abgelegt):
+   ```bash
+   tail -f vlm_qwen2_5_vl_3b_*.out
+   ```
+
 ## Hinweise
 
 - `.env`, `secrets.sh` und `~/.hf_token` sind alle in `.gitignore`
