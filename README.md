@@ -196,10 +196,6 @@ sbatch scripts/slurm_qwen2_5_vl_3b.sh
 ```
 Logfiles landen automatisch in `evaluation_results/logs/`.
 
-> **Hinweis zum DFKI-Enroot-Beispiel (`srun --container-* ... --task-prolog install.sh`)**
-> 
-> Die generierten SLURM-Skripte starten bereits ein Enroot-Container-Image via `srun` und mounten sowohl `/netscratch` als auch das Projektverzeichnis. Ein zusätzlicher `--task-prolog` ist hier nicht nötig, weil das virtuelle Environment vorgelagert mit `scripts/setup_venv.sh` auf `/netscratch/$USER/vlm_venv` installiert wird. Wenn ihr ein anderes Container-Image oder zusätzliche Mounts braucht, könnt ihr dies über die Umgebungsvariablen `CONTAINER_IMAGE` bzw. `CONTAINER_MOUNTS` beim `sbatch`-Aufruf überschreiben.
-
 **5. Fortschritt überwachen:**
 ```bash
 squeue -u $USER

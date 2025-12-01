@@ -47,17 +47,11 @@ srun \
       echo "ℹ️ Venv existiert bereits unter $VENV_PATH"
     else
       echo "🐍 Erstelle venv..."
-      if python3 -m venv "$VENV_PATH" 2>/tmp/vlm_venv.err; then
-        echo "✅ venv erstellt mit python3 -m venv"
-      else
-        echo "⚠️ python3 -m venv fehlgeschlagen. Fallback auf virtualenv (pip wird automatisch installiert)."
-        python3 -m pip install --user --upgrade virtualenv
-        python3 -m virtualenv "$VENV_PATH"
-      fi
+      python3 -m venv "$VENV_PATH"
     fi
 
     source "$VENV_PATH/bin/activate"
-    python -m pip install --upgrade pip setuptools wheel
+    python -m pip install --upgrade pip
 
     echo "📦 Installiere Kern-Abhängigkeiten (CUDA 12.1 Build)"
     python -m pip install --extra-index-url https://download.pytorch.org/whl/cu121 \
