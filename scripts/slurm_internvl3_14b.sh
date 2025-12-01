@@ -69,43 +69,45 @@ fi
 # Projekt-Root als Umgebungsvariable für Python-Skripte
 export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export HF_TOKEN
+export PROJECT_ROOT
+export VENV_PATH
 
 # Container starten
 srun \
   --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
   --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
-  --export=ALL,HF_TOKEN,VLM_PROJECT_ROOT \
-  bash -c "
-    echo '=========================================='
-    echo '🚀 VLM Benchmark: InternVL3-14B'
-    echo '=========================================='
-    echo 'Start:' \$(date)
-    echo 'HF_TOKEN: '\${HF_TOKEN:+gesetzt}
-    echo 'GPU:'
+  --export=ALL,HF_TOKEN,VLM_PROJECT_ROOT,PROJECT_ROOT,VENV_PATH \
+  bash -c '
+    echo "=========================================="
+    echo "🚀 VLM Benchmark: InternVL3-14B"
+    echo "=========================================="
+    echo "Start: $(date)"
+    echo "HF_TOKEN: ${HF_TOKEN:+gesetzt}"
+    echo "GPU:"
     nvidia-smi --query-gpu=name,memory.total --format=csv
-    echo ''
+    echo ""
     
     # In Projektverzeichnis wechseln
-    cd $PROJECT_ROOT
+    cd "$PROJECT_ROOT"
     
     # Virtual Environment aktivieren
-    echo '🐍 Aktiviere .venv...'
+    echo "🐍 Aktiviere .venv..."
     if [ -f "$VENV_PATH/bin/activate" ]; then
         source "$VENV_PATH/bin/activate" || exit 1
     else
         echo "❌ FEHLER: venv nicht gefunden: $VENV_PATH"
-        echo "Bitte 'sbatch scripts/setup_venv.sh' ausführen und warten!"
+        echo "Bitte sbatch scripts/setup_venv.sh ausführen und warten!"
         exit 1
     fi
     
-    echo 'Python:' \$(which python)
-    echo ''
+    echo "Python: $(which python)"
+    echo ""
     
-    echo '🏃 Starte Benchmark...'
-    python $PROJECT_ROOT/src/eval/models/run_internvl3_14b.py
+    echo "🏃 Starte Benchmark..."
+    python "$PROJECT_ROOT/src/eval/models/run_internvl3_14b.py"
     
-    echo ''
-    echo '=========================================='
-    echo '✅ Fertig:' \$(date)
-    echo '=========================================='
-  "
+    echo ""
+    echo "=========================================="
+    echo "✅ Fertig: $(date)"
+    echo "=========================================="
+  '
