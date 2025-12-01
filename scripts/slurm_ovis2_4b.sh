@@ -8,18 +8,23 @@
 #SBATCH --output=evaluation_results/logs/ovis2_4b_%j.out
 #SBATCH --error=evaluation_results/logs/ovis2_4b_%j.err
 
+# Projekt-Root ermitteln (eine Ebene über scripts/)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
 # Logs-Verzeichnis erstellen
-mkdir -p evaluation_results/logs
+mkdir -p "$PROJECT_ROOT/evaluation_results/logs"
 
 srun \
   --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
-  --container-workdir="`pwd`" \
-  --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"`pwd`":"`pwd`" \
+  --container-workdir="$PROJECT_ROOT" \
+  --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
   bash -c '
     echo "=========================================="
     echo "🚀 VLM Benchmark: Ovis2-4B"
     echo "=========================================="
     echo "Start: $(date)"
+    echo "Working Directory: $(pwd)"
     echo "GPU:"
     nvidia-smi --query-gpu=name,memory.total --format=csv
     echo ""
