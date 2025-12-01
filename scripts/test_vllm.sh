@@ -67,6 +67,10 @@ srun \
     
     # vLLM und Dependencies installieren
     echo '📦 Installiere vLLM und Dependencies...'
+    
+    # NumPy 1.x beibehalten (Container-Module sind damit kompiliert)
+    pip install --quiet --no-warn-script-location 'numpy<2' 2>&1 | tail -1 || true
+    
     pip install --quiet --no-warn-script-location \
       vllm \
       pillow \

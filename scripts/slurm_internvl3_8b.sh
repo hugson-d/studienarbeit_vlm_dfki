@@ -81,6 +81,9 @@ srun \
     # Python-Pakete installieren
     echo '📦 Installiere Python-Pakete...'
     
+    # NumPy 1.x beibehalten (Container-Module sind damit kompiliert)
+    pip install --quiet --no-warn-script-location 'numpy<2' 2>&1 | tail -1 || true
+    
     # torchvision neu installieren - PyTorch 2.2.0 braucht torchvision 0.17.x
     pip install --quiet --no-warn-script-location --force-reinstall \
       'torchvision==0.17.0' 2>&1 | tail -1 || true
