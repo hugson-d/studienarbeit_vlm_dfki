@@ -307,43 +307,50 @@ class VLMEvaluator:
         
         logger.info(f"✅ {MODEL_NAME} bereit")
 
+    @torch.inference_mode()  # WICHTIG: Deaktiviert Gradientenberechnung global für diese Methode
     def generate(self, image_path: str) -> Dict:
         full_path = DATA_DIR / image_path
         if not full_path.exists():
-            raise FileNotFoundError(f"Bild nicht gefunden: {full_path}")
-        
-        # InternVL-spezifische Bildvorverarbeitung
-        pixel_values = load_image_internvl(str(full_path), max_num=12).to(torch.bfloat16).cuda()
-        
-        # Prompt für InternVL
-        question = (
-            "<image>\n"
-            "Du bist ein präzises mathematisches Assistenzsystem. "
-            "Analysiere die Aufgabe im Bild und gib die korrekte Antwort. "
-            "Antworte AUSSCHLIESSLICH mit einem JSON-Objekt im Format: "
-            '{"answer": "X"} wobei X einer der Buchstaben A, B, C, D oder E ist.\n\n'
-            "Löse die Mathematik-Aufgabe im Bild. Gib nur das JSON zurück."
-        )
-        
-        generation_config = dict(max_new_tokens=50, do_sample=False)
-        
-        start_time = time.time()
-        # InternVL3 verwendet model.chat() Methode
-        response = self.model.chat(self.tokenizer, pixel_values, question, generation_config)
-        duration = time.time() - start_time
-        
-        del pixel_values
-        
-        result = parse_response(response)
-        
-        return {
-            "raw_output": response,
-            "prediction": result["prediction"],
-            "format_valid": result["format_valid"],
-            "error": result["error"],
-            "inference_time": round(duration, 4),
-            "input_tokens": 0  # InternVL chat() gibt keine Token-Zahl zurück
-        }
+            return {"error": "Image not found", "prediction": None}
+
+        try:
+            # InternVL-spezifische Bildvorverarbeitung
+            pixel_values = load_image_internvl(str(full_path), max_num=12).to(torch.bfloat16).cuda()
+            
+            # Prompt für InternVL
+            question = (
+                "<image>\n"
+                "Löse die folgende Mathematik-Aufgabe. Analysiere das Bild genau.\n"
+                "Gib die Antwort NUR als JSON-Objekt im Format {\"answer\": \"X\"}, "
+                "wobei X einer der Buchstaben A, B, C, D oder E ist."
+            )
+            
+            generation_config = dict(
+                max_new_tokens=128, 
+                do_sample=False,
+                temperature=0.0
+            )
+            
+            start_time = time.time()
+            # InternVL3 verwendet model.chat() Methode
+            response = self.model.chat(self.tokenizer, pixel_values, question, generation_config)
+            duration = time.time() - start_time
+            
+            del pixel_values
+            
+            result = parse_response(response)
+            
+            return {
+                "raw_output": response,
+                "prediction": result["prediction"],
+                "format_valid": result["format_valid"],
+                "error": result["error"],
+                "inference_time": round(duration, 4),
+                "input_tokens": 0  # InternVL chat() gibt keine Token-Zahl zurück
+            }
+            
+        except Exception as e:
+            return {"error": str(e), "prediction": None}
 
     def cleanup(self):
         logger.info(f"🧹 Räume {MODEL_NAME} auf...")
