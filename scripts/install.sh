@@ -33,6 +33,7 @@ if [[ "${SLURM_LOCALID:-0}" == "0" ]]; then
         "pandas" \
         "openpyxl>=3.1" \
         "tqdm" \
+        "timm" \
         "pillow>=10.0" \
         "bitsandbytes>=0.43.0" \
         "safetensors>=0.4.0"
