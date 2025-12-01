@@ -38,24 +38,27 @@ for SECRET_FILE in "$PROJECT_ROOT/.env" "$PROJECT_ROOT/secrets.sh" "$HOME/.hf_to
 done
 
 export HF_TOKEN
+export PROJECT_ROOT
+export VENV_PATH
 
 # Container starten
+# Wir nutzen Single-Quotes für bash -c, damit Variablen erst im Container expandiert werden
 srun \
   --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
   --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
-  --export=ALL,HF_TOKEN \
-  bash -c "
-    echo '=========================================='
-    echo '🐍 Erstelle Virtual Environment...'
-    echo '=========================================='
+  --export=ALL,HF_TOKEN,PROJECT_ROOT,VENV_PATH \
+  bash -c '
+    echo "=========================================="
+    echo "🐍 Erstelle Virtual Environment..."
+    echo "=========================================="
     
     # Fehler sofort melden
     set -e
     
-    cd $PROJECT_ROOT
+    cd "$PROJECT_ROOT"
     
     # Sicherstellen, dass Zielverzeichnis existiert
-    mkdir -p "\$(dirname "$VENV_PATH")"
+    mkdir -p "$(dirname "$VENV_PATH")"
     
     # Falls venv existiert, löschen
     if [ -d "$VENV_PATH" ]; then
@@ -66,9 +69,8 @@ srun \
     echo "Erstelle venv in: $VENV_PATH"
     
     # Neue venv erstellen MIT system-site-packages
-    # Wir versuchen erst venv, falls das fehlschlägt, virtualenv
     if ! python -m venv --system-site-packages "$VENV_PATH"; then
-        echo "⚠️ 'python -m venv' fehlgeschlagen. Versuche virtualenv..."
+        echo "⚠️ python -m venv fehlgeschlagen. Versuche virtualenv..."
         pip install --user virtualenv
         python -m virtualenv --system-site-packages "$VENV_PATH"
     fi
@@ -80,50 +82,47 @@ srun \
     
     source "$VENV_PATH/bin/activate"
     
-    echo 'Python: '\$(which python)
-    echo 'Version: '\$(python --version)
+    echo "Python: $(which python)"
+    echo "Version: $(python --version)"
     
     # Prüfen ob PyTorch aus Container verfügbar ist
-    echo ''
-    echo '🔍 Container PyTorch:'
-    python -c 'import torch; print(f\"  torch: {torch.__version__}\"); print(f\"  CUDA: {torch.cuda.is_available()}\")'
+    echo ""
+    echo "🔍 Container PyTorch:"
+    python -c "import torch; print(f\"  torch: {torch.__version__}\"); print(f\"  CUDA: {torch.cuda.is_available()}\")"
     
     # Basis-Pakete upgraden
     pip install --upgrade pip wheel setuptools
     
-    echo ''
-    echo '📦 Installiere zusätzliche Pakete...'
+    echo ""
+    echo "📦 Installiere zusätzliche Pakete..."
     
-    # NumPy 1.x beibehalten (Container-Module sind damit kompiliert)
-    # NICHT neu installieren - Container hat bereits kompatible Version!
+    # Transformers von GitHub
+    pip install "git+https://github.com/huggingface/transformers"
     
-    # Transformers von GitHub (für Qwen2.5-VL Support)
-    pip install 'git+https://github.com/huggingface/transformers'
-    
-    # VLM Dependencies (nur was fehlt)
+    # VLM Dependencies
     pip install \
-      'accelerate>=0.34.0' \
-      'qwen-vl-utils[decord]>=0.0.8' \
-      'bitsandbytes>=0.43.0' \
-      'pillow>=10.0.0' \
-      'pydantic>=2.0.0' \
-      'pandas' \
-      'openpyxl>=3.1.0' \
-      'python-dotenv>=1.0.0' \
-      'huggingface_hub>=0.24.0' \
-      'tqdm>=4.66.0' \
-      'safetensors>=0.4.0' \
-      'tokenizers>=0.19.0'
+      "accelerate>=0.34.0" \
+      "qwen-vl-utils[decord]>=0.0.8" \
+      "bitsandbytes>=0.43.0" \
+      "pillow>=10.0.0" \
+      "pydantic>=2.0.0" \
+      "pandas" \
+      "openpyxl>=3.1.0" \
+      "python-dotenv>=1.0.0" \
+      "huggingface_hub>=0.24.0" \
+      "tqdm>=4.66.0" \
+      "safetensors>=0.4.0" \
+      "tokenizers>=0.19.0"
     
     # Flash Attention (optional)
-    pip install flash-attn --no-build-isolation 2>/dev/null || echo '⚠️ Flash Attention nicht installiert'
+    pip install flash-attn --no-build-isolation 2>/dev/null || echo "⚠️ Flash Attention nicht installiert"
     
-    echo ''
-    echo '=========================================='
-    echo '✅ Setup abgeschlossen!'
-    echo '=========================================='
+    echo ""
+    echo "=========================================="
+    echo "✅ Setup abgeschlossen!"
+    echo "=========================================="
     pip list | head -30
-    echo '...'
-    echo ''
-    echo 'Pakete insgesamt: '\$(pip list | wc -l)
-  "
+    echo "..."
+    echo ""
+    echo "Pakete insgesamt: $(pip list | wc -l)"
+  '
