@@ -51,42 +51,45 @@ srun \
     
     cd $PROJECT_ROOT
     
-    # Falls .venv existiert, löschen
+    # Falls venv existiert, löschen
     if [ -d '$VENV_PATH' ]; then
-        echo '⚠️ Lösche bestehende .venv...'
+        echo '⚠️ Lösche bestehende venv...'
         rm -rf '$VENV_PATH'
     fi
     
-    # Neue venv erstellen
-    python -m venv '$VENV_PATH'
+    # Neue venv erstellen MIT system-site-packages
+    # Dadurch erbt die venv PyTorch/CUDA aus dem Container!
+    python -m venv --system-site-packages '$VENV_PATH'
     source '$VENV_PATH/bin/activate'
     
     echo 'Python: '\$(which python)
     echo 'Version: '\$(python --version)
     
+    # Prüfen ob PyTorch aus Container verfügbar ist
+    echo ''
+    echo '🔍 Container PyTorch:'
+    python -c 'import torch; print(f\"  torch: {torch.__version__}\"); print(f\"  CUDA: {torch.cuda.is_available()}\")'
+    
     # Basis-Pakete upgraden
     pip install --upgrade pip wheel setuptools
     
     echo ''
-    echo '📦 Installiere Pakete...'
+    echo '📦 Installiere zusätzliche Pakete...'
     
-    # NumPy 1.x (Container-Kompatibilität)
-    pip install 'numpy<2'
-    
-    # PyTorch (bereits im Container, aber für venv)
-    pip install torch==2.2.0 torchvision==0.17.0 --index-url https://download.pytorch.org/whl/cu121
+    # NumPy 1.x beibehalten (Container-Module sind damit kompiliert)
+    # NICHT neu installieren - Container hat bereits kompatible Version!
     
     # Transformers von GitHub (für Qwen2.5-VL Support)
     pip install 'git+https://github.com/huggingface/transformers'
     
-    # VLM Dependencies
+    # VLM Dependencies (nur was fehlt)
     pip install \
       'accelerate>=0.34.0' \
       'qwen-vl-utils[decord]>=0.0.8' \
       'bitsandbytes>=0.43.0' \
       'pillow>=10.0.0' \
       'pydantic>=2.0.0' \
-      'pandas<1.6' \
+      'pandas' \
       'openpyxl>=3.1.0' \
       'python-dotenv>=1.0.0' \
       'huggingface_hub>=0.24.0' \
