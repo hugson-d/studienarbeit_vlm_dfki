@@ -37,7 +37,10 @@ source .env && echo "Token: ${HF_TOKEN:0:10}..."
 ```bash
 # Immer aus dem Projekt-Root starten:
 cd /pfad/zu/studienarbeit_vlm_dfki
-sbatch scripts/slurm_qwen2_5_vl_3b.sh
+
+# Qwen2.5-VL-3B Benchmark auf H100/H200 starten (erstellt venv automatisch auf /netscratch)
+# Für H200 ggf. Partition per Flag überschreiben: sbatch -p H200 scripts/run_qwen2_5_vl_3b.sh
+sbatch scripts/run_qwen2_5_vl_3b.sh
 ```
 
 ## Hinweise
@@ -45,3 +48,4 @@ sbatch scripts/slurm_qwen2_5_vl_3b.sh
 - `.env`, `secrets.sh` und `~/.hf_token` sind alle in `.gitignore`
 - Der Token wird beim Job-Start automatisch aus diesen Dateien geladen
 - Prüfe mit `squeue -u $USER` ob der Job läuft
+- Das SLURM-Skript nutzt den NVIDIA PyTorch 23.12 Container, legt ein venv auf `/netscratch/$USER/vlm_qwen2_5_vl_3b` an (Python 3.10) und installiert die benötigten Pakete inkl. CUDA 12.1 Torch-Build.
