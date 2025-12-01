@@ -90,7 +90,14 @@ srun \
     
     # Virtual Environment aktivieren
     echo '🐍 Aktiviere .venv...'
-    source $VENV_PATH/bin/activate
+    if [ -f "$VENV_PATH/bin/activate" ]; then
+        source "$VENV_PATH/bin/activate" || exit 1
+    else
+        echo "❌ FEHLER: venv nicht gefunden: $VENV_PATH"
+        echo "Bitte 'sbatch scripts/setup_venv.sh' ausführen und warten!"
+        exit 1
+    fi
+    
     echo 'Python:' \$(which python)
     echo ''
     

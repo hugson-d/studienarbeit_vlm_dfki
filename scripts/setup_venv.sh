@@ -49,18 +49,36 @@ srun \
     echo '🐍 Erstelle Virtual Environment...'
     echo '=========================================='
     
+    # Fehler sofort melden
+    set -e
+    
     cd $PROJECT_ROOT
     
+    # Sicherstellen, dass Zielverzeichnis existiert
+    mkdir -p "\$(dirname "$VENV_PATH")"
+    
     # Falls venv existiert, löschen
-    if [ -d '$VENV_PATH' ]; then
-        echo '⚠️ Lösche bestehende venv...'
-        rm -rf '$VENV_PATH'
+    if [ -d "$VENV_PATH" ]; then
+        echo "⚠️ Lösche bestehende venv: $VENV_PATH"
+        rm -rf "$VENV_PATH"
     fi
     
+    echo "Erstelle venv in: $VENV_PATH"
+    
     # Neue venv erstellen MIT system-site-packages
-    # Dadurch erbt die venv PyTorch/CUDA aus dem Container!
-    python -m venv --system-site-packages '$VENV_PATH'
-    source '$VENV_PATH/bin/activate'
+    # Wir versuchen erst venv, falls das fehlschlägt, virtualenv
+    if ! python -m venv --system-site-packages "$VENV_PATH"; then
+        echo "⚠️ 'python -m venv' fehlgeschlagen. Versuche virtualenv..."
+        pip install --user virtualenv
+        python -m virtualenv --system-site-packages "$VENV_PATH"
+    fi
+    
+    if [ ! -f "$VENV_PATH/bin/activate" ]; then
+        echo "❌ FEHLER: venv wurde nicht korrekt erstellt (activate fehlt)"
+        exit 1
+    fi
+    
+    source "$VENV_PATH/bin/activate"
     
     echo 'Python: '\$(which python)
     echo 'Version: '\$(python --version)
