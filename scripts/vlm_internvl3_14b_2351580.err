@@ -1,0 +1,63 @@
+Job 2351580: Running on node(s) serv-3336
+Job 2351580: Started at 2025-12-01 22:50:52+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2351580&from=1764625852000
+srun: jobinfo: version v1.0.0
+Job 2351580: Running on node(s) serv-3336
+Job 2351580: Started at 2025-12-01 22:50:55+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2351580&from=1764625855000
+Job 2351580: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
+Job 2351580: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 19.0 seconds
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+/usr/local/lib/python3.10/dist-packages/torchvision/io/image.py:13: UserWarning: Failed to load image Python extension: 'Could not load this library: /usr/local/lib/python3.10/dist-packages/torchvision/image.so'If you don't plan on using image functionality from `torchvision.io`, you can ignore this warning. Otherwise, there might be something wrong with your environment. Did you have `libjpeg` or `libpng` installed before building `torchvision` from source?
+  warn(
+2025-12-01 22:54:06,485 - INFO - 📂 Dataset geladen: 3557 Aufgaben
+2025-12-01 22:54:06,487 - INFO - 🚀 Starte InternVL3-14B: 3557/3557 Tasks ausstehend
+2025-12-01 22:54:06,488 - INFO - 🏗️ Lade InternVL3-14B (14B)
+2025-12-01 22:54:06,488 - INFO -    HuggingFace ID: OpenGVLab/InternVL3-14B
+2025-12-01 22:54:06,489 - INFO -    4-Bit Quantisierung: False
+2025-12-01 22:54:06,490 - INFO -    📥 Lade Processor...
+A new version of the following files was downloaded from https://huggingface.co/OpenGVLab/InternVL3-14B:
+- configuration_intern_vit.py
+. Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.
+A new version of the following files was downloaded from https://huggingface.co/OpenGVLab/InternVL3-14B:
+- configuration_internvl_chat.py
+- configuration_intern_vit.py
+. Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.
+2025-12-01 22:54:09,037 - INFO - vision_select_layer: -1
+2025-12-01 22:54:09,037 - INFO - ps_version: v2
+2025-12-01 22:54:09,038 - INFO - min_dynamic_patch: 1
+2025-12-01 22:54:09,039 - INFO - max_dynamic_patch: 12
+2025-12-01 22:54:09,040 - INFO - vision_config is None. Initializing the InternVisionConfig with default values.
+2025-12-01 22:54:09,041 - INFO - llm_config is None. Initializing the LlamaConfig config with default values (`LlamaConfig`).
+2025-12-01 22:54:09,041 - INFO - vision_select_layer: -1
+2025-12-01 22:54:09,042 - INFO - ps_version: v1
+2025-12-01 22:54:09,043 - INFO - min_dynamic_patch: 1
+2025-12-01 22:54:09,043 - INFO - max_dynamic_patch: 6
+2025-12-01 22:54:12,591 - INFO -    📥 Lade Modell...
+/usr/local/lib/python3.10/dist-packages/transformers/models/auto/modeling_auto.py:2284: FutureWarning: The class `AutoModelForVision2Seq` is deprecated and will be removed in v5.0. Please use `AutoModelForImageTextToText` instead.
+  warnings.warn(
+`torch_dtype` is deprecated! Use `dtype` instead!
+2025-12-01 22:54:12,859 - INFO - vision_select_layer: -1
+2025-12-01 22:54:12,859 - INFO - ps_version: v2
+2025-12-01 22:54:12,860 - INFO - min_dynamic_patch: 1
+2025-12-01 22:54:12,860 - INFO - max_dynamic_patch: 12
+2025-12-01 22:54:12,862 - INFO - vision_config is None. Initializing the InternVisionConfig with default values.
+2025-12-01 22:54:12,862 - INFO - llm_config is None. Initializing the LlamaConfig config with default values (`LlamaConfig`).
+2025-12-01 22:54:12,863 - INFO - vision_select_layer: -1
+2025-12-01 22:54:12,863 - INFO - ps_version: v1
+2025-12-01 22:54:12,864 - INFO - min_dynamic_patch: 1
+2025-12-01 22:54:12,864 - INFO - max_dynamic_patch: 6
+Traceback (most recent call last):
+  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/models/run_internvl3_14b.py", line 488, in <module>
+    run_benchmark()
+  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/models/run_internvl3_14b.py", line 376, in run_benchmark
+    evaluator = VLMEvaluator()
+  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/models/run_internvl3_14b.py", line 235, in __init__
+    self.model = AutoModelForVision2Seq.from_pretrained(MODEL_HF_ID, **load_kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/transformers/models/auto/modeling_auto.py", line 2289, in from_pretrained
+    return super().from_pretrained(pretrained_model_name_or_path, *model_args, **kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/transformers/models/auto/auto_factory.py", line 607, in from_pretrained
+    raise ValueError(
+ValueError: Unrecognized configuration class <class 'transformers_modules.OpenGVLab.InternVL3_hyphen_14B.419aa10d2db7da6c64382ad3124f79a60cec42aa.configuration_internvl_chat.InternVLChatConfig'> for this kind of AutoModel: AutoModelForVision2Seq.
+Model type should be one of BlipConfig, Blip2Config, ChameleonConfig, GitConfig, Idefics2Config, Idefics3Config, InstructBlipConfig, InstructBlipVideoConfig, Kosmos2Config, Kosmos2_5Config, LlavaConfig, LlavaNextConfig, LlavaNextVideoConfig, LlavaOnevisionConfig, Mistral3Config, MllamaConfig, Ovis2Config, PaliGemmaConfig, Pix2StructConfig, Qwen2_5_VLConfig, Qwen2VLConfig, Qwen3VLConfig, Qwen3VLMoeConfig, VideoLlavaConfig, VipLlavaConfig, VisionEncoderDecoderConfig.
+srun: error: serv-3336: task 0: Exited with exit code 1
