@@ -75,6 +75,9 @@ if [ -f "$PROJECT_ROOT/.env" ]; then
     export $(grep -v '^#' "$PROJECT_ROOT/.env" | xargs)
 fi
 
+# Projekt-Root als Umgebungsvariable für Python-Skripte
+export VLM_PROJECT_ROOT="$PROJECT_ROOT"
+
 # Container starten
 srun \\
   --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \\

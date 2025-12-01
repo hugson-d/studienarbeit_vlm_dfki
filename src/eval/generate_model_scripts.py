@@ -84,8 +84,23 @@ USE_QUANTIZATION = MODEL_PARAMS_B > QUANT_THRESHOLD_B
 # PFADE
 # ============================================================================
 
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+# Projekt-Root ermitteln (3 Ebenen hoch von src/eval/models/)
+# Oder über Umgebungsvariable falls gesetzt
+_script_path = Path(__file__).resolve()
+PROJECT_ROOT = Path(os.environ.get("VLM_PROJECT_ROOT", _script_path.parent.parent.parent))
+
+# Validierung: dataset_final.json muss existieren
 DATASET_PATH = PROJECT_ROOT / "dataset_final.json"
+if not DATASET_PATH.exists():
+    # Fallback: Suche nach oben bis dataset_final.json gefunden wird
+    _search = _script_path.parent
+    for _ in range(5):
+        if (_search / "dataset_final.json").exists():
+            PROJECT_ROOT = _search
+            DATASET_PATH = PROJECT_ROOT / "dataset_final.json"
+            break
+        _search = _search.parent
+
 DATA_DIR = PROJECT_ROOT / "data"
 OUTPUT_DIR = PROJECT_ROOT / "evaluation_results"
 LOG_FILE = OUTPUT_DIR / f"{{MODEL_NAME}}_results.jsonl"
