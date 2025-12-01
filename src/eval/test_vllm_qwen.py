@@ -8,7 +8,14 @@ import os
 from pathlib import Path
 from PIL import Image
 
-from vllm import LLM, SamplingParams
+# vLLM nur importieren wenn verfügbar (Linux mit CUDA)
+try:
+    from vllm import LLM, SamplingParams
+    VLLM_AVAILABLE = True
+except ImportError:
+    VLLM_AVAILABLE = False
+    print("⚠️ vLLM nicht verfügbar (nur Linux mit CUDA)")
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -55,6 +62,10 @@ def main():
     print("=" * 60)
     print("🚀 vLLM Test für Qwen2.5-VL-7B")
     print("=" * 60)
+    
+    if not VLLM_AVAILABLE:
+        print("❌ vLLM nicht verfügbar. Bitte auf Linux mit CUDA ausführen.")
+        return
     
     # Test-Bild finden
     test_image = find_test_image()
