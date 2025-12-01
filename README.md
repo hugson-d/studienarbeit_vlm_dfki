@@ -171,6 +171,79 @@ This dataset is designed for evaluating Vision Language Models on:
 
 All tasks include ground truth answers for automated evaluation.
 
+### Benchmark Setup (Linux Cluster)
+
+**1. Initial Setup:**
+```bash
+./scripts/setup_cluster.sh
+```
+Installs uv, creates virtual environment, and installs all dependencies.
+
+**2. Configure HuggingFace Token:**
+```bash
+echo 'HF_TOKEN=hf_your_token_here' > .env
+```
+
+**3. Submit all SLURM Jobs:**
+```bash
+./scripts/submit_all_jobs.sh
+```
+Starts 14 parallel jobs (one per model).
+
+**4. Monitor Progress:**
+```bash
+squeue -u $USER
+# Logs: evaluation_results/logs/
+```
+
+**5. Combine Results:**
+```bash
+python src/eval/combine_results.py
+```
+
+### Evaluated Models
+
+| Model | Parameters | Quantization |
+|-------|------------|--------------|
+| Qwen2.5-VL-3B | 3B | FP16/BF16 |
+| Qwen2.5-VL-7B | 7B | FP16/BF16 |
+| Qwen2.5-VL-32B | 32B | FP16/BF16 |
+| Qwen2.5-VL-72B | 72B | 4-Bit |
+| InternVL3-8B | 8B | FP16/BF16 |
+| InternVL3-14B | 14B | FP16/BF16 |
+| InternVL3-38B | 38B | FP16/BF16 |
+| InternVL3-78B | 78B | 4-Bit |
+| Ovis2.5-2B | 2B | FP16/BF16 |
+| Ovis2.5-9B | 9B | FP16/BF16 |
+| Ovis2-4B | 4B | FP16/BF16 |
+| Ovis2-8B | 8B | FP16/BF16 |
+| Ovis2-16B | 16B | FP16/BF16 |
+| Ovis2-34B | 34B | FP16/BF16 |
+
+### Evaluation Files
+
+```
+src/eval/
+├── models/                    # 14 identical model scripts
+│   ├── run_qwen2_5_vl_3b.py
+│   ├── run_qwen2_5_vl_7b.py
+│   ├── ...
+│   └── run_ovis2_34b.py
+├── generate_model_scripts.py  # Generator for model scripts
+└── combine_results.py         # Combines all results
+
+scripts/
+├── setup_cluster.sh          # Initial cluster setup
+└── submit_all_jobs.sh        # Submit all SLURM jobs
+
+evaluation_results/
+├── {MODEL}_results.jsonl     # Per-model results
+├── {MODEL}_summary.xlsx      # Per-model Excel summary
+├── all_results_combined.jsonl
+├── benchmark_summary.xlsx    # Final combined summary
+└── logs/                     # SLURM job logs
+```
+
 ## 🔍 Technical Notes
 
 ### PDF Extraction Challenges (1998-2011)
