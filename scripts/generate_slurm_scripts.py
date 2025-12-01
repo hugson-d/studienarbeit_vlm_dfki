@@ -32,8 +32,8 @@ MODELS = {
 
 SLURM_TEMPLATE = '''#!/bin/bash
 #SBATCH --job-name=vlm_{job_name}
-#SBATCH --partition=batch
-#SBATCH --gres=gpu:{gpu_type}
+#SBATCH --partition=H100
+#SBATCH --gres=gpu:1
 #SBATCH --mem={mem}G
 #SBATCH --cpus-per-task=8
 #SBATCH --time={time}:00:00

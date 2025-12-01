@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=vlm_qwen2_5_vl_7b
-#SBATCH --partition=batch
+#SBATCH --partition=H100
 #SBATCH --gres=gpu:1
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=8

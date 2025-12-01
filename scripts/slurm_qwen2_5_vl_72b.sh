@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=vlm_qwen2_5_vl_72b
-#SBATCH --partition=batch
-#SBATCH --gres=gpu:a100:1
+#SBATCH --partition=H100
+#SBATCH --gres=gpu:1
 #SBATCH --mem=128G
 #SBATCH --cpus-per-task=8
 #SBATCH --time=48:00:00
