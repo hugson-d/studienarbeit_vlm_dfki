@@ -6,7 +6,7 @@ Alle Skripte sind strukturell gleich - nur MODEL_NAME unterscheidet sich.
 
 from pathlib import Path
 
-# Modell-Registry
+# Modell-Registry - NUR Qwen und InternVL (Standard transformers Loader)
 MODELS = {
     # Qwen2.5-VL Familie
     "Qwen2.5-VL-72B":  {"hf_id": "Qwen/Qwen2.5-VL-72B-Instruct",  "params_b": 72, "arch": "qwen"},
@@ -19,16 +19,6 @@ MODELS = {
     "InternVL3-38B":   {"hf_id": "OpenGVLab/InternVL3-38B",       "params_b": 38, "arch": "internvl"},
     "InternVL3-14B":   {"hf_id": "OpenGVLab/InternVL3-14B",       "params_b": 14, "arch": "internvl"},
     "InternVL3-8B":    {"hf_id": "OpenGVLab/InternVL3-8B",        "params_b": 8,  "arch": "internvl"},
-
-    # Ovis2.5 Familie
-    "Ovis2.5-9B":      {"hf_id": "AIDC-AI/Ovis2.5-Llama3-8B",     "params_b": 9,  "arch": "ovis"},
-    "Ovis2.5-2B":      {"hf_id": "AIDC-AI/Ovis2.5-Gemma2-2B",     "params_b": 2,  "arch": "ovis"},
-    
-    # Ovis2 Familie
-    "Ovis2-34B":       {"hf_id": "AIDC-AI/Ovis2-Qwen2.5-32B",     "params_b": 34, "arch": "ovis"},
-    "Ovis2-16B":       {"hf_id": "AIDC-AI/Ovis2-Qwen2.5-14B",     "params_b": 16, "arch": "ovis"},
-    "Ovis2-8B":        {"hf_id": "AIDC-AI/Ovis2-Llama3.1-8B",     "params_b": 8,  "arch": "ovis"},
-    "Ovis2-4B":        {"hf_id": "AIDC-AI/Ovis2-Qwen2.5-3B",      "params_b": 4,  "arch": "ovis"},
 }
 
 SCRIPT_TEMPLATE = '''#!/usr/bin/env python3
@@ -62,7 +52,6 @@ if HF_TOKEN:
 
 from transformers import (
     AutoProcessor, 
-    AutoModelForCausalLM, 
     AutoModelForVision2Seq,
     BitsAndBytesConfig
 )
@@ -250,10 +239,8 @@ class VLMEvaluator:
         # Modell laden
         logger.info("   📥 Lade Modell...")
         if MODEL_ARCH == "qwen":
-            from transformers import Qwen2VLForConditionalGeneration
-            self.model = Qwen2VLForConditionalGeneration.from_pretrained(MODEL_HF_ID, **load_kwargs)
-        elif MODEL_ARCH == "ovis":
-            self.model = AutoModelForCausalLM.from_pretrained(MODEL_HF_ID, **load_kwargs)
+            from transformers import Qwen2_5_VLForConditionalGeneration
+            self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(MODEL_HF_ID, **load_kwargs)
         else:  # internvl
             self.model = AutoModelForVision2Seq.from_pretrained(MODEL_HF_ID, **load_kwargs)
         
@@ -275,27 +262,43 @@ class VLMEvaluator:
         )
         user_prompt = "Löse die Mathematik-Aufgabe im Bild. Gib nur das JSON zurück."
 
-        messages = [
-            {{"role": "system", "content": system_prompt}},
-            {{"role": "user", "content": [
-                {{"type": "image", "image": image}},
-                {{"type": "text", "text": user_prompt}}
-            ]}}
-        ]
-
-        try:
+        # Architektur-spezifische Verarbeitung
+        if MODEL_ARCH == "qwen":
+            # Qwen2.5-VL verwendet qwen_vl_utils
+            from qwen_vl_utils import process_vision_info
+            
+            messages = [
+                {{"role": "system", "content": system_prompt}},
+                {{"role": "user", "content": [
+                    {{"type": "image", "image": image}},
+                    {{"type": "text", "text": user_prompt}}
+                ]}}
+            ]
+            
             text_prompt = self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        except Exception:
-            messages_simple = [{{"role": "user", "content": [
-                {{"type": "image", "image": image}},
-                {{"type": "text", "text": f"{{system_prompt}}\\n\\n{{user_prompt}}"}}
-            ]}}]
+            image_inputs, video_inputs = process_vision_info(messages)
+            inputs = self.processor(
+                text=[text_prompt],
+                images=image_inputs,
+                videos=video_inputs,
+                padding=True,
+                return_tensors="pt"
+            ).to(self.model.device)
+        else:
+            # InternVL - Standard-Verarbeitung
+            messages = [
+                {{"role": "user", "content": [
+                    {{"type": "image", "image": image}},
+                    {{"type": "text", "text": f"{{system_prompt}}\\n\\n{{user_prompt}}"}}
+                ]}}
+            ]
+            
             try:
-                text_prompt = self.processor.apply_chat_template(messages_simple, tokenize=False, add_generation_prompt=True)
+                text_prompt = self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
             except Exception:
                 text_prompt = f"<image>\\n{{system_prompt}}\\n{{user_prompt}}"
-
-        inputs = self.processor(text=[text_prompt], images=[image], padding=True, return_tensors="pt").to(self.model.device)
+            
+            inputs = self.processor(text=[text_prompt], images=[image], padding=True, return_tensors="pt").to(self.model.device)
         
         start_time = time.time()
         with torch.no_grad():

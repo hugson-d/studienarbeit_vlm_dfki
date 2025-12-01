@@ -76,18 +76,21 @@ srun \
     cd $PROJECT_ROOT
     echo 'Working Directory:' \$(pwd)
     
-    # Python-Pakete installieren (kompatibel mit PyTorch 2.2.0 im Container)
+    # Python-Pakete installieren
     echo '📦 Installiere Python-Pakete...'
+    
+    # Transformers von GitHub (neueste Version für Qwen2.5-VL)
     pip install --quiet --no-warn-script-location \
-      'transformers==4.44.2' \
-      'accelerate==0.33.0' \
-      'bitsandbytes==0.43.3' \
+      'git+https://github.com/huggingface/transformers' \
+      'accelerate>=0.34.0' \
+      'qwen-vl-utils[decord]>=0.0.8' \
+      'bitsandbytes>=0.43.0' \
       'pillow>=10.0.0' \
       'pydantic>=2.0.0' \
       'pandas<1.6' \
       'openpyxl>=3.1.0' \
       'python-dotenv>=1.0.0' \
-      'huggingface_hub==0.24.7' \
+      'huggingface_hub>=0.24.0' \
       'tqdm>=4.66.0' \
       'safetensors>=0.4.0' \
       'tokenizers>=0.19.0' \

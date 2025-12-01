@@ -29,7 +29,6 @@ if HF_TOKEN:
 
 from transformers import (
     AutoProcessor, 
-    AutoModelForCausalLM, 
     AutoModelForVision2Seq,
     BitsAndBytesConfig
 )
@@ -217,10 +216,8 @@ class VLMEvaluator:
         # Modell laden
         logger.info("   📥 Lade Modell...")
         if MODEL_ARCH == "qwen":
-            from transformers import Qwen2VLForConditionalGeneration
-            self.model = Qwen2VLForConditionalGeneration.from_pretrained(MODEL_HF_ID, **load_kwargs)
-        elif MODEL_ARCH == "ovis":
-            self.model = AutoModelForCausalLM.from_pretrained(MODEL_HF_ID, **load_kwargs)
+            from transformers import Qwen2_5_VLForConditionalGeneration
+            self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(MODEL_HF_ID, **load_kwargs)
         else:  # internvl
             self.model = AutoModelForVision2Seq.from_pretrained(MODEL_HF_ID, **load_kwargs)
         
@@ -242,27 +239,43 @@ class VLMEvaluator:
         )
         user_prompt = "Löse die Mathematik-Aufgabe im Bild. Gib nur das JSON zurück."
 
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": [
-                {"type": "image", "image": image},
-                {"type": "text", "text": user_prompt}
-            ]}
-        ]
-
-        try:
+        # Architektur-spezifische Verarbeitung
+        if MODEL_ARCH == "qwen":
+            # Qwen2.5-VL verwendet qwen_vl_utils
+            from qwen_vl_utils import process_vision_info
+            
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": [
+                    {"type": "image", "image": image},
+                    {"type": "text", "text": user_prompt}
+                ]}
+            ]
+            
             text_prompt = self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        except Exception:
-            messages_simple = [{"role": "user", "content": [
-                {"type": "image", "image": image},
-                {"type": "text", "text": f"{system_prompt}\n\n{user_prompt}"}
-            ]}]
+            image_inputs, video_inputs = process_vision_info(messages)
+            inputs = self.processor(
+                text=[text_prompt],
+                images=image_inputs,
+                videos=video_inputs,
+                padding=True,
+                return_tensors="pt"
+            ).to(self.model.device)
+        else:
+            # InternVL - Standard-Verarbeitung
+            messages = [
+                {"role": "user", "content": [
+                    {"type": "image", "image": image},
+                    {"type": "text", "text": f"{system_prompt}\n\n{user_prompt}"}
+                ]}
+            ]
+            
             try:
-                text_prompt = self.processor.apply_chat_template(messages_simple, tokenize=False, add_generation_prompt=True)
+                text_prompt = self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
             except Exception:
                 text_prompt = f"<image>\n{system_prompt}\n{user_prompt}"
-
-        inputs = self.processor(text=[text_prompt], images=[image], padding=True, return_tensors="pt").to(self.model.device)
+            
+            inputs = self.processor(text=[text_prompt], images=[image], padding=True, return_tensors="pt").to(self.model.device)
         
         start_time = time.time()
         with torch.no_grad():

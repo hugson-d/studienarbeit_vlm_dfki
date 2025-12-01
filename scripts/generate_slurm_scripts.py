@@ -5,7 +5,7 @@ Generiert SLURM-Skripte für alle Modelle.
 
 from pathlib import Path
 
-# Modell-Registry
+# Modell-Registry - NUR Qwen und InternVL
 MODELS = {
     # Qwen2.5-VL Familie
     "Qwen2.5-VL-72B":  {"script": "run_qwen2_5_vl_72b.py", "params_b": 72, "large": True},
@@ -18,16 +18,6 @@ MODELS = {
     "InternVL3-38B":   {"script": "run_internvl3_38b.py",  "params_b": 38, "large": False},
     "InternVL3-14B":   {"script": "run_internvl3_14b.py",  "params_b": 14, "large": False},
     "InternVL3-8B":    {"script": "run_internvl3_8b.py",   "params_b": 8,  "large": False},
-
-    # Ovis2.5 Familie
-    "Ovis2.5-9B":      {"script": "run_ovis2_5_9b.py",     "params_b": 9,  "large": False},
-    "Ovis2.5-2B":      {"script": "run_ovis2_5_2b.py",     "params_b": 2,  "large": False},
-    
-    # Ovis2 Familie
-    "Ovis2-34B":       {"script": "run_ovis2_34b.py",      "params_b": 34, "large": False},
-    "Ovis2-16B":       {"script": "run_ovis2_16b.py",      "params_b": 16, "large": False},
-    "Ovis2-8B":        {"script": "run_ovis2_8b.py",       "params_b": 8,  "large": False},
-    "Ovis2-4B":        {"script": "run_ovis2_4b.py",       "params_b": 4,  "large": False},
 }
 
 SLURM_TEMPLATE = '''#!/bin/bash
@@ -108,18 +98,21 @@ srun \\
     cd $PROJECT_ROOT
     echo 'Working Directory:' \\$(pwd)
     
-    # Python-Pakete installieren (kompatibel mit PyTorch 2.2.0 im Container)
+    # Python-Pakete installieren
     echo '📦 Installiere Python-Pakete...'
+    
+    # Transformers von GitHub (neueste Version für Qwen2.5-VL)
     pip install --quiet --no-warn-script-location \\
-      'transformers==4.44.2' \\
-      'accelerate==0.33.0' \\
-      'bitsandbytes==0.43.3' \\
+      'git+https://github.com/huggingface/transformers' \\
+      'accelerate>=0.34.0' \\
+      'qwen-vl-utils[decord]>=0.0.8' \\
+      'bitsandbytes>=0.43.0' \\
       'pillow>=10.0.0' \\
       'pydantic>=2.0.0' \\
       'pandas<1.6' \\
       'openpyxl>=3.1.0' \\
       'python-dotenv>=1.0.0' \\
-      'huggingface_hub==0.24.7' \\
+      'huggingface_hub>=0.24.0' \\
       'tqdm>=4.66.0' \\
       'safetensors>=0.4.0' \\
       'tokenizers>=0.19.0' \\
