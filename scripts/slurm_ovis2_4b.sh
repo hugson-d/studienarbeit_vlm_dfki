@@ -29,16 +29,15 @@ srun \
     nvidia-smi --query-gpu=name,memory.total --format=csv
     echo ""
     
-    # Python-Pakete installieren
+    # Python-Pakete installieren (ohne torch, da im Container vorhanden)
     echo "📦 Installiere Python-Pakete..."
-    pip install --quiet --upgrade \
-      torch \
+    pip install --quiet \
       transformers \
       accelerate \
       bitsandbytes \
       pillow \
       pydantic \
-      pandas \
+      "pandas<1.6" \
       openpyxl \
       python-dotenv \
       huggingface_hub \
