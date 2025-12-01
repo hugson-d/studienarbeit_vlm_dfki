@@ -17,8 +17,12 @@ if [[ "${SLURM_LOCALID:-0}" == "0" ]]; then
     # Pip upgraden
     python -m pip install --upgrade pip --quiet
     
-    # Nur zusätzliche Pakete - PyTorch/CUDA aus Container erben!
-    # Container: PyTorch 2.1.0, CUDA 12.3, Python 3.10
+    # torchvision upgraden (Container hat 0.16.0, transformers braucht neuere)
+    # Muss zur PyTorch 2.1.0 im Container passen
+    pip install --quiet --no-warn-script-location \
+        "torchvision==0.16.2"
+    
+    # Zusätzliche Pakete - PyTorch/CUDA aus Container erben!
     pip install --quiet --no-warn-script-location \
         "transformers>=4.44.0" \
         "accelerate>=0.33.0" \

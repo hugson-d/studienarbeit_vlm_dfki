@@ -171,40 +171,59 @@ This dataset is designed for evaluating Vision Language Models on:
 
 All tasks include ground truth answers for automated evaluation.
 
-### Benchmark Setup (Linux Cluster)
+### Benchmark Setup (DFKI Pegasus Cluster)
 
-**1. Virtuelles Environment auf /netscratch vorbereiten (einmalig):**
-```bash
-sbatch scripts/setup_venv.sh
-```
-Legt ein venv unter `/netscratch/$USER/vlm_venv` an und installiert Torch/Transformers/BitsAndBytes sowie die Projektdépendencys.
+Das Benchmark nutzt den NVIDIA PyTorch Container (`nvcr.io_nvidia_pytorch_23.12-py3.sqsh`) mit PyTorch 2.1.0 und CUDA 12.3. Zusätzliche Pakete werden über ein Task-Prolog-Skript installiert.
 
-**2. HuggingFace Token konfigurieren:**
+**1. HuggingFace Token konfigurieren:**
 ```bash
 echo 'HF_TOKEN=hf_your_token_here' > .env
 ```
 
-**3. SLURM-Skripte für die Modelle erzeugen:**
+**2. Job starten (Beispiel Qwen2.5-VL-3B):**
 ```bash
-python scripts/generate_slurm_scripts.py
+sbatch scripts/run_qwen2_5_vl_3b.sh
 ```
-Erstellt `scripts/slurm_*.sh` für alle Qwen- und InternVL-Modelle.
 
-**4. Jobs einreichen (Beispiel für Qwen2.5-VL-3B):**
-```bash
-sbatch scripts/slurm_qwen2_5_vl_3b.sh
-```
-Logfiles landen automatisch in `evaluation_results/logs/`.
+Das Skript:
+- Nutzt `--task-prolog` um Dependencies einmalig zu installieren (`scripts/install.sh`)
+- Erbt PyTorch/CUDA aus dem Container (keine manuelle Installation nötig)
+- Speichert Logs in `evaluation_results/logs/`
 
-**5. Fortschritt überwachen:**
+**3. Fortschritt überwachen:**
 ```bash
 squeue -u $USER
+tail -f vlm_qwen2_5_vl_3b_*.out
 ```
 
-**6. Ergebnisse kombinieren:**
-```bash
-python src/eval/combine_results.py
+### Skript-Struktur
+
 ```
+scripts/
+├── install.sh                 # Task-Prolog: Installiert Dependencies
+├── run_qwen2_5_vl_3b.sh       # SLURM-Job für Qwen2.5-VL-3B
+└── ...                        # Weitere Modell-Skripte
+
+src/eval/models/
+├── run_qwen2_5_vl_3b.py       # Python Benchmark-Skript
+└── ...                        # Weitere Modelle
+```
+
+### Container-Details
+
+| Eigenschaft | Wert |
+|-------------|------|
+| Image | `/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh` |
+| PyTorch | 2.1.0 |
+| CUDA | 12.3 |
+| Python | 3.10 |
+
+Zusätzlich installierte Pakete (via `install.sh`):
+- `transformers>=4.44.0`
+- `accelerate>=0.33.0`
+- `qwen-vl-utils>=0.0.8`
+- `bitsandbytes>=0.43.0`
+- `pydantic`, `python-dotenv`, `pandas`, `pillow`
 
 ### Evaluated Models
 
@@ -218,35 +237,15 @@ python src/eval/combine_results.py
 | InternVL3-14B | 14B | FP16/BF16 |
 | InternVL3-38B | 38B | FP16/BF16 |
 | InternVL3-78B | 78B | 4-Bit |
-| Ovis2.5-2B | 2B | FP16/BF16 |
-| Ovis2.5-9B | 9B | FP16/BF16 |
-| Ovis2-4B | 4B | FP16/BF16 |
-| Ovis2-8B | 8B | FP16/BF16 |
-| Ovis2-16B | 16B | FP16/BF16 |
-| Ovis2-34B | 34B | FP16/BF16 |
 
-### Evaluation Files
+### Evaluation Output
 
 ```
-src/eval/
-├── models/                    # 14 identical model scripts
-│   ├── run_qwen2_5_vl_3b.py
-│   ├── run_qwen2_5_vl_7b.py
-│   ├── ...
-│   └── run_ovis2_34b.py
-├── generate_model_scripts.py  # Generator for model scripts
-└── combine_results.py         # Combines all results
-
-scripts/
-├── setup_cluster.sh          # Initial cluster setup
-└── submit_all_jobs.sh        # Submit all SLURM jobs
-
 evaluation_results/
-├── {MODEL}_results.jsonl     # Per-model results
-├── {MODEL}_summary.xlsx      # Per-model Excel summary
-├── all_results_combined.jsonl
-├── benchmark_summary.xlsx    # Final combined summary
-└── logs/                     # SLURM job logs
+├── {MODEL}_results.jsonl     # Detaillierte Ergebnisse pro Task
+├── {MODEL}_summary.xlsx      # Excel-Zusammenfassung
+├── {MODEL}.log               # Python-Logs
+└── logs/                     # SLURM stdout/stderr
 ```
 
 ## 🔍 Technical Notes
