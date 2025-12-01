@@ -46,10 +46,12 @@ else:
     print("⚠️ HF_TOKEN nicht gesetzt - gated models werden fehlschlagen!")
 
 from transformers import (
-    AutoProcessor, 
-    AutoModelForVision2Seq,
+    AutoTokenizer, 
+    AutoModel,
     BitsAndBytesConfig
 )
+import torchvision.transforms as T
+from torchvision.transforms.functional import InterpolationMode
 
 # ============================================================================
 # KONFIGURATION - DIESES MODELL
@@ -63,6 +65,85 @@ MODEL_ARCH = "internvl"
 # Quantisierung ab 40B Parameter
 QUANT_THRESHOLD_B = 40
 USE_QUANTIZATION = MODEL_PARAMS_B > QUANT_THRESHOLD_B
+
+# ============================================================================
+# INTERNVL IMAGE PREPROCESSING (from HuggingFace docs)
+# ============================================================================
+
+IMAGENET_MEAN = (0.485, 0.456, 0.406)
+IMAGENET_STD = (0.229, 0.224, 0.225)
+
+def build_transform(input_size):
+    transform = T.Compose([
+        T.Lambda(lambda img: img.convert('RGB') if img.mode != 'RGB' else img),
+        T.Resize((input_size, input_size), interpolation=InterpolationMode.BICUBIC),
+        T.ToTensor(),
+        T.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD)
+    ])
+    return transform
+
+def find_closest_aspect_ratio(aspect_ratio, target_ratios, width, height, image_size):
+    best_ratio_diff = float('inf')
+    best_ratio = (1, 1)
+    area = width * height
+    for ratio in target_ratios:
+        target_aspect_ratio = ratio[0] / ratio[1]
+        ratio_diff = abs(aspect_ratio - target_aspect_ratio)
+        if ratio_diff < best_ratio_diff:
+            best_ratio_diff = ratio_diff
+            best_ratio = ratio
+        elif ratio_diff == best_ratio_diff:
+            if area > 0.5 * image_size * image_size * ratio[0] * ratio[1]:
+                best_ratio = ratio
+    return best_ratio
+
+def dynamic_preprocess(image, min_num=1, max_num=12, image_size=448, use_thumbnail=False):
+    orig_width, orig_height = image.size
+    aspect_ratio = orig_width / orig_height
+    
+    target_ratios = set(
+        (i, j) for n in range(min_num, max_num + 1) 
+        for i in range(1, n + 1) for j in range(1, n + 1) 
+        if i * j <= max_num and i * j >= min_num
+    )
+    target_ratios = sorted(target_ratios, key=lambda x: x[0] * x[1])
+    
+    target_aspect_ratio = find_closest_aspect_ratio(
+        aspect_ratio, target_ratios, orig_width, orig_height, image_size
+    )
+    
+    target_width = image_size * target_aspect_ratio[0]
+    target_height = image_size * target_aspect_ratio[1]
+    blocks = target_aspect_ratio[0] * target_aspect_ratio[1]
+    
+    resized_img = image.resize((target_width, target_height))
+    processed_images = []
+    for i in range(blocks):
+        box = (
+            (i % (target_width // image_size)) * image_size,
+            (i // (target_width // image_size)) * image_size,
+            ((i % (target_width // image_size)) + 1) * image_size,
+            ((i // (target_width // image_size)) + 1) * image_size
+        )
+        split_img = resized_img.crop(box)
+        processed_images.append(split_img)
+    
+    if use_thumbnail and len(processed_images) != 1:
+        thumbnail_img = image.resize((image_size, image_size))
+        processed_images.append(thumbnail_img)
+    return processed_images
+
+def load_image_internvl(image_file, input_size=448, max_num=12):
+    """Load and preprocess image for InternVL3."""
+    if isinstance(image_file, str):
+        image = Image.open(image_file).convert('RGB')
+    else:
+        image = image_file.convert('RGB')
+    transform = build_transform(input_size=input_size)
+    images = dynamic_preprocess(image, image_size=input_size, use_thumbnail=True, max_num=max_num)
+    pixel_values = [transform(img) for img in images]
+    pixel_values = torch.stack(pixel_values)
+    return pixel_values
 
 # ============================================================================
 # PFADE (PROJECT_ROOT bereits oben definiert)
@@ -197,132 +278,79 @@ class VLMEvaluator:
             )
             logger.info("   📦 BitsAndBytes 4-Bit aktiviert")
 
-        # Processor laden
-        logger.info("   📥 Lade Processor...")
-        try:
-            self.processor = AutoProcessor.from_pretrained(MODEL_HF_ID, trust_remote_code=True)
-        except Exception as e:
-            logger.warning(f"   ⚠️ Standard-Processor fehlgeschlagen: {e}")
-            self.processor = AutoProcessor.from_pretrained(
-                MODEL_HF_ID, trust_remote_code=True,
-                min_pixels=256*28*28, max_pixels=1280*28*28
-            )
+        # Tokenizer laden (InternVL verwendet AutoTokenizer, nicht AutoProcessor)
+        logger.info("   📥 Lade Tokenizer...")
+        self.tokenizer = AutoTokenizer.from_pretrained(MODEL_HF_ID, trust_remote_code=True, use_fast=False)
 
         # Modell-Konfiguration
         load_kwargs = {
             "device_map": "auto",
             "trust_remote_code": True,
             "torch_dtype": torch.bfloat16,
+            "low_cpu_mem_usage": True,
         }
         
         if bnb_config:
             load_kwargs["quantization_config"] = bnb_config
         
-        # Flash Attention
+        # Flash Attention - InternVL verwendet use_flash_attn Parameter
         try:
             import flash_attn
-            load_kwargs["attn_implementation"] = "flash_attention_2"
+            load_kwargs["use_flash_attn"] = True
             logger.info("   ⚡ Flash Attention 2 aktiviert")
         except ImportError:
-            load_kwargs["attn_implementation"] = "eager"
+            load_kwargs["use_flash_attn"] = False
 
         # Modell laden
         logger.info("   📥 Lade Modell...")
-        if MODEL_ARCH == "qwen":
-            from transformers import Qwen2_5_VLForConditionalGeneration
-            self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(MODEL_HF_ID, **load_kwargs)
-        else:  # internvl
-            self.model = AutoModelForVision2Seq.from_pretrained(MODEL_HF_ID, **load_kwargs)
+        self.model = AutoModel.from_pretrained(MODEL_HF_ID, **load_kwargs).eval()
         
-        self.model.eval()
-        logger.info(f"✅ {MODEL_NAME} bereit auf {self.model.device}")
+        logger.info(f"✅ {MODEL_NAME} bereit")
 
     def generate(self, image_path: str) -> Dict:
         full_path = DATA_DIR / image_path
         if not full_path.exists():
             raise FileNotFoundError(f"Bild nicht gefunden: {full_path}")
         
-        image = Image.open(full_path).convert("RGB")
+        # InternVL-spezifische Bildvorverarbeitung
+        pixel_values = load_image_internvl(str(full_path), max_num=12).to(torch.bfloat16).cuda()
         
-        system_prompt = (
+        # Prompt für InternVL
+        question = (
+            "<image>\n"
             "Du bist ein präzises mathematisches Assistenzsystem. "
             "Analysiere die Aufgabe im Bild und gib die korrekte Antwort. "
             "Antworte AUSSCHLIESSLICH mit einem JSON-Objekt im Format: "
-            '{"answer": "X"} wobei X einer der Buchstaben A, B, C, D oder E ist.'
+            '{"answer": "X"} wobei X einer der Buchstaben A, B, C, D oder E ist.\n\n'
+            "Löse die Mathematik-Aufgabe im Bild. Gib nur das JSON zurück."
         )
-        user_prompt = "Löse die Mathematik-Aufgabe im Bild. Gib nur das JSON zurück."
-
-        # Architektur-spezifische Verarbeitung
-        if MODEL_ARCH == "qwen":
-            # Qwen2.5-VL verwendet qwen_vl_utils
-            from qwen_vl_utils import process_vision_info
-            
-            messages = [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": [
-                    {"type": "image", "image": image},
-                    {"type": "text", "text": user_prompt}
-                ]}
-            ]
-            
-            text_prompt = self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-            image_inputs, video_inputs = process_vision_info(messages)
-            inputs = self.processor(
-                text=[text_prompt],
-                images=image_inputs,
-                videos=video_inputs,
-                padding=True,
-                return_tensors="pt"
-            ).to(self.model.device)
-        else:
-            # InternVL - Standard-Verarbeitung
-            messages = [
-                {"role": "user", "content": [
-                    {"type": "image", "image": image},
-                    {"type": "text", "text": f"{system_prompt}\n\n{user_prompt}"}
-                ]}
-            ]
-            
-            try:
-                text_prompt = self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-            except Exception:
-                text_prompt = f"<image>\n{system_prompt}\n{user_prompt}"
-            
-            inputs = self.processor(text=[text_prompt], images=[image], padding=True, return_tensors="pt").to(self.model.device)
+        
+        generation_config = dict(max_new_tokens=50, do_sample=False)
         
         start_time = time.time()
-        with torch.no_grad():
-            generated_ids = self.model.generate(
-                **inputs, 
-                max_new_tokens=50,
-                do_sample=False,
-                pad_token_id=self.processor.tokenizer.pad_token_id if hasattr(self.processor, 'tokenizer') else None
-            )
+        # InternVL3 verwendet model.chat() Methode
+        response = self.model.chat(self.tokenizer, pixel_values, question, generation_config)
         duration = time.time() - start_time
         
-        input_len = inputs.input_ids.shape[1]
-        trimmed_ids = [out[input_len:] for out in generated_ids]
-        output_text = self.processor.batch_decode(trimmed_ids, skip_special_tokens=True)[0]
+        del pixel_values
         
-        del inputs, generated_ids
-        
-        result = parse_response(output_text)
+        result = parse_response(response)
         
         return {
-            "raw_output": output_text,
+            "raw_output": response,
             "prediction": result["prediction"],
             "format_valid": result["format_valid"],
             "error": result["error"],
             "inference_time": round(duration, 4),
-            "input_tokens": input_len
+            "input_tokens": 0  # InternVL chat() gibt keine Token-Zahl zurück
         }
 
     def cleanup(self):
         logger.info(f"🧹 Räume {MODEL_NAME} auf...")
         if hasattr(self, 'model'):
             del self.model
-        if hasattr(self, 'processor'):
-            del self.processor
+        if hasattr(self, 'tokenizer'):
+            del self.tokenizer
         free_gpu_memory()
 
 
