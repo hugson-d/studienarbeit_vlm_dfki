@@ -47,6 +47,10 @@ fi
 # WICHTIG: venv auf /netscratch (nicht $HOME oder Projekt-Root!)
 VENV_PATH="/netscratch/$USER/vlm_venv"
 
+# Container-Defaults gemäß DFKI-Dokumentation (überschreibbar per ENV)
+CONTAINER_IMAGE="${CONTAINER_IMAGE:-/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh}"
+CONTAINER_MOUNTS="${CONTAINER_MOUNTS:-/netscratch:/netscratch,/ds:/ds:ro,\"$PROJECT_ROOT\":\"$PROJECT_ROOT\"}"
+
 echo "=========================================="
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
@@ -94,10 +98,11 @@ export HF_TOKEN
 export PROJECT_ROOT
 export VENV_PATH
 
-# Container starten
+# Container starten (Task-Prolog aus DFKI-Doku wird hier nicht benötigt,
+# weil das venv bereits auf /netscratch vorbereitet wird)
 srun \\
-  --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \\
-  --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \\
+  --container-image="$CONTAINER_IMAGE" \\
+  --container-mounts="$CONTAINER_MOUNTS" \\
   --export=ALL,HF_TOKEN,VLM_PROJECT_ROOT,PROJECT_ROOT,VENV_PATH \\
   bash -c '
     echo "=========================================="
