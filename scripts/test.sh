@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=pipeline_cot_3b_7b_32b
-#SBATCH --partition=A100-40GB
+#SBATCH --partition=A100-80GB
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
 #SBATCH --mem=64G
