@@ -26,7 +26,7 @@ from pydantic import BaseModel, ValidationError, Field
 
 MODEL_NAME = "Qwen2.5-VL-7B-Batch4-Concise"
 MODEL_HF_ID = "Qwen/Qwen2.5-VL-7B-Instruct"
-BATCH_SIZE = 4  # Parallelisierung
+BATCH_SIZE = 1  # Parallelisierung
 USE_QUANTIZATION = False # Nur für 72B aktivieren
 
 _script_path = Path(__file__).resolve()
