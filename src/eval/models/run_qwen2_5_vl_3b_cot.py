@@ -246,21 +246,31 @@ class VLMEvaluator:
         
         # Chain-of-Thought Prompting
         system_prompt = (
-            "Du bist ein mathematischer Experte. Löse die Aufgabe Schritt für Schritt.\n\n"
-            "Gehe dabei wie folgt vor:\n"
-            "1. Lies die Aufgabenstellung sorgfältig\n"
-            "2. Identifiziere die gegebenen Informationen\n"
-            "3. Überlege, welche mathematischen Konzepte relevant sind\n"
-            "4. Führe die Berechnung Schritt für Schritt durch\n"
-            "5. Überprüfe dein Ergebnis\n"
-            "6. Gib am Ende deine finale Antwort als JSON an\n\n"
-            "WICHTIG: Beende deine Antwort IMMER mit einem JSON-Objekt im Format: "
-            '{"answer": "X"} wobei X einer der Buchstaben A, B, C, D oder E ist.'
+            "Du bist ein präzises mathematisches Assistenzsystem.\n\n"
+            "ARBEITSWEISE:\n"
+            "1. Denke Schritt für Schritt, aber nutze NUR Stichpunkte.\n"
+            "2. Verwende Formeln statt Text wo möglich.\n"
+            "3. Fasse dich extrem kurz.\n\n"
+            "AUSGABEFORMAT:\n"
+            "Deine Ausgabe MUSS ausschließlich aus einem einzigen JSON-Objekt bestehen.\n"
+            "Keine Erklärungen. Keine Analyse. Kein Text davor oder danach.\n\n"
+            "Das einzige gültige Ausgabeformat ist exakt:\n\n"
+            '{"answer": "X"}\n\n'
+            "wobei X genau einer der Buchstaben A, B, C, D oder E ist.\n\n"
+            "Verboten:\n"
+            "- Zusätzlicher Text\n"
+            "- Kommentare\n"
+            "- Markdown\n"
+            "- Codeblöcke\n"
+            "- Mehrere JSON-Objekte\n"
+            "- Begründungen\n"
+            "- Alternative Antworten\n"
+            "- Leerzeilen vor oder nach dem JSON\n\n"
+            "Wenn du keine Antwort findest, MUSST du trotzdem einen der Buchstaben A–E ausgeben.\n"
+            "Das JSON MUSS syntaktisch korrekt sein."
         )
         user_prompt = (
-            "Analysiere die Mathematik-Aufgabe im Bild. "
-            "Denke Schritt für Schritt und erkläre deinen Lösungsweg. "
-            "Gib am Ende das JSON mit deiner Antwort an."
+           "Löse die Mathematik-Aufgabe im Bild. Gib nur das JSON zurück."
         )
 
         # Architektur-spezifische Verarbeitung

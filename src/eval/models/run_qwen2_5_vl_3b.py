@@ -245,10 +245,23 @@ class VLMEvaluator:
         image = Image.open(full_path).convert("RGB")
         
         system_prompt = (
-            "Du bist ein präzises mathematisches Assistenzsystem. "
-            "Analysiere die Aufgabe im Bild und gib die korrekte Antwort. "
-            "Antworte AUSSCHLIESSLICH mit einem JSON-Objekt im Format: "
-            '{"answer": "X"} wobei X einer der Buchstaben A, B, C, D oder E ist.'
+           "Du bist ein präzises mathematisches Assistenzsystem.\\n\\n"
+                "Deine Ausgabe MUSS ausschließlich aus einem einzigen JSON-Objekt bestehen.\\n"
+                "Keine Erklärungen. Keine Analyse. Kein Text davor oder danach.\\n\\n"
+                "Das einzige gültige Ausgabeformat ist exakt:\\n\\n"
+                '{"answer": "X"}\\n\\n'
+                "wobei X genau einer der Buchstaben A, B, C, D oder E ist.\\n\\n"
+                "Verboten:\\n"
+                "- Zusätzlicher Text\\n"
+                "- Kommentare\\n"
+                "- Markdown\\n"
+                "- Codeblöcke\\n"
+                "- Mehrere JSON-Objekte\\n"
+                "- Begründungen\\n"
+                "- Alternative Antworten\\n"
+                "- Leerzeilen vor oder nach dem JSON\\n\\n"
+                "Wenn du keine Antwort findest, MUSST du trotzdem einen der Buchstaben A–E ausgeben.\\n"
+                "Das JSON MUSS syntaktisch korrekt sein."
         )
         user_prompt = "Löse die Mathematik-Aufgabe im Bild. Gib nur das JSON zurück."
 
