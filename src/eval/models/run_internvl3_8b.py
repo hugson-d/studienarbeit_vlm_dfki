@@ -33,7 +33,6 @@ from torchvision.transforms.functional import InterpolationMode
 # SETUP & KONFIGURATION
 # ============================================================================
 
-# Pfad-Setup
 _script_path = Path(__file__).resolve()
 PROJECT_ROOT = Path(os.environ.get("VLM_PROJECT_ROOT", _script_path.parent.parent.parent))
 DATASET_PATH = PROJECT_ROOT / "dataset_final.json"
@@ -42,10 +41,12 @@ OUTPUT_DIR = PROJECT_ROOT / "evaluation_results"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 MODEL_NAME = "InternVL3-8B"
-MODEL_HF_ID = "OpenGVLab/InternVL3-8B"
+MODEL_HF_ID = "OpenGVLab/InternVL3-8B" 
+LOG_FILE = OUTPUT_DIR / f"{MODEL_NAME}_results.jsonl"
+EXCEL_FILE = OUTPUT_DIR / f"{MODEL_NAME}_summary.xlsx"
 SEED = 42
 
-# Logging Setup
+# Logging
 logging.basicConfig(
     level=logging.INFO, 
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -56,16 +57,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(MODEL_NAME)
 
-# Token Handling
 HF_TOKEN = os.getenv("HF_TOKEN")
 if HF_TOKEN:
     login(token=HF_TOKEN)
-else:
-    logger.warning("⚠️ HF_TOKEN nicht gesetzt.")
 
 # ============================================================================
-# INTERNVL UTILITIES (Boilerplate for Image Preprocessing)
+# INTERNVL IMAGE PREPROCESSING (Dynamic Tiling)
 # ============================================================================
+# InternVL benötigt spezifisches Preprocessing für optimale Performance
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
@@ -131,67 +130,93 @@ def load_image_internvl(image_file, input_size=448, max_num=12):
     return torch.stack(pixel_values)
 
 # ============================================================================
-# EVALUATOR CLASS
+# PARSING & UTILS (Identisch zu Qwen für Vergleichbarkeit)
 # ============================================================================
 
 class KanguruAnswer(BaseModel):
     answer: Literal['A', 'B', 'C', 'D', 'E'] = Field(description="Die korrekte Antwort.")
 
+def parse_response(output_text: str) -> Dict:
+    clean_text = output_text.strip()
+    if "```" in clean_text:
+        match = re.search(r'```(?:json)?\s*(.*?)\s*```', clean_text, re.DOTALL)
+        if match: clean_text = match.group(1).strip()
+    
+    json_match = re.search(r'\{[^{}]*\}', clean_text, re.DOTALL)
+    if json_match:
+        try:
+            data = json.loads(json_match.group(0))
+            # Key normalization
+            data = {k.lower(): v for k, v in data.items()}
+            validated = KanguruAnswer(**data)
+            return {"prediction": validated.answer, "format_valid": True, "error": None}
+        except (json.JSONDecodeError, ValidationError):
+            pass
+
+    # Regex Fallback
+    patterns = [
+        r'(?:antwort|answer|lösung|solution)[:\s]+([A-E])\b',
+        r'"answer"\s*:\s*"?([A-E])"?'
+    ]
+    for p in patterns:
+        m = re.search(p, clean_text, re.IGNORECASE)
+        if m: return {"prediction": m.group(1).upper(), "format_valid": False, "error": "Regex Extraction"}
+    
+    return {"prediction": None, "format_valid": False, "error": "No valid answer"}
+
+def set_seed(seed):
+    random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available(): torch.cuda.manual_seed_all(seed)
+
+# ============================================================================
+# EVALUATOR
+# ============================================================================
+
 class VLMEvaluator:
     def __init__(self):
         logger.info(f"🏗️ Initialisiere {MODEL_NAME}...")
-        
-        # 1. Konfiguration für Memory/Speed
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        # InternVL3 ist groß, wir nutzen bfloat16
-        torch_dtype = torch.bfloat16
         
         load_kwargs = {
             "trust_remote_code": True,
-            "torch_dtype": torch_dtype,
+            "torch_dtype": torch.bfloat16,
             "low_cpu_mem_usage": True,
             "device_map": "auto"
         }
-
-        # 2. Flash Attention 2 Integration (Wichtig für Speed/Memory bei VLM)
+        
         try:
             import flash_attn
             load_kwargs["attn_implementation"] = "flash_attention_2"
-            logger.info("   ⚡ Flash Attention 2 aktiviert")
         except ImportError:
-            logger.info("   ⚠️ Flash Attention 2 nicht verfügbar, nutze Fallback.")
+            pass
 
-        # 3. Tokenizer laden
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            MODEL_HF_ID, trust_remote_code=True, use_fast=False
-        )
+        self.tokenizer = AutoTokenizer.from_pretrained(MODEL_HF_ID, trust_remote_code=True, use_fast=False)
+        self.model = AutoModel.from_pretrained(MODEL_HF_ID, **load_kwargs).eval()
+        logger.info(f"✅ Modell geladen.")
 
-        # 4. Modell laden (Kritischer Fix: AutoModel statt AutoModelForVision2Seq)
-        try:
-            self.model = AutoModel.from_pretrained(MODEL_HF_ID, **load_kwargs).eval()
-        except Exception as e:
-            logger.error(f"FATAL: Modell konnte nicht geladen werden. Fehler: {e}")
-            raise e
-
-        logger.info(f"✅ Modell geladen auf {self.device}")
-
-    @torch.inference_mode()  # WICHTIG: Deaktiviert Gradientenberechnung global für diese Methode
+    @torch.inference_mode()
     def generate(self, image_path: str) -> Dict:
         full_path = DATA_DIR / image_path
         if not full_path.exists():
             return {"error": "Image not found", "prediction": None}
 
         try:
-            # Preprocessing
+            # 1. Bild laden (InternVL spezifisch)
             pixel_values = load_image_internvl(str(full_path), max_num=12).to(torch.bfloat16).cuda()
             
-            # Prompt Engineering
-            question = (
-                "<image>\n"
-                "Löse die folgende Mathematik-Aufgabe. Analysiere das Bild genau.\n"
-                "Gib die Antwort NUR als JSON-Objekt im Format {\"answer\": \"X\"}, "
-                "wobei X einer der Buchstaben A, B, C, D oder E ist."
+            # 2. Prompt (Identisch zu Qwen, aber für InternVL formatiert)
+            system_prompt = (
+                "Du bist ein präzises mathematisches Assistenzsystem. "
+                "Analysiere die Aufgabe im Bild und gib die korrekte Antwort. "
+                "Antworte AUSSCHLIESSLICH mit einem JSON-Objekt im Format: "
+                '{"answer": "X"} wobei X einer der Buchstaben A, B, C, D oder E ist.'
             )
+            user_prompt = "Löse die Mathematik-Aufgabe im Bild. Gib nur das JSON zurück."
+            
+            # InternVL Chat Template Integration
+            # Für InternVL wird oft <image>\n{Frage} verwendet. Wir kombinieren System+User.
+            question = f"<image>\n{system_prompt}\n\n{user_prompt}"
             
             generation_config = dict(
                 max_new_tokens=128, 
@@ -200,7 +225,7 @@ class VLMEvaluator:
             )
 
             start_time = time.time()
-            # Model.chat ist spezifisch für InternVL Remote Code
+            # model.chat() handles tokenization internally for the remote code models
             response = self.model.chat(self.tokenizer, pixel_values, question, generation_config)
             duration = time.time() - start_time
 
@@ -224,89 +249,85 @@ class VLMEvaluator:
         torch.cuda.empty_cache()
 
 # ============================================================================
-# PARSING & UTILS
+# MAIN LOOP
 # ============================================================================
 
-def parse_response(output_text: str) -> Dict:
-    clean_text = output_text.strip()
-    # Versuch 1: JSON Parsing
-    try:
-        # Finde JSON Block
-        match = re.search(r'\{.*?\}', clean_text, re.DOTALL)
-        if match:
-            data = json.loads(match.group(0))
-            # Normalisiere Keys (manchmal generieren LLMs 'Answer' statt 'answer')
-            data = {k.lower(): v for k, v in data.items()}
-            if 'answer' in data and data['answer'] in ['A', 'B', 'C', 'D', 'E']:
-                return {"prediction": data['answer'], "format_valid": True, "error": None}
-    except:
-        pass
-
-    # Versuch 2: Regex Fallback
-    patterns = [
-        r'Antwort:\s*([A-E])',
-        r'Answer:\s*([A-E])',
-        r'The correct answer is\s*([A-E])',
-        r'^\s*([A-E])\s*$'
-    ]
-    for p in patterns:
-        m = re.search(p, clean_text, re.IGNORECASE | re.MULTILINE)
-        if m:
-            return {"prediction": m.group(1).upper(), "format_valid": False, "error": "Regex Extraction"}
-
-    return {"prediction": None, "format_valid": False, "error": "No valid answer"}
-
 def run_benchmark():
-    # Setup
-    random.seed(SEED)
-    torch.manual_seed(SEED)
+    set_seed(SEED)
     
-    # Dataset laden
     if not DATASET_PATH.exists():
-        logger.error(f"Dataset nicht gefunden: {DATASET_PATH}")
+        logger.error(f"Dataset fehlt: {DATASET_PATH}")
         return
     with open(DATASET_PATH) as f:
         dataset = json.load(f)
 
-    # Schon bearbeitete filtern
+    # Resume-Logik
     processed_ids = set()
-    if (OUTPUT_DIR / f"{MODEL_NAME}_results.jsonl").exists():
-        with open(OUTPUT_DIR / f"{MODEL_NAME}_results.jsonl", 'r') as f:
+    if LOG_FILE.exists():
+        with open(LOG_FILE, 'r') as f:
             for line in f:
-                try: 
-                    processed_ids.add(json.loads(line)['task_id']) 
+                try: processed_ids.add(json.loads(line)['task_id']) 
                 except: pass
 
-    # Evaluator starten
     evaluator = VLMEvaluator()
     
-    pbar = tqdm(dataset, desc="Processing")
-    log_file = OUTPUT_DIR / f"{MODEL_NAME}_results.jsonl"
+    correct_count = 0
+    processed_count = 0
     
-    for task in pbar:
-        task_id = f"{task.get('year')}_{task.get('class')}_{task.get('task_id')}"
-        
-        if task_id in processed_ids:
-            continue
+    with open(LOG_FILE, 'a') as f_log:
+        pbar = tqdm(dataset, desc=MODEL_NAME)
+        for task in pbar:
+            task_id = f"{task.get('year')}_{task.get('class')}_{task.get('task_id')}"
             
-        result = evaluator.generate(task.get("image_path"))
-        
-        is_correct = (result['prediction'] == task.get('answer')) if result['prediction'] else False
-        
-        log_entry = {
-            "task_id": task_id,
-            "original_id": task.get("task_id"),
-            "answer_gt": task.get("answer"),
-            "answer_pred": result["prediction"],
-            "is_correct": is_correct,
-            **result
-        }
-        
-        with open(log_file, 'a') as f:
-            f.write(json.dumps(log_entry) + "\n")
+            if task_id in processed_ids:
+                continue
+                
+            result = evaluator.generate(task.get("image_path"))
+            
+            gt = task.get('answer')
+            is_correct = (result['prediction'] == gt) if result['prediction'] else False
+            
+            if is_correct: correct_count += 1
+            processed_count += 1
+
+            log_entry = {
+                "model": MODEL_NAME,
+                "task_id": task_id,
+                "year": task.get("year"),
+                "class": task.get("class"),
+                "math_category": task.get("math_category"),
+                "answer_gt": gt,
+                "answer_pred": result["prediction"],
+                "is_correct": is_correct,
+                "format_valid": result.get("format_valid"),
+                "raw_output": result.get("raw_output"),
+                "inference_time": result.get("inference_time")
+            }
+            
+            f_log.write(json.dumps(log_entry) + "\n")
+            f_log.flush()
+            
+            acc = correct_count / processed_count if processed_count > 0 else 0
+            pbar.set_postfix({"acc": f"{acc:.1%}"})
 
     evaluator.cleanup()
-    logger.info("Benchmark beendet.")
+    generate_report()
+
+def generate_report():
+    if not LOG_FILE.exists(): return
+    df = pd.read_json(LOG_FILE, lines=True)
+    if df.empty: return
+    
+    df.to_excel(EXCEL_FILE, index=False)
+    
+    print("\n" + "="*70)
+    print(f"📊 ERGEBNISSE: {MODEL_NAME}")
+    print(f"  Accuracy:     {df['is_correct'].mean():.1%}")
+    print(f"  Valid JSON:   {df['format_valid'].mean():.1%}")
+    
+    if 'math_category' in df.columns:
+        print("\n📐 Nach Kategorie:")
+        print(df.groupby('math_category')['is_correct'].mean().apply(lambda x: f"{x:.1%}"))
 
 if __name__ == "__main__":
     run_benchmark()
