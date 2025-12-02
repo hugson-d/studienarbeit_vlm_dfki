@@ -23,8 +23,9 @@ if [[ "${SLURM_LOCALID:-0}" == "0" ]]; then
         "torchvision==0.16.2"
     
     # Zusätzliche Pakete - PyTorch/CUDA aus Container erben!
+    # Transformers vom Main-Branch für Gemma-3 Support (AutoModelForMultimodalLM)
     pip install --quiet --no-warn-script-location \
-        "transformers>=4.44.0" \
+        "git+https://github.com/huggingface/transformers.git" \
         "accelerate>=0.33.0" \
         "huggingface_hub>=0.24.0" \
         "qwen-vl-utils>=0.0.8" \
