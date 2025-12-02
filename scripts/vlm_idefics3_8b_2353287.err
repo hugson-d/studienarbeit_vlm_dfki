@@ -1,0 +1,13 @@
+Job 2353287: Running on node(s) serv-3315
+Job 2353287: Started at 2025-12-02 18:18:57+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2353287&from=1764695937000
+srun: jobinfo: version v1.0.0
+Job 2353287: Running on node(s) serv-3315
+Job 2353287: Started at 2025-12-02 18:18:58+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2353287&from=1764695938000
+Job 2353287: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
+Job 2353287: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 21.1 seconds
+slurmstepd: error: run_command: user task_prolog can not be executed (/netscratch/dhug/studienarbeit_vlm_dfki/scripts/install_ide.sh) Permission denied
+slurmstepd: error: user task_prolog did not exit normally. reason: Run command failed - configuration error
+slurmstepd: error: --task-prolog failed status=1
+srun: error: serv-3315: task 0: Exited with exit code 1

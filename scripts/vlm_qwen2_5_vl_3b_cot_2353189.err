@@ -1,0 +1,12 @@
+Job 2353189: Running on node(s) serv-3316
+Job 2353189: Started at 2025-12-02 17:40:55+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2353189&from=1764693655000
+srun: jobinfo: version v1.0.0
+Job 2353189: Running on node(s) serv-3316
+Job 2353189: Started at 2025-12-02 17:40:56+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2353189&from=1764693656000
+Job 2353189: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
+Job 2353189: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 23.1 seconds
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd: error: *** STEP 2353189.0 ON serv-3316 CANCELLED AT 2025-12-02T17:41:42 ***
+slurmstepd: error: *** JOB 2353189 ON serv-3316 CANCELLED AT 2025-12-02T17:41:42 ***

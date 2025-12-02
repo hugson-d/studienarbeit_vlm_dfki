@@ -1,0 +1,4 @@
+Job 2352931: Running on node(s) serv-3312
+Job 2352931: Started at 2025-12-02 15:57:20+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2352931&from=1764687440000
+/var/spool/slurm/d/job2352931/slurm_script: line 35: PYTHONPATH: unbound variable
