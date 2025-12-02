@@ -310,6 +310,7 @@ def run_benchmark():
             processed_count += 1
 
             log_entry = {
+                "model": MODEL_NAME,
                 "task_id": task_id,
                 "year": task.get("year"),
                 "class": task.get("class"),
