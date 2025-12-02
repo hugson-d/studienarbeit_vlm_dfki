@@ -186,8 +186,7 @@ class VLMEvaluator:
         load_kwargs = {
             "trust_remote_code": True,
             "torch_dtype": torch.bfloat16,
-            "low_cpu_mem_usage": True,
-            "device_map": "auto"
+            "low_cpu_mem_usage": True
         }
         
         try:
@@ -197,8 +196,8 @@ class VLMEvaluator:
             pass
 
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_HF_ID, trust_remote_code=True, use_fast=False)
-        self.model = AutoModel.from_pretrained(MODEL_HF_ID, **load_kwargs).eval()
-        logger.info(f"✅ Modell geladen.")
+        self.model = AutoModel.from_pretrained(MODEL_HF_ID, **load_kwargs).to(self.device).eval()
+        logger.info(f"✅ Modell geladen auf {self.device}.")
 
     @torch.inference_mode()
     def generate(self, image_path: str) -> Dict:

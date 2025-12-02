@@ -284,7 +284,6 @@ class VLMEvaluator:
 
         # Modell-Konfiguration
         load_kwargs = {
-            "device_map": "auto",
             "trust_remote_code": True,
             "torch_dtype": torch.bfloat16,
             "low_cpu_mem_usage": True,
@@ -303,7 +302,10 @@ class VLMEvaluator:
 
         # Modell laden
         logger.info("   📥 Lade Modell...")
-        self.model = AutoModel.from_pretrained(MODEL_HF_ID, **load_kwargs).eval()
+        self.model = AutoModel.from_pretrained(MODEL_HF_ID, **load_kwargs)
+        if not bnb_config:  # Nur manuell auf GPU wenn keine Quantisierung
+            self.model = self.model.to(self.device)
+        self.model = self.model.eval()
         
         logger.info(f"✅ {MODEL_NAME} bereit")
 
