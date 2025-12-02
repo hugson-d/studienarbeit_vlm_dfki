@@ -35,8 +35,7 @@ if HF_TOKEN:
 
 from transformers import (
     AutoProcessor, 
-    AutoModelForVision2Seq, # Oder AutoModelForCausalLM je nach Architektur
-    AutoModel,
+    AutoModelForMultimodalLM, # Korrekte Klasse für Gemma-3
     BitsAndBytesConfig
 )
 
@@ -158,7 +157,7 @@ class VLMEvaluator:
             pass
 
         # AutoModel lädt automatisch die korrekte Architektur (z.B. PaliGemmaForConditionalGeneration)
-        self.model = AutoModelForVision2Seq.from_pretrained(MODEL_HF_ID, **load_kwargs).eval()
+        self.model = AutoModelForMultimodalLM.from_pretrained(MODEL_HF_ID, **load_kwargs).eval()
         
         logger.info(f"✅ {MODEL_NAME} bereit auf {self.model.device}")
 
@@ -192,16 +191,11 @@ class VLMEvaluator:
         ]
 
         # Vorbereitung der Inputs
-        text_prompt = self.processor.apply_chat_template(
+        inputs = self.processor.apply_chat_template(
             messages, 
-            tokenize=False, 
-            add_generation_prompt=True
-        )
-        
-        inputs = self.processor(
-            text=[text_prompt],
-            images=[image],
-            padding=True,
+            add_generation_prompt=True,
+            tokenize=True,
+            return_dict=True,
             return_tensors="pt"
         ).to(self.model.device)
 
