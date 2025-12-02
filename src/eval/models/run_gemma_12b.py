@@ -158,7 +158,7 @@ class VLMEvaluator:
             pass
 
         # AutoModel lädt automatisch die korrekte Architektur (z.B. PaliGemmaForConditionalGeneration)
-        self.model = AutoModel.from_pretrained(MODEL_HF_ID, **load_kwargs).eval()
+        self.model = AutoModelForVision2Seq.from_pretrained(MODEL_HF_ID, **load_kwargs).eval()
         
         logger.info(f"✅ {MODEL_NAME} bereit auf {self.model.device}")
 
