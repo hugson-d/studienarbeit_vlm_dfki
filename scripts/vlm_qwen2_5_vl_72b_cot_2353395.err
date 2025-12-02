@@ -1,9 +1,0 @@
-Job 2353395: Running on node(s) serv-3315
-Job 2353395: Started at 2025-12-02 19:12:59+0100
-Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2353395&from=1764699179000
-srun: jobinfo: version v1.0.0
-Job 2353395: Running on node(s) serv-3315
-Job 2353395: Started at 2025-12-02 19:13:00+0100
-Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2353395&from=1764699180000
-Job 2353395: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
-Job 2353395: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 19.6 seconds
