@@ -306,7 +306,6 @@ def run_benchmark():
                     "prediction": result["prediction"],
                     "is_correct": is_correct,
                     "format_valid": result.get("format_valid"),
-                    "raw_output": result.get("raw_output"),
                     "inference_time": result.get("inference_time")
                 }
                 

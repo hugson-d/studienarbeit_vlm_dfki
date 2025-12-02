@@ -22,11 +22,6 @@ if [[ "${SLURM_LOCALID:-0}" == "0" ]]; then
     pip install --quiet --no-warn-script-location \
         "torchvision==0.16.2"
     
-    # Numpy/Pandas Kompatibilität sicherstellen (Container-Konflikt vermeiden)
-    pip install --quiet --no-warn-script-location --force-reinstall \
-        "numpy<2.0" \
-        "pandas>=2.0"
-    
     # Zusätzliche Pakete - PyTorch/CUDA aus Container erben!
     # Transformers vom Main-Branch für Gemma-3 Support (AutoModelForMultimodalLM)
     pip install --quiet --no-warn-script-location \
@@ -36,13 +31,13 @@ if [[ "${SLURM_LOCALID:-0}" == "0" ]]; then
         "qwen-vl-utils>=0.0.8" \
         "pydantic>=2.0" \
         "python-dotenv>=1.0" \
+        "pandas" \
         "openpyxl>=3.1" \
         "tqdm" \
         "timm" \
         "pillow>=10.0" \
         "bitsandbytes>=0.43.0" \
-        "safetensors>=0.4.0" \
-        "vllm>=0.6.0"
+        "safetensors>=0.4.0"
     
     echo "✅ Installation abgeschlossen"
     

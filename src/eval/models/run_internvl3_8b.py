@@ -314,14 +314,15 @@ def run_benchmark():
                 "task_id": task_id,
                 "year": task.get("year"),
                 "class": task.get("class"),
+                "original_task_id": task.get("task_id"),
                 "math_category": task.get("math_category"),
+                "is_text_only": task.get("is_text_only", False),
                 "ground_truth": gt,
                 "prediction": result["prediction"],
                 "is_correct": is_correct,
                 "format_valid": result.get("format_valid"),
-                "raw_output": result.get("raw_output"),
-                "inference_time": result.get("inference_time")
-            }
+                "error_type": result.get("error"),
+                "inference_time": result.get("inference_time"),
                 "input_tokens": result.get("input_tokens")
             }
             

@@ -458,13 +458,16 @@ def run_benchmark():
                         "task_id": task_id,
                         "year": item.get("year"),
                         "class": item.get("class"),
+                        "original_task_id": item.get("task_id"),
                         "math_category": item.get("math_category"),
+                        "is_text_only": item.get("is_text_only"),
                         "ground_truth": ground_truth,
                         "prediction": result["prediction"],
                         "is_correct": is_correct,
                         "format_valid": result["format_valid"],
-                        "raw_output": result.get("raw_output"),
-                        "inference_time": result["inference_time"]
+                        "error_type": result["error"],
+                        "inference_time": result["inference_time"],
+                        "input_tokens": result["input_tokens"]
                     }
                     
                     f_log.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
