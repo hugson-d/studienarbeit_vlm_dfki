@@ -37,7 +37,8 @@ if [[ "${SLURM_LOCALID:-0}" == "0" ]]; then
         "timm" \
         "pillow>=10.0" \
         "bitsandbytes>=0.43.0" \
-        "safetensors>=0.4.0"
+        "safetensors>=0.4.0" \
+        "vllm>=0.6.0"
     
     echo "✅ Installation abgeschlossen"
     

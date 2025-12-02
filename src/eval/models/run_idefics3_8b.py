@@ -135,7 +135,9 @@ class VLMEvaluator:
 
         # 1. Processor
         try:
+            logger.info("   📥 Lade Processor (kann einige Sekunden dauern)...")
             self.processor = AutoProcessor.from_pretrained(MODEL_HF_ID, trust_remote_code=True)
+            logger.info("   ✅ Processor geladen")
         except Exception as e:
             logger.error(f"Fehler beim Laden des Processors: {e}")
             raise e
@@ -158,6 +160,7 @@ class VLMEvaluator:
         except ImportError:
             pass
 
+        logger.info("   📥 Lade Modell (kann mehrere Minuten dauern)...")
         self.model = AutoModelForVision2Seq.from_pretrained(MODEL_HF_ID, **load_kwargs).eval()
         
         logger.info(f"✅ {MODEL_NAME} bereit auf {self.model.device}")
@@ -294,7 +297,6 @@ def run_benchmark():
                 processed_count += 1
 
                 log_entry = {
-                    "model": MODEL_NAME,
                     "task_id": task_id,
                     "year": task.get("year"),
                     "class": task.get("class"),
@@ -303,6 +305,7 @@ def run_benchmark():
                     "prediction": result["prediction"],
                     "is_correct": is_correct,
                     "format_valid": result.get("format_valid"),
+                    "raw_output": result.get("raw_output"),
                     "inference_time": result.get("inference_time")
                 }
                 

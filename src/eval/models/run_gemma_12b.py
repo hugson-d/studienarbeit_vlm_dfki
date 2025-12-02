@@ -294,7 +294,6 @@ def run_benchmark():
                 processed_count += 1
 
                 log_entry = {
-                    "model": MODEL_NAME,
                     "task_id": task_id,
                     "year": task.get("year"),
                     "class": task.get("class"),
@@ -303,6 +302,7 @@ def run_benchmark():
                     "prediction": result["prediction"],
                     "is_correct": is_correct,
                     "format_valid": result.get("format_valid"),
+                    "raw_output": result.get("raw_output"),
                     "inference_time": result.get("inference_time")
                 }
                 

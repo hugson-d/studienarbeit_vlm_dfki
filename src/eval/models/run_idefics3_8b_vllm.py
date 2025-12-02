@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
 """
 VLM Benchmark für Känguru-Mathematik-Aufgaben
-Modell: Google Gemma-3-4b-it (Multimodal/VLM) - CoT Version
+Modell: HuggingFaceM4/Idefics3-8B-Llama3 (vLLM Backend)
 """
 
 import os
 import json
-import torch
 import logging
 import re
 import time
 import random
 import gc
 import pandas as pd
-from PIL import Image
-from typing import Dict, List, Literal, Union
+from typing import Dict, List, Literal
 from pathlib import Path
 from tqdm import tqdm
 from pydantic import BaseModel, ValidationError, Field
@@ -33,21 +31,16 @@ HF_TOKEN = os.getenv("HF_TOKEN")
 if HF_TOKEN:
     login(token=HF_TOKEN)
 
-from transformers import (
-    AutoProcessor, 
-    AutoModelForMultimodalLM, # Korrekte Klasse für Gemma-3
-    BitsAndBytesConfig
-)
+from vllm import LLM, SamplingParams
+from vllm.assets.image import ImageAsset
 
 # ============================================================================
-# KONFIGURATION - GEMMA 3
+# KONFIGURATION - IDEFICS3
 # ============================================================================
 
-MODEL_NAME = "Gemma-3-4b-it-CoT"
-MODEL_HF_ID = "google/gemma-3-4b-it"
-MODEL_PARAMS_B = 4
-
-USE_QUANTIZATION = False
+MODEL_NAME = "Idefics3-8B-Llama3-vLLM"
+MODEL_HF_ID = "HuggingFaceM4/Idefics3-8B-Llama3"
+MODEL_PARAMS_B = 8
 
 SEED = 42
 LOG_FILE = OUTPUT_DIR / f"{MODEL_NAME}_results.jsonl"
@@ -65,7 +58,7 @@ logging.basicConfig(
 logger = logging.getLogger(MODEL_NAME)
 
 # ============================================================================
-# UTILS & PARSING (Identisch zu Qwen für Vergleichbarkeit)
+# UTILS & PARSING
 # ============================================================================
 
 class KanguruAnswer(BaseModel):
@@ -89,7 +82,7 @@ def parse_response(output_text: str) -> Dict:
         except Exception:
             pass
 
-    # Regex Fallback (Gleiche Patterns wie Qwen)
+    # Regex Fallback
     patterns = [
         r'(?:antwort|answer|lösung|solution)[:\s]+([A-E])\b',
         r'\b([A-E])\s*(?:ist|is)\s+(?:richtig|correct)',
@@ -99,16 +92,18 @@ def parse_response(output_text: str) -> Dict:
         m = re.search(p, clean_text, re.IGNORECASE)
         if m: return {"prediction": m.group(1).upper(), "format_valid": False, "error": "Regex Extraction"}
     
+    # Letzter Fallback: Suche nach dem letzten Vorkommen eines Buchstabens A-E
+    last_letter_match = re.findall(r'\b([A-E])\b', clean_text.upper())
+    if last_letter_match:
+        return {"prediction": last_letter_match[-1], "format_valid": False, "error": "Fallback: Last A-E"}
+    
     return {"prediction": None, "format_valid": False, "error": "No valid answer"}
 
 def set_seed(seed):
     random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available(): torch.cuda.manual_seed_all(seed)
 
 def free_gpu_memory():
     gc.collect()
-    torch.cuda.empty_cache()
 
 # ============================================================================
 # EVALUATOR
@@ -116,63 +111,35 @@ def free_gpu_memory():
 
 class VLMEvaluator:
     def __init__(self):
-        logger.info(f"🏗️ Lade {MODEL_NAME} ({MODEL_PARAMS_B}B)")
-        logger.info(f"   Quantisierung (4-bit): {USE_QUANTIZATION}")
-
-        bnb_config = None
-        if USE_QUANTIZATION:
-            bnb_config = BitsAndBytesConfig(
-                load_in_4bit=True, 
-                bnb_4bit_quant_type="nf4", 
-                bnb_4bit_compute_dtype=torch.bfloat16,
-                bnb_4bit_use_double_quant=True
-            )
-
-        # 1. Processor
-        try:
-            self.processor = AutoProcessor.from_pretrained(MODEL_HF_ID, trust_remote_code=True)
-        except Exception as e:
-            logger.error(f"Fehler beim Laden des Processors: {e}")
-            raise e
-
-        # 2. Modell
-        load_kwargs = {
-            "device_map": "auto",
-            "trust_remote_code": True,
-            "torch_dtype": torch.bfloat16,
-            "low_cpu_mem_usage": True
-        }
-        if bnb_config:
-            load_kwargs["quantization_config"] = bnb_config
-
-        # Flash Attention Check
-        try:
-            import flash_attn
-            load_kwargs["attn_implementation"] = "flash_attention_2"
-            logger.info("   ⚡ Flash Attention 2 aktiviert")
-        except ImportError:
-            pass
-
-        self.model = AutoModelForMultimodalLM.from_pretrained(MODEL_HF_ID, **load_kwargs).eval()
+        logger.info(f"🏗️ Lade {MODEL_NAME} mit vLLM...")
         
-        logger.info(f"✅ {MODEL_NAME} bereit auf {self.model.device}")
+        # vLLM Initialisierung
+        self.llm = LLM(
+            model=MODEL_HF_ID,
+            trust_remote_code=True,
+            max_model_len=4096,
+            limit_mm_per_prompt={"image": 1},
+            gpu_memory_utilization=0.9,
+        )
+        
+        # Sampling Parameters (Greedy Decoding für Vergleichbarkeit)
+        self.sampling_params = SamplingParams(
+            temperature=0.0,
+            top_p=1.0,
+            max_tokens=128,
+            stop_token_ids=None,
+        )
+        
+        logger.info(f"✅ {MODEL_NAME} bereit")
 
     def generate(self, image_path: str) -> Dict:
         full_path = DATA_DIR / image_path
         if not full_path.exists():
             return {"error": "Image not found", "prediction": None}
 
-        # Bild laden
-        image = Image.open(full_path).convert("RGB")
-        
-        # CONCISE CoT PROMPT mit strikter JSON-Ausgabe
+        # PROMPT ENGINEERING
         system_prompt = (
             "Du bist ein präzises mathematisches Assistenzsystem.\n\n"
-            "ARBEITSWEISE:\n"
-            "1. Denke Schritt für Schritt, aber nutze NUR Stichpunkte.\n"
-            "2. Verwende Formeln statt Text wo möglich.\n"
-            "3. Fasse dich extrem kurz.\n\n"
-            "AUSGABEFORMAT:\n"
             "Deine Ausgabe MUSS ausschließlich aus einem einzigen JSON-Objekt bestehen.\n"
             "Keine Erklärungen. Keine Analyse. Kein Text davor oder danach.\n\n"
             "Das einzige gültige Ausgabeformat ist exakt:\n\n"
@@ -192,60 +159,42 @@ class VLMEvaluator:
         )
         user_prompt = "Löse die Mathematik-Aufgabe im Bild. Gib nur das JSON zurück."
 
-        # Chat Template Erstellung
-        messages = [
-            {
-                "role": "user",
-                "content": [
-                    {"type": "image", "image": image},
-                    {"type": "text", "text": f"{system_prompt}\n\n{user_prompt}"}
-                ]
-            }
-        ]
+        # vLLM Format: Text mit <image> Platzhalter
+        prompt = f"{system_prompt}\n\n<image>\n\n{user_prompt}"
 
-        # Vorbereitung der Inputs
-        inputs = self.processor.apply_chat_template(
-            messages, 
-            add_generation_prompt=True,
-            tokenize=True,
-            return_dict=True,
-            return_tensors="pt"
-        ).to(self.model.device)
-
-        # Generierung
-        start_time = time.time()
-        with torch.no_grad():
-            generated_ids = self.model.generate(
-                **inputs,
-                max_new_tokens=512, # Mehr Tokens für CoT
-                do_sample=False,    # Greedy decoding (WICHTIG für Vergleichbarkeit)
-                temperature=0.0,
-                eos_token_id=self.processor.tokenizer.eos_token_id
+        try:
+            start_time = time.time()
+            
+            # vLLM Inference
+            outputs = self.llm.generate(
+                {
+                    "prompt": prompt,
+                    "multi_modal_data": {"image": str(full_path)},
+                },
+                sampling_params=self.sampling_params
             )
-        duration = time.time() - start_time
-
-        # Decoding
-        input_len = inputs.input_ids.shape[1]
-        trimmed_ids = generated_ids[:, input_len:]
-        output_text = self.processor.batch_decode(
-            trimmed_ids, 
-            skip_special_tokens=True, 
-            clean_up_tokenization_spaces=False
-        )[0]
-
-        # Parsing
-        result = parse_response(output_text)
-        
-        return {
-            "prediction": result["prediction"],
-            "format_valid": result["format_valid"],
-            "error": result["error"],
-            "inference_time": round(duration, 4)
-        }
+            
+            duration = time.time() - start_time
+            
+            # Output extrahieren
+            output_text = outputs[0].outputs[0].text
+            
+            # Parsing
+            result = parse_response(output_text)
+            
+            return {
+                "prediction": result["prediction"],
+                "format_valid": result["format_valid"],
+                "error": result["error"],
+                "inference_time": round(duration, 4)
+            }
+            
+        except Exception as e:
+            logger.error(f"Fehler bei Inference: {e}")
+            return {"error": str(e), "prediction": None, "inference_time": 0}
 
     def cleanup(self):
-        del self.model
-        del self.processor
+        del self.llm
         free_gpu_memory()
 
 # ============================================================================
