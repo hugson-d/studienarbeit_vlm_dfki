@@ -317,13 +317,19 @@ class VLMEvaluator:
             # InternVL-spezifische Bildvorverarbeitung
             pixel_values = load_image_internvl(str(full_path), max_num=12).to(torch.bfloat16).cuda()
             
-            # Prompt für InternVL
-            question = (
-                "<image>\n"
-                "Löse die folgende Mathematik-Aufgabe. Analysiere das Bild genau.\n"
-                "Gib die Antwort NUR als JSON-Objekt im Format {\"answer\": \"X\"}, "
-                "wobei X einer der Buchstaben A, B, C, D oder E ist."
+            # Prompt für InternVL (Optimiert für JSON Output)
+            system_prompt = (
+                "Du bist ein präzises mathematisches Assistenzsystem. "
+            "Analysiere die Aufgabe im Bild und gib die korrekte Antwort. "
+            "Antworte AUSSCHLIESSLICH mit einem JSON-Objekt im Format: "
+            '{"answer": "X"} wobei X einer der Buchstaben A, B, C, D oder E ist.'
             )
+            user_prompt = "Löse die Mathematik-Aufgabe im Bild. Gib nur das JSON zurück."
+            
+            question = f"<image>\n{system_prompt}\n\n{user_prompt}"
+            
+            # Token Count (Schätzung)
+            input_tokens = len(self.tokenizer(question).input_ids)
             
             generation_config = dict(
                 max_new_tokens=128, 
@@ -346,7 +352,7 @@ class VLMEvaluator:
                 "format_valid": result["format_valid"],
                 "error": result["error"],
                 "inference_time": round(duration, 4),
-                "input_tokens": 0  # InternVL chat() gibt keine Token-Zahl zurück
+                "input_tokens": input_tokens
             }
             
         except Exception as e:

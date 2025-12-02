@@ -205,19 +205,21 @@ class VLMEvaluator:
             # 1. Bild laden (InternVL spezifisch)
             pixel_values = load_image_internvl(str(full_path), max_num=12).to(torch.bfloat16).cuda()
             
-            # 2. Prompt (Identisch zu Qwen, aber für InternVL formatiert)
+            # 2. Prompt (Optimiert für JSON Output)
             system_prompt = (
                 "Du bist ein präzises mathematisches Assistenzsystem. "
-                "Analysiere die Aufgabe im Bild und gib die korrekte Antwort. "
-                "Antworte AUSSCHLIESSLICH mit einem JSON-Objekt im Format: "
-                '{"answer": "X"} wobei X einer der Buchstaben A, B, C, D oder E ist.'
+            "Analysiere die Aufgabe im Bild und gib die korrekte Antwort. "
+            "Antworte AUSSCHLIESSLICH mit einem JSON-Objekt im Format: "
+            '{"answer": "X"} wobei X einer der Buchstaben A, B, C, D oder E ist.'
             )
             user_prompt = "Löse die Mathematik-Aufgabe im Bild. Gib nur das JSON zurück."
             
             # InternVL Chat Template Integration
-            # Für InternVL wird oft <image>\n{Frage} verwendet. Wir kombinieren System+User.
             question = f"<image>\n{system_prompt}\n\n{user_prompt}"
             
+            # Token Count (Schätzung)
+            input_tokens = len(self.tokenizer(question).input_ids)
+
             generation_config = dict(
                 max_new_tokens=128, 
                 do_sample=False,
@@ -236,7 +238,8 @@ class VLMEvaluator:
                 "prediction": result["prediction"],
                 "format_valid": result["format_valid"],
                 "error": result["error"],
-                "inference_time": round(duration, 4)
+                "inference_time": round(duration, 4),
+                "input_tokens": input_tokens
             }
             
         except Exception as e:
@@ -295,13 +298,17 @@ def run_benchmark():
                 "task_id": task_id,
                 "year": task.get("year"),
                 "class": task.get("class"),
+                "original_task_id": task.get("task_id"),
                 "math_category": task.get("math_category"),
-                "answer_gt": gt,
-                "answer_pred": result["prediction"],
+                "is_text_only": task.get("is_text_only", False),
+                "ground_truth": gt,
+                "prediction": result["prediction"],
                 "is_correct": is_correct,
                 "format_valid": result.get("format_valid"),
+                "error_type": result.get("error"),
                 "raw_output": result.get("raw_output"),
-                "inference_time": result.get("inference_time")
+                "inference_time": result.get("inference_time"),
+                "input_tokens": result.get("input_tokens")
             }
             
             f_log.write(json.dumps(log_entry) + "\n")
