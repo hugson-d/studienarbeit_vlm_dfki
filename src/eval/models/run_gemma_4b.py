@@ -231,7 +231,6 @@ class VLMEvaluator:
         result = parse_response(output_text)
         
         return {
-            "raw_output": output_text,
             "prediction": result["prediction"],
             "format_valid": result["format_valid"],
             "error": result["error"],
@@ -297,7 +296,6 @@ def run_benchmark():
                     "prediction": result["prediction"],
                     "is_correct": is_correct,
                     "format_valid": result.get("format_valid"),
-                    "raw_output": result.get("raw_output"),
                     "inference_time": result.get("inference_time")
                 }
                 
