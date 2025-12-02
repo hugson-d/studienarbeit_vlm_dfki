@@ -240,7 +240,8 @@ class VLMEvaluator:
             "prediction": result["prediction"],
             "format_valid": result["format_valid"],
             "error": result["error"],
-            "inference_time": round(duration, 4)
+            "inference_time": round(duration, 4),
+            "input_tokens": input_len
         }
 
     def cleanup(self):
@@ -297,15 +298,19 @@ def run_benchmark():
                     "task_id": task_id,
                     "year": task.get("year"),
                     "class": task.get("class"),
+                    "original_task_id": task.get("task_id"),
                     "math_category": task.get("math_category"),
+                    "is_text_only": task.get("is_text_only"),
                     "ground_truth": gt,
                     "prediction": result["prediction"],
                     "is_correct": is_correct,
                     "format_valid": result.get("format_valid"),
-                    "inference_time": result.get("inference_time")
+                    "error_type": result.get("error"),
+                    "inference_time": result.get("inference_time"),
+                    "input_tokens": result.get("input_tokens")
                 }
                 
-                f_log.write(json.dumps(log_entry) + "\n")
+                f_log.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
                 f_log.flush()
                 
                 acc = correct_count / processed_count if processed_count > 0 else 0

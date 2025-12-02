@@ -327,7 +327,7 @@ def run_benchmark():
                 "input_tokens": result.get("input_tokens")
             }
             
-            f_log.write(json.dumps(log_entry) + "\n")
+            f_log.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
             f_log.flush()
             
             acc = correct_count / processed_count if processed_count > 0 else 0

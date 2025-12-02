@@ -218,12 +218,12 @@ class VLMEvaluator:
                 raw_txt = output_texts[batch_idx]
                 parsed = parse_response(raw_txt)
                 results[original_idx] = {
-                    "raw_output": raw_txt,
                     "prediction": parsed["prediction"],
                     "format_valid": parsed["format_valid"],
                     "error": parsed["error"],
                     "inference_time": round(avg_time_per_item, 4), # Zeit anteilig
-                    "total_batch_time": round(duration, 4)
+                    "total_batch_time": round(duration, 4),
+                    "input_tokens": input_len
                 }
             
             return results
@@ -297,18 +297,22 @@ def run_benchmark():
                 processed_count += 1
 
                 log_entry = {
+                    "model": MODEL_NAME,
                     "task_id": task["full_id"],
                     "year": task.get("year"),
                     "class": task.get("class"),
+                    "original_task_id": task.get("task_id"),
                     "math_category": task.get("math_category"),
+                    "is_text_only": task.get("is_text_only"),
                     "ground_truth": gt,
                     "prediction": pred,
                     "is_correct": is_correct,
                     "format_valid": res.get("format_valid"),
-                    "raw_output": res.get("raw_output"),
-                    "inference_time": res.get("inference_time")
+                    "error_type": res.get("error"),
+                    "inference_time": res.get("inference_time"),
+                    "input_tokens": res.get("input_tokens")
                 }
-                f_log.write(json.dumps(log_entry) + "\n")
+                f_log.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
             
             f_log.flush()
             acc = correct_count / processed_count if processed_count > 0 else 0
