@@ -250,10 +250,10 @@ def parse_response(output_text: str) -> Dict[str, Union[str, bool, None]]:
         if match:
             return {"prediction": match.group(1).upper(), "format_valid": False, "error": "Extracted from text"}
     
-    # Letzter Fallback
-    single_letter = re.search(r'\b([A-E])\b', clean_text.upper())
-    if single_letter:
-        return {"prediction": single_letter.group(1), "format_valid": False, "error": "Fallback: First A-E"}
+    # Letzter Fallback: Suche nach dem letzten Vorkommen eines Buchstabens A-E
+    all_letters = re.findall(r'\b([A-E])\b', clean_text.upper())
+    if all_letters:
+        return {"prediction": all_letters[-1], "format_valid": False, "error": "Fallback: Last A-E"}
     
     return {"prediction": None, "format_valid": False, "error": "No valid answer found"}
 
@@ -347,7 +347,6 @@ class VLMEvaluator:
             result = parse_response(response)
             
             return {
-                "raw_output": response,
                 "prediction": result["prediction"],
                 "format_valid": result["format_valid"],
                 "error": result["error"],
@@ -452,7 +451,6 @@ def run_benchmark():
                         "is_correct": is_correct,
                         "format_valid": result["format_valid"],
                         "error_type": result["error"],
-                        "raw_output": result["raw_output"],
                         "inference_time": result["inference_time"],
                         "input_tokens": result["input_tokens"]
                     }

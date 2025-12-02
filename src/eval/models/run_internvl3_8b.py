@@ -162,6 +162,11 @@ def parse_response(output_text: str) -> Dict:
         m = re.search(p, clean_text, re.IGNORECASE)
         if m: return {"prediction": m.group(1).upper(), "format_valid": False, "error": "Regex Extraction"}
     
+    # Letzter Fallback: Suche nach dem letzten Vorkommen eines Buchstabens A-E
+    last_letter_match = re.findall(r'\b([A-E])\b', clean_text.upper())
+    if last_letter_match:
+        return {"prediction": last_letter_match[-1], "format_valid": False, "error": "Fallback: Last A-E"}
+
     return {"prediction": None, "format_valid": False, "error": "No valid answer"}
 
 def set_seed(seed):
@@ -234,7 +239,6 @@ class VLMEvaluator:
             result = parse_response(response)
             
             return {
-                "raw_output": response,
                 "prediction": result["prediction"],
                 "format_valid": result["format_valid"],
                 "error": result["error"],
@@ -306,7 +310,6 @@ def run_benchmark():
                 "is_correct": is_correct,
                 "format_valid": result.get("format_valid"),
                 "error_type": result.get("error"),
-                "raw_output": result.get("raw_output"),
                 "inference_time": result.get("inference_time"),
                 "input_tokens": result.get("input_tokens")
             }
