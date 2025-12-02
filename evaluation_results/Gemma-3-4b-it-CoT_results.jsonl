@@ -406,3 +406,5 @@
 {"model": "Gemma-3-4b-it-CoT", "task_id": "2001_5und6_B5", "year": 2001, "class": "5und6", "math_category": "Geometrie", "ground_truth": "D", "prediction": "C", "is_correct": false, "format_valid": true, "inference_time": 28.0479}
 {"model": "Gemma-3-4b-it-CoT", "task_id": "2001_5und6_B6", "year": 2001, "class": "5und6", "math_category": "Geometrie", "ground_truth": "B", "prediction": "C", "is_correct": false, "format_valid": true, "inference_time": 28.3327}
 {"model": "Gemma-3-4b-it-CoT", "task_id": "2001_5und6_B7", "year": 2001, "class": "5und6", "math_category": "Arithmetik", "ground_truth": "C", "prediction": "C", "is_correct": true, "format_valid": true, "inference_time": 27.6148}
+{"model": "Gemma-3-4b-it-CoT", "task_id": "2001_5und6_B8", "year": 2001, "class": "5und6", "math_category": "Arithmetik", "ground_truth": "D", "prediction": "B", "is_correct": false, "format_valid": true, "inference_time": 27.7787}
+{"model": "Gemma-3-4b-it-CoT", "task_id": "2001_5und6_B9", "year": 2001, "class": "5und6", "math_category": "Geometrie", "ground_truth": "C", "prediction": "C", "is_correct": true, "format_valid": true, "inference_time": 28.1008}
