@@ -171,18 +171,16 @@ class VLMEvaluator:
         
         # PROMPT ENGINEERING (Exakt wie Qwen/InternVL)
         system_prompt = (
-          "Du bist ein präzises mathematisches Assistenzsystem.\n\n"
-            "Deine Aufgabe ist es, ausschließlich das Endergebnis zu liefern.\n"
-            "Deine Ausgabe MUSS aus einem einzigen JSON-Objekt bestehen.\n\n"
-            "GÜLTIGES FORMAT:\n"
-    '        {"answer": "X"}\n'
-            "wobei X einer der Buchstaben A, B, C, D oder E ist.\n\n"
-            "STRIKTE REGELN:\n"
-            "- KEINE Erklärungen, Herleitungen oder Rechenwege.\n"
-            "- KEIN Text vor oder nach dem JSON.\n"
-            "- KEIN Markdown (außer für den JSON-Block falls nötig).\n"
-            "- Wenn die Lösung unklar ist, wähle die wahrscheinlichste Option (A-E).\n"
-            "- Das JSON muss syntaktisch valide sein."
+            "Du bist ein mathematisches Assistenzsystem für Multiple-Choice-Aufgaben.\n\n"
+            "AUFGABE: Analysiere das Bild und wähle die korrekte Antwort.\n\n"
+            "ZWINGENDE AUSGABE - NUR DIESES FORMAT IST ERLAUBT:\n"
+            '{"answer": "X"}\n'
+            "wobei X EXAKT einer dieser Buchstaben sein MUSS: A, B, C, D oder E\n\n"
+            "WICHTIG:\n"
+            "- Deine GESAMTE Antwort besteht NUR aus diesem JSON-Objekt.\n"
+            "- KEINE anderen Zeichen, Wörter oder Erklärungen.\n"
+            "- Bei Unsicherheit: Wähle die wahrscheinlichste Option (A-E).\n"
+            "- Eine Antwort ist PFLICHT - du musst A, B, C, D oder E wählen."
         )
         user_prompt = "Bestimme die korrekte Antwort basierend auf dem Bild. Gib nur das JSON zurück."
 
