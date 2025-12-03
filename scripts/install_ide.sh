@@ -1,52 +1,53 @@
 #!/bin/bash
 # =============================================================================
-# Install-Skript für VLM Benchmark – Idefics3-8B-Llama3
+# Install-Skript für VLM Benchmark (vLLM Variante)
 # Wird einmal pro Node ausgeführt, bevor das Python-Skript startet
 # =============================================================================
 
 set -euo pipefail
 
-# Robuste Job-ID (manche Cluster nutzen SLURM_JOB_ID, andere SLURM_JOBID)
-JOB_ID="${SLURM_JOB_ID:-${SLURM_JOBID:-unknown}}"
-DONEFILE="/tmp/install_idefics3_done_${JOB_ID}"
+# Nur der erste Task pro Node installiert, andere warten
+DONEFILE="/tmp/install_vllm_done_${SLURM_JOBID}"
 
 if [[ "${SLURM_LOCALID:-0}" == "0" ]]; then
     echo "=========================================="
-    echo "Installiere Dependencies für Idefics3 (Task 0)..."
+    echo "📦 Installiere vLLM Dependencies (Task 0)..."
     echo "=========================================="
     
     # Pip upgraden
     python -m pip install --upgrade pip --quiet
     
-    # torchvision upgraden (Container hat 0.16.0, zu PyTorch 2.1.0 passt 0.16.2)
-    python -m pip install --quiet --no-warn-script-location \
-        "torchvision==0.16.2"
+    # WICHTIG: vLLM installiert oft sein eigenes PyTorch.
+    # Wir installieren vLLM zuerst, damit es die Umgebung definiert.
+    # Qwen2.5-VL benötigt eine sehr neue vLLM Version (>= 0.6.3 empfohlen).
     
-    # Zusätzliche Pakete – PyTorch/CUDA aus Container erben
-    # Transformers aus stabilem Release, reicht für Idefics3
-    python -m pip install --quiet --no-warn-script-location \
-        "transformers>=4.45.0" \
-        "accelerate>=0.33.0" \
+    pip install --quiet --no-warn-script-location \
+        "vllm>=0.6.3" \
+        "qwen-vl-utils>=0.0.8" \
         "huggingface_hub>=0.24.0" \
-        "pydantic>=2.0" \
-        "python-dotenv>=1.0" \
         "pandas" \
         "openpyxl>=3.1" \
+        "pydantic>=2.0" \
+        "python-dotenv>=1.0" \
         "tqdm" \
-        "timm" \
         "pillow>=10.0" \
-        "bitsandbytes>=0.43.0" \
-        "safetensors>=0.4.0" \
-        "sentencepiece>=0.1.99"
+        "einops" \
+        "scipy"
+
+    # Optional: Flash Attention explizit prüfen/installieren, falls vLLM meckert.
+    # Meistens bringt vLLM das passend mit oder nutzt das im Container vorhandene.
     
-    echo "Installation abgeschlossen"
+    echo "✅ Installation abgeschlossen"
+    
+    # Versionen loggen zur Sicherheit
+    echo "📊 Installierte Versionen:"
+    python -c "import vllm; print(f'vLLM: {vllm.__version__}')"
+    python -c "import transformers; print(f'Transformers: {transformers.__version__}')"
     
     # Anderen Tasks signalisieren
     touch "${DONEFILE}"
 else
-    echo "Task ${SLURM_LOCALID} wartet auf Installation..."
-    while [[ ! -f "${DONEFILE}" ]]; do
-        sleep 1
-    done
-    echo "Installation fertig, Task ${SLURM_LOCALID} startet"
+    echo "⏳ Task ${SLURM_LOCALID} wartet auf Installation..."
+    while [[ ! -f "${DONEFILE}" ]]; do sleep 1; done
+    echo "✅ Installation fertig, Task ${SLURM_LOCALID} startet"
 fi

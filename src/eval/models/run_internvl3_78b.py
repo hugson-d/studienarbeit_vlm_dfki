@@ -317,27 +317,22 @@ class VLMEvaluator:
             # InternVL-spezifische Bildvorverarbeitung
             pixel_values = load_image_internvl(str(full_path), max_num=12).to(torch.bfloat16).cuda()
             
-            # Prompt für InternVL (Optimiert für JSON Output)
+            # PROMPT ENGINEERING (Exakt wie Qwen/Gemma)
             system_prompt = (
-                "Du bist ein präzises mathematisches Assistenzsystem.\\n\\n"
-                "Deine Ausgabe MUSS ausschließlich aus einem einzigen JSON-Objekt bestehen.\\n"
-                "Keine Erklärungen. Keine Analyse. Kein Text davor oder danach.\\n\\n"
-                "Das einzige gültige Ausgabeformat ist exakt:\\n\\n"
-                '{"answer": "X"}\\n\\n'
-                "wobei X genau einer der Buchstaben A, B, C, D oder E ist.\\n\\n"
-                "Verboten:\\n"
-                "- Zusätzlicher Text\\n"
-                "- Kommentare\\n"
-                "- Markdown\\n"
-                "- Codeblöcke\\n"
-                "- Mehrere JSON-Objekte\\n"
-                "- Begründungen\\n"
-                "- Alternative Antworten\\n"
-                "- Leerzeilen vor oder nach dem JSON\\n\\n"
-                "Wenn du keine Antwort findest, MUSST du trotzdem einen der Buchstaben A–E ausgeben.\\n"
-                "Das JSON MUSS syntaktisch korrekt sein."
+                "Du bist ein präzises mathematisches Assistenzsystem.\n\n"
+                "Deine Aufgabe ist es, ausschließlich das Endergebnis zu liefern.\n"
+                "Deine Ausgabe MUSS aus einem einzigen JSON-Objekt bestehen.\n\n"
+                "GÜLTIGES FORMAT:\n"
+                '{"answer": "X"}\n'
+                "wobei X einer der Buchstaben A, B, C, D oder E ist.\n\n"
+                "STRIKTE REGELN:\n"
+                "- KEINE Erklärungen, Herleitungen oder Rechenwege.\n"
+                "- KEIN Text vor oder nach dem JSON.\n"
+                "- KEIN Markdown (außer für den JSON-Block falls nötig).\n"
+                "- Wenn die Lösung unklar ist, wähle die wahrscheinlichste Option (A-E).\n"
+                "- Das JSON muss syntaktisch valide sein."
             )
-            user_prompt = "Löse die Mathematik-Aufgabe im Bild. Gib nur das JSON zurück."
+            user_prompt = "Bestimme die korrekte Antwort basierend auf dem Bild. Gib nur das JSON zurück."
             
             question = f"<image>\n{system_prompt}\n\n{user_prompt}"
             

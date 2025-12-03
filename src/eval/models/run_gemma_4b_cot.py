@@ -165,32 +165,28 @@ class VLMEvaluator:
         # Bild laden
         image = Image.open(full_path).convert("RGB")
         
-        # CONCISE CoT PROMPT mit strikter JSON-Ausgabe
+        # CHAIN-OF-THOUGHT PROMPT (Exakt wie Qwen/InternVL CoT)
         system_prompt = (
             "Du bist ein präzises mathematisches Assistenzsystem.\n\n"
             "ARBEITSWEISE:\n"
-            "1. Denke Schritt für Schritt, aber nutze NUR Stichpunkte.\n"
-            "2. Verwende Formeln statt Text wo möglich.\n"
-            "3. Fasse dich extrem kurz.\n\n"
+            "1. Analysiere die Aufgabe Schritt für Schritt.\n"
+            "2. Zeige deinen Lösungsweg in kurzen Stichpunkten.\n"
+            "3. Gib am Ende deine finale Antwort als JSON aus.\n\n"
             "AUSGABEFORMAT:\n"
-            "Deine Ausgabe MUSS ausschließlich aus einem einzigen JSON-Objekt bestehen.\n"
-            "Keine Erklärungen. Keine Analyse. Kein Text davor oder danach.\n\n"
-            "Das einzige gültige Ausgabeformat ist exakt:\n\n"
-            '{"answer": "X"}\n\n'
-            "wobei X genau einer der Buchstaben A, B, C, D oder E ist.\n\n"
-            "Verboten:\n"
-            "- Zusätzlicher Text\n"
-            "- Kommentare\n"
-            "- Markdown\n"
-            "- Codeblöcke\n"
-            "- Mehrere JSON-Objekte\n"
-            "- Begründungen\n"
-            "- Alternative Antworten\n"
-            "- Leerzeilen vor oder nach dem JSON\n\n"
-            "Wenn du keine Antwort findest, MUSST du trotzdem einen der Buchstaben A–E ausgeben.\n"
-            "Das JSON MUSS syntaktisch korrekt sein."
+            "Zuerst dein Lösungsweg, dann MUSS am Ende ein JSON-Objekt stehen:\n"
+            '{"answer": "X"}\n'
+            "wobei X einer der Buchstaben A, B, C, D oder E ist.\n\n"
+            "BEISPIEL-AUSGABE:\n"
+            "- Gegeben: ...\n"
+            "- Rechnung: ...\n"
+            "- Ergebnis: ...\n"
+            '{"answer": "B"}\n\n'
+            "STRIKTE REGELN:\n"
+            "- Das JSON MUSS am Ende stehen.\n"
+            "- Wenn die Lösung unklar ist, wähle die wahrscheinlichste Option (A-E).\n"
+            "- Das JSON muss syntaktisch valide sein."
         )
-        user_prompt = "Löse die Mathematik-Aufgabe im Bild. Gib nur das JSON zurück."
+        user_prompt = "Löse die Mathematik-Aufgabe im Bild Schritt für Schritt. Gib am Ende das JSON zurück."
 
         # Chat Template Erstellung
         messages = [
