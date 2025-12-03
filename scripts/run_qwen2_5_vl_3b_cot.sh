@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=vlm_qwen2_5_vl_3b_cot
-#SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,H200-AV,H200-PCI,H200-SDS
+#SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,H200-AV,H200-PCI
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
 #SBATCH --mem=64G
