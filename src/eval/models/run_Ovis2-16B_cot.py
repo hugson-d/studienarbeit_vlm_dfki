@@ -116,11 +116,13 @@ class VLMEvaluator:
         logger.info(f"Lade {MODEL_NAME} ({MODEL_HF_ID})")
 
         # Ovis2 benötigt multimodal_max_length Parameter
+        # attn_implementation="eager" vermeidet flash-attn Dependency
         self.model = AutoModelForCausalLM.from_pretrained(
             MODEL_HF_ID,
             torch_dtype=torch.bfloat16,
             multimodal_max_length=32768,
             trust_remote_code=True,
+            attn_implementation="eager",
         ).cuda().eval()
 
         # Ovis2-spezifische Tokenizer
