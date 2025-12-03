@@ -46,6 +46,12 @@ if [[ "${SLURM_LOCALID:-0}" == "0" ]]; then
         "safetensors>=0.4.0" \
         "einops"
 
+    # Flash Attention 2 - Ovis2 prüft dies im Custom Code (modeling_ovis.py)
+    # und wirft AssertionError wenn nicht installiert
+    echo "📦 Installiere Flash Attention 2 (kann etwas dauern)..."
+    pip install --quiet --no-warn-script-location --no-build-isolation \
+        "flash-attn>=2.6.3"
+
     # Verifiziere Installation
     echo "✅ Transformers Version: $(python -c 'import transformers; print(transformers.__version__)')"
     echo "✅ Torch Version: $(python -c 'import torch; print(torch.__version__)')"
