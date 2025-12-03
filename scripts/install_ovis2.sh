@@ -34,6 +34,7 @@ if [[ "${SLURM_LOCALID:-0}" == "0" ]]; then
         "transformers==4.46.2" \
         "accelerate>=0.33.0" \
         "huggingface_hub>=0.24.0" \
+        "hf_transfer" \
         "pydantic>=2.0" \
         "python-dotenv>=1.0" \
         "pandas" \
