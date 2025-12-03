@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=vlm_ovis2_8b_cot
+#SBATCH --job-name=vlm_ovis2_5_2b_thinking_cot
 #SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,H200-AV,H200-PCI,A100-40GB
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
@@ -52,7 +52,7 @@ export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
 echo "=========================================="
-echo "🚀 VLM Benchmark: Ovis2-8B (Chain-of-Thought)"
+echo "🚀 VLM Benchmark: Ovis2.5-2B (Thinking + CoT)"
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
@@ -63,7 +63,7 @@ srun \
     --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
-    --task-prolog="$PROJECT_ROOT/scripts/install_ovis2.sh" \
-    python "$PROJECT_ROOT/src/eval/models/run_Ovis2-8B_cot.py"
+    --task-prolog="$PROJECT_ROOT/scripts/install_ovis.sh" \
+    python "$PROJECT_ROOT/src/eval/models/run_Ovis2.5-2B_thinking_cot.py"
 
 echo "✅ Job abgeschlossen"
