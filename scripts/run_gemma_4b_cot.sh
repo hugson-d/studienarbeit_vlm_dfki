@@ -2,7 +2,7 @@
 #SBATCH --job-name=vlm_gemma_4b_cot
 #SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,H200-AV,H200-DA,H200-PCI,H200-SDS
 #SBATCH --gpus=1
-#SBATCH --time=48:00:00
+#SBATCH --time=24:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=8

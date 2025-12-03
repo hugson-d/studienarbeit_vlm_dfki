@@ -3,7 +3,8 @@
 #SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,H200-AV,H200-DA,H200-PCI,H200-SDS
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
-#SBATCH --mem=64G
+#SBATCH --mem=80G
+#SBATCH --time=24:00:00
 #SBATCH --cpus-per-task=8
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err
