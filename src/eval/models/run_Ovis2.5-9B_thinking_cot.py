@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 VLM Benchmark für Känguru-Mathematik-Aufgaben
-Modell: AIDC-AI/Ovis2.5-2B mit Thinking-Modus (Non-CoT)
+Modell: AIDC-AI/Ovis2.5-9B mit Thinking-Modus (Chain-of-Thought Prompt)
 """
 
 import os
@@ -28,18 +28,18 @@ from transformers import AutoModelForCausalLM
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="VLM Benchmark für Känguru-Mathematik-Aufgaben (Ovis2.5 mit Thinking)"
+        description="VLM Benchmark für Känguru-Mathematik-Aufgaben (Ovis2.5-9B Thinking + CoT)"
     )
     parser.add_argument(
         "--hf-id",
         type=str,
-        default="AIDC-AI/Ovis2.5-2B",
+        default="AIDC-AI/Ovis2.5-9B",
         help="HF-Model-ID",
     )
     parser.add_argument(
         "--model-name",
         type=str,
-        default="Ovis2.5-2B_thinking",
+        default="Ovis2.5-9B_thinking_cot",
         help="Interner Modellname für Logs/Dateien.",
     )
     return parser.parse_args()
@@ -133,12 +133,12 @@ def free_gpu_memory():
         torch.cuda.empty_cache()
 
 # ============================================================================
-# EVALUATOR (OVIS2.5 MIT THINKING)
+# EVALUATOR (OVIS2.5-9B MIT THINKING + COT)
 # ============================================================================
 
 class VLMEvaluator:
     def __init__(self):
-        logger.info(f"Lade {MODEL_NAME} ({MODEL_HF_ID}) mit Thinking-Modus")
+        logger.info(f"Lade {MODEL_NAME} ({MODEL_HF_ID}) mit Thinking + CoT")
 
         load_kwargs = {
             "trust_remote_code": True,
@@ -169,20 +169,21 @@ class VLMEvaluator:
 
         image = Image.open(full_path).convert("RGB")
 
-        # PROMPT (Non-CoT - keine Erklärung gewünscht, aber Thinking intern)
+        # CHAIN-OF-THOUGHT PROMPT (fordert internes Nachdenken auf)
         system_prompt = (
             "Du bist ein mathematisches Assistenzsystem für Multiple-Choice-Aufgaben.\n\n"
-            "AUFGABE: Analysiere das Bild und wähle die korrekte Antwort.\n\n"
+            "ARBEITSWEISE:\n"
+            "Denke gründlich über die Aufgabe nach und analysiere sie intern Schritt für Schritt.\n\n"
             "ZWINGENDE AUSGABE - NUR DIESES FORMAT IST ERLAUBT:\n"
             '{"answer": "X"}\n'
             "wobei X EXAKT einer dieser Buchstaben sein MUSS: A, B, C, D oder E\n\n"
             "WICHTIG:\n"
-            "- Deine GESAMTE Antwort besteht NUR aus diesem JSON-Objekt.\n"
-            "- KEINE anderen Zeichen, Wörter oder Erklärungen.\n"
+            "- Obwohl du intern nachdenkst, besteht deine GESAMTE sichtbare Antwort NUR aus diesem JSON-Objekt.\n"
+            "- KEINE anderen Zeichen, Wörter oder Erklärungen in der Ausgabe.\n"
             "- Bei Unsicherheit: Wähle die wahrscheinlichste Option (A-E).\n"
             "- Eine Antwort ist PFLICHT - du musst A, B, C, D oder E wählen."
         )
-        user_prompt = "Bestimme die korrekte Antwort basierend auf dem Bild. Gib nur das JSON zurück."
+        user_prompt = "Denke gründlich nach und gib dann NUR das JSON mit deiner Antwort zurück."
 
         messages = [
             {

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 VLM Benchmark für Känguru-Mathematik-Aufgaben
-Modell: AIDC-AI/Ovis2.5-2B mit Thinking-Modus (Non-CoT)
+Modell: AIDC-AI/Ovis2.5-9B mit Thinking-Modus (Non-CoT)
 """
 
 import os
@@ -28,18 +28,18 @@ from transformers import AutoModelForCausalLM
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="VLM Benchmark für Känguru-Mathematik-Aufgaben (Ovis2.5 mit Thinking)"
+        description="VLM Benchmark für Känguru-Mathematik-Aufgaben (Ovis2.5-9B mit Thinking)"
     )
     parser.add_argument(
         "--hf-id",
         type=str,
-        default="AIDC-AI/Ovis2.5-2B",
+        default="AIDC-AI/Ovis2.5-9B",
         help="HF-Model-ID",
     )
     parser.add_argument(
         "--model-name",
         type=str,
-        default="Ovis2.5-2B_thinking",
+        default="Ovis2.5-9B_thinking",
         help="Interner Modellname für Logs/Dateien.",
     )
     return parser.parse_args()
@@ -133,7 +133,7 @@ def free_gpu_memory():
         torch.cuda.empty_cache()
 
 # ============================================================================
-# EVALUATOR (OVIS2.5 MIT THINKING)
+# EVALUATOR (OVIS2.5-9B MIT THINKING)
 # ============================================================================
 
 class VLMEvaluator:

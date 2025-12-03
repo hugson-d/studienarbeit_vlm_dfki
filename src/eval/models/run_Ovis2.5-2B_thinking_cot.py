@@ -20,7 +20,7 @@ from pathlib import Path
 from tqdm import tqdm
 from pydantic import BaseModel, Field
 from huggingface_hub import login
-from transformers import AutoModelForCausalLM, BitsAndBytesConfig
+from transformers import AutoModelForCausalLM
 
 # ============================================================================
 # ARGPARSE / KONFIG
@@ -42,17 +42,11 @@ def parse_args():
         default="Ovis2.5-2B_thinking_cot",
         help="Interner Modellname für Logs/Dateien.",
     )
-    parser.add_argument(
-        "--quantize",
-        action="store_true",
-        help="4-bit Quantisierung via BitsAndBytes aktivieren.",
-    )
     return parser.parse_args()
 
 args = parse_args()
 MODEL_HF_ID = args.hf_id
 MODEL_NAME = args.model_name
-USE_QUANTIZATION = args.quantize
 
 # ============================================================================
 # PFAD & LOGGING
@@ -151,15 +145,6 @@ class VLMEvaluator:
             "torch_dtype": torch.bfloat16,
             "low_cpu_mem_usage": True,
         }
-
-        if USE_QUANTIZATION:
-            bnb_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_compute_dtype=torch.bfloat16,
-                bnb_4bit_use_double_quant=True,
-            )
-            load_kwargs["quantization_config"] = bnb_config
 
         device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = AutoModelForCausalLM.from_pretrained(
