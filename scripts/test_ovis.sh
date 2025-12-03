@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name=vlm_gemma_4b_cot
-#SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,H200-AV,H200-PCI,H200-SDS
+#SBATCH --job-name=vlm_ovis2_5_2b
+#SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,H200-AV,H200-PCI
 #SBATCH --gpus=1
-#SBATCH --time=24:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=8
+#SBATCH --time=24:00:00
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err
 
@@ -29,6 +29,9 @@ export PIP_CACHE_DIR="/netscratch/$USER/.cache/pip"
 export HF_HOME="/netscratch/$USER/.cache/huggingface"
 mkdir -p "$PIP_CACHE_DIR" "$HF_HOME"
 
+# Optional: schnellerer Download
+export HF_HUB_ENABLE_HF_TRANSFER=1
+
 # HF Token laden
 for SECRET_FILE in "$PROJECT_ROOT/.env" "$HOME/.hf_token"; do
     if [[ -f "$SECRET_FILE" ]]; then
@@ -49,7 +52,7 @@ export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
 echo "=========================================="
-echo "🚀 VLM Benchmark: Gemma-3-4b-it-CoT"
+echo "🚀 VLM Benchmark: Ovis2.5-2B"
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
@@ -61,6 +64,6 @@ srun \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
     --task-prolog="$PROJECT_ROOT/scripts/install.sh" \
-    python "$PROJECT_ROOT/src/eval/models/run_gemma_4b_cot.py"
+    python "$PROJECT_ROOT/src/eval/models/test_ovis.py"
 
 echo "✅ Job abgeschlossen"
