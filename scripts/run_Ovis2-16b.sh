@@ -1,9 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=vlm_ovis2_16b
-#SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,H200-AV,H200-PCI
+#SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,A100-40GB
 #SBATCH --gpus=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
 #SBATCH --time=24:00:00
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err
