@@ -33,11 +33,7 @@ HF_TOKEN = os.getenv("HF_TOKEN")
 if HF_TOKEN:
     login(token=HF_TOKEN)
 
-from transformers import (
-    AutoModelForCausalLM,  # Ovis nutzt CausalLM
-    BitsAndBytesConfig,
-    TextStreamer
-)
+from transformers import AutoModelForCausalLM
 
 # ============================================================================
 # KONFIGURATION - OVIS COT
@@ -45,7 +41,6 @@ from transformers import (
 
 MODEL_NAME = "Ovis2-4B-cot"
 MODEL_HF_ID = "AIDC-AI/Ovis2-4B"
-USE_QUANTIZATION = False
 
 SEED = 42
 LOG_FILE = OUTPUT_DIR / f"{MODEL_NAME}_results.jsonl"
@@ -120,31 +115,17 @@ class VLMEvaluator:
     def __init__(self):
         logger.info(f"Lade {MODEL_NAME} ({MODEL_HF_ID})")
 
-        load_kwargs = {
-            "trust_remote_code": True,
-            "torch_dtype": torch.bfloat16,
-            "low_cpu_mem_usage": True,
-        }
-
-        if USE_QUANTIZATION:
-            bnb_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_compute_dtype=torch.bfloat16,
-                bnb_4bit_use_double_quant=True,
-            )
-            load_kwargs["quantization_config"] = bnb_config
-
-        # Einfach auf GPU laden
-        device = "cuda" if torch.cuda.is_available() else "cpu"
+        # Ovis2 benötigt multimodal_max_length Parameter
         self.model = AutoModelForCausalLM.from_pretrained(
             MODEL_HF_ID,
-            **load_kwargs,
-        ).to(device).eval()
+            torch_dtype=torch.bfloat16,
+            multimodal_max_length=32768,
+            trust_remote_code=True,
+        ).cuda().eval()
 
-        # Ovis-spezifischer Text-Tokenizer
-        # Offiziell: model.text_tokenizer
-        self.tokenizer = self.model.text_tokenizer
+        # Ovis2-spezifische Tokenizer
+        self.text_tokenizer = self.model.get_text_tokenizer()
+        self.visual_tokenizer = self.model.get_visual_tokenizer()
 
         logger.info(f"{MODEL_NAME} bereit auf {self.model.device}")
 
@@ -173,49 +154,42 @@ class VLMEvaluator:
         )
         user_prompt = "Denke gründlich nach und gib dann NUR das JSON mit deiner Antwort zurück."
 
-        # Ovis Message Format
-        messages = [
-            {
-                "role": "user",
-                "content": [
-                    {"type": "image", "image": image},
-                    {"type": "text", "text": f"{system_prompt}\n\n{user_prompt}"},
-                ],
-            }
-        ]
+        # Ovis2 API: Query mit <image> Tag
+        query = f"<image>\n{system_prompt}\n\n{user_prompt}"
 
-        # Ovis: preprocess_inputs gibt direkt Tensoren zurück
-        # Typisch: input_ids, pixel_values, grid_thws
-        input_ids, pixel_values, grid_thws = self.model.preprocess_inputs(
-            messages=messages,
-            add_generation_prompt=True,
+        # Ovis2 preprocess_inputs API
+        prompt, input_ids, pixel_values = self.model.preprocess_inputs(
+            query, [image], max_partition=9
         )
+        attention_mask = torch.ne(input_ids, self.text_tokenizer.pad_token_id)
 
-        device = self.model.device
-        input_ids = input_ids.to(device)
-        if pixel_values is not None:
-            pixel_values = pixel_values.to(device, dtype=self.model.dtype)
-        if grid_thws is not None:
-            grid_thws = grid_thws.to(device)
+        input_ids = input_ids.unsqueeze(0).to(self.model.device)
+        attention_mask = attention_mask.unsqueeze(0).to(self.model.device)
+        pixel_values = [pixel_values.to(dtype=self.visual_tokenizer.dtype, device=self.model.device)]
 
         gen_kwargs = {
-            "inputs": input_ids,
             "pixel_values": pixel_values,
-            "grid_thws": grid_thws,
+            "attention_mask": attention_mask,
             "max_new_tokens": 512,
             "do_sample": False,
-            "temperature": 0.0,
-            "eos_token_id": self.tokenizer.eos_token_id,
-            "pad_token_id": self.tokenizer.pad_token_id,
+            "top_p": None,
+            "top_k": None,
+            "temperature": None,
+            "repetition_penalty": None,
+            "eos_token_id": self.model.generation_config.eos_token_id,
+            "pad_token_id": self.text_tokenizer.pad_token_id,
+            "use_cache": True,
         }
 
         start_time = time.time()
         with torch.inference_mode():
-            outputs = self.model.generate(**gen_kwargs)
+            output_ids = self.model.generate(input_ids, **gen_kwargs)[0]
         duration = time.time() - start_time
 
-        # Bei Ovis steckt alles in outputs[0], kein explizites Abschneiden nötig
-        output_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
+        # Nur neue Tokens dekodieren
+        output_text = self.text_tokenizer.decode(
+            output_ids[input_ids.shape[1]:], skip_special_tokens=True
+        ).strip()
 
         result = parse_response(output_text)
 
@@ -233,7 +207,8 @@ class VLMEvaluator:
         except Exception:
             pass
         try:
-            del self.tokenizer
+            del self.text_tokenizer
+            del self.visual_tokenizer
         except Exception:
             pass
         free_gpu_memory()
