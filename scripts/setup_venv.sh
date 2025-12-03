@@ -3,7 +3,7 @@
 #SBATCH --partition=H100
 #SBATCH --gres=gpu:1
 #SBATCH --mem=32G
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=2
 #SBATCH --time=02:00:00
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err
