@@ -50,7 +50,7 @@ def parse_args():
     parser.add_argument(
         "--model-name",
         type=str,
-        default="Ovis2.5-2B",
+        default="Ovis2.5-2B_cot",
         help="Interner Modellname für Logs/Dateien (frei wählbar).",
     )
     parser.add_argument(
@@ -241,15 +241,11 @@ class VLMEvaluator:
             "inputs": input_ids,
             "pixel_values": pixel_values,
             "grid_thws": grid_thws,
-            "max_new_tokens": 3072,  # Muss > thinking_budget + 25 sein
+            "max_new_tokens": 512,
             "do_sample": False,
             "temperature": 0.0,
             "eos_token_id": self.tokenizer.eos_token_id,
             "pad_token_id": self.tokenizer.pad_token_id,
-            # Ovis2.5 Thinking Mode für CoT
-            "enable_thinking": True,
-            "enable_thinking_budget": True,
-            "thinking_budget": 2048,
         }
 
         start_time = time.time()
