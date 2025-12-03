@@ -43,7 +43,7 @@ from transformers import (
 # KONFIGURATION - OVIS
 # ============================================================================
 
-MODEL_NAME = "Ovis2.5-2B-CoT"
+MODEL_NAME = "Ovis2.5-2B_cot"
 MODEL_HF_ID = "AIDC-AI/Ovis2.5-2B"
 # Ovis2.5 ist ein ~2B Modell, Quantisierung ist meist nicht nötig, aber möglich
 USE_QUANTIZATION = False
@@ -159,15 +159,26 @@ class VLMEvaluator:
 
         # PROMPT
         system_prompt = (
-            "Du bist ein präzises mathematisches Assistenzsystem. "
-            "Analysiere die Aufgabe im Bild Schritt für Schritt. "
-            "Zeige deinen Lösungsweg und gib am Ende NUR das JSON-Objekt aus.\n\n"
-            "Beispiel Format:\n"
-            "- Schritt 1: ...\n"
-            "- Schritt 2: ...\n"
-            '{"answer": "A"}'
+            "Du bist ein präzises mathematisches Assistenzsystem.\n\n"
+            "ARBEITSWEISE:\n"
+            "1. Analysiere die Aufgabe Schritt für Schritt.\n"
+            "2. Zeige deinen Lösungsweg in kurzen Stichpunkten.\n"
+            "3. Gib am Ende deine finale Antwort als JSON aus.\n\n"
+            "AUSGABEFORMAT:\n"
+            "Zuerst dein Lösungsweg, dann MUSS am Ende ein JSON-Objekt stehen:\n"
+            '{"answer": "X"}\n'
+            "wobei X einer der Buchstaben A, B, C, D oder E ist.\n\n"
+            "BEISPIEL-AUSGABE:\n"
+            "- Gegeben: ...\n"
+            "- Rechnung: ...\n"
+            "- Ergebnis: ...\n"
+            '{"answer": "B"}\n\n'
+            "STRIKTE REGELN:\n"
+            "- Das JSON MUSS am Ende stehen.\n"
+            "- Wenn die Lösung unklar ist, wähle die wahrscheinlichste Option (A-E).\n"
+            "- Das JSON muss syntaktisch valide sein."
         )
-        user_prompt = "Löse die Mathematik-Aufgabe. Gib am Ende das JSON zurück."
+        user_prompt = "Löse die Mathematik-Aufgabe im Bild Schritt für Schritt. Gib am Ende das JSON zurück."
 
         # Ovis Message Format
         messages = [

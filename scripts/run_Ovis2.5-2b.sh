@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=vlm_ovis2_5_2b
-#SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,H200-AV,H200-PCI
+#SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,H200-AV,H200-PCI,A100-40GB
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
 #SBATCH --mem=64G
@@ -63,7 +63,7 @@ srun \
     --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
-    --task-prolog="$PROJECT_ROOT/scripts/install_ide.sh" \
-    python "$PROJECT_ROOT/src/eval/models/test_ovis.py"
+    --task-prolog="$PROJECT_ROOT/scripts/install_ovis.sh" \
+    python "$PROJECT_ROOT/src/eval/models/run_Ovis2.5-2B.py"
 
 echo "✅ Job abgeschlossen"
