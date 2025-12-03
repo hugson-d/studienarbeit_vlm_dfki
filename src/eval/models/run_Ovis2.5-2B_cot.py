@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 """
 VLM Benchmark für Känguru-Mathematik-Aufgaben
-Modell: AIDC-AI/Ovis2.5-2B (Multimodal/VLM)
+Modelle: Ovis2 / Ovis2.5 (Multimodal/VLM)
+Unterstützte HF-IDs u.a.:
+- AIDC-AI/Ovis2-4B
+- AIDC-AI/Ovis2-8B
+- AIDC-AI/Ovis2-16B
+- AIDC-AI/Ovis2-34B
+- AIDC-AI/Ovis2.5-2B
 """
 
 import os
@@ -12,14 +18,57 @@ import re
 import time
 import random
 import gc
+import argparse
 import pandas as pd
 from PIL import Image
-from typing import Dict, List, Literal, Union
+from typing import Dict, Literal
 from pathlib import Path
 from tqdm import tqdm
-from pydantic import BaseModel, ValidationError, Field
+from pydantic import BaseModel, Field
+from huggingface_hub import login
+from transformers import AutoModelForCausalLM, BitsAndBytesConfig
 
-# Projekt-Root
+# ============================================================================
+# ARGPARSE / KONFIG
+# ============================================================================
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="VLM Benchmark für Känguru-Mathematik-Aufgaben (Ovis2 / Ovis2.5)"
+    )
+    parser.add_argument(
+        "--hf-id",
+        type=str,
+        default="AIDC-AI/Ovis2.5-2B",
+        help=(
+            "HF-Model-ID, z.B. "
+            "AIDC-AI/Ovis2-4B, AIDC-AI/Ovis2-8B, "
+            "AIDC-AI/Ovis2-16B, AIDC-AI/Ovis2-34B, "
+            "AIDC-AI/Ovis2.5-2B"
+        ),
+    )
+    parser.add_argument(
+        "--model-name",
+        type=str,
+        default="Ovis2.5-2B",
+        help="Interner Modellname für Logs/Dateien (frei wählbar).",
+    )
+    parser.add_argument(
+        "--quantize",
+        action="store_true",
+        help="4-bit Quantisierung via BitsAndBytes aktivieren (empfohlen für 16B/34B).",
+    )
+    return parser.parse_args()
+
+args = parse_args()
+MODEL_HF_ID = args.hf_id
+MODEL_NAME = args.model_name
+USE_QUANTIZATION = args.quantize
+
+# ============================================================================
+# PFAD & LOGGING
+# ============================================================================
+
 _script_path = Path(__file__).resolve()
 PROJECT_ROOT = Path(os.environ.get("VLM_PROJECT_ROOT", _script_path.parent.parent.parent))
 DATASET_PATH = PROJECT_ROOT / "dataset_final.json"
@@ -27,26 +76,10 @@ DATA_DIR = PROJECT_ROOT / "data"
 OUTPUT_DIR = PROJECT_ROOT / "evaluation_results"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# HuggingFace Login
-from huggingface_hub import login
-HF_TOKEN = os.getenv("HF_TOKEN")
-if HF_TOKEN:
-    login(token=HF_TOKEN)
-
-from transformers import AutoModelForCausalLM
-
-# ============================================================================
-# KONFIGURATION - OVIS
-# ============================================================================
-
-MODEL_NAME = "Ovis2.5-2B_cot"
-MODEL_HF_ID = "AIDC-AI/Ovis2.5-2B"
-
 SEED = 42
 LOG_FILE = OUTPUT_DIR / f"{MODEL_NAME}_results.jsonl"
 EXCEL_FILE = OUTPUT_DIR / f"{MODEL_NAME}_summary.xlsx"
 
-# Logging Setup
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -56,6 +89,11 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(MODEL_NAME)
+
+# HuggingFace Login
+HF_TOKEN = os.getenv("HF_TOKEN")
+if HF_TOKEN:
+    login(token=HF_TOKEN)
 
 # ============================================================================
 # UTILS & PARSING
@@ -92,11 +130,15 @@ def parse_response(output_text: str) -> Dict:
     for p in patterns:
         m = re.search(p, clean_text, re.IGNORECASE)
         if m:
-            return {"prediction": m.group(1).upper(), "format_valid": False, "error": "Regex Extraction"}
+            return {
+                "prediction": m.group(1).upper(),
+                "format_valid": False,
+                "error": "Regex Extraction",
+            }
 
     return {"prediction": None, "format_valid": False, "error": "No valid answer"}
 
-def set_seed(seed):
+def set_seed(seed: int):
     random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
@@ -108,24 +150,43 @@ def free_gpu_memory():
         torch.cuda.empty_cache()
 
 # ============================================================================
-# EVALUATOR (OVIS)
+# EVALUATOR (OVIS2 / OVIS2.5)
 # ============================================================================
 
 class VLMEvaluator:
     def __init__(self):
         logger.info(f"Lade {MODEL_NAME} ({MODEL_HF_ID})")
 
-        # Ovis2 benötigt multimodal_max_length Parameter
+        load_kwargs = {
+            "trust_remote_code": True,
+            "torch_dtype": torch.bfloat16,
+            "low_cpu_mem_usage": True,
+        }
+
+        if USE_QUANTIZATION:
+            bnb_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.bfloat16,
+                bnb_4bit_use_double_quant=True,
+            )
+            load_kwargs["quantization_config"] = bnb_config
+
+        device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = AutoModelForCausalLM.from_pretrained(
             MODEL_HF_ID,
-            torch_dtype=torch.bfloat16,
-            multimodal_max_length=32768,
-            trust_remote_code=True,
-        ).cuda().eval()
+            **load_kwargs,
+        ).to(device).eval()
 
-        # Ovis2-spezifische Tokenizer
-        self.text_tokenizer = self.model.get_text_tokenizer()
-        self.visual_tokenizer = self.model.get_visual_tokenizer()
+        # Ovis text tokenizer
+        # Ovis2.5 nutzt teilweise get_text_tokenizer(); Ovis2-Modelle stellen oft text_tokenizer bereit.
+        # Wir versuchen erst text_tokenizer, dann Fallback auf get_text_tokenizer.
+        if hasattr(self.model, "text_tokenizer"):
+            self.tokenizer = self.model.text_tokenizer
+        elif hasattr(self.model, "get_text_tokenizer"):
+            self.tokenizer = self.model.get_text_tokenizer()
+        else:
+            raise AttributeError("Modell bietet keinen text_tokenizer / get_text_tokenizer an.")
 
         logger.info(f"{MODEL_NAME} bereit auf {self.model.device}")
 
@@ -134,10 +195,9 @@ class VLMEvaluator:
         if not full_path.exists():
             return {"error": "Image not found", "prediction": None}
 
-        # Bild laden
         image = Image.open(full_path).convert("RGB")
 
-        # CHAIN-OF-THOUGHT PROMPT
+        # CHAIN-OF-THOUGHT PROMPT (Exakt wie Gemma/InternVL CoT)
         system_prompt = (
             "Du bist ein mathematisches Assistenzsystem für Multiple-Choice-Aufgaben.\n\n"
             "ARBEITSWEISE:\n"
@@ -154,43 +214,46 @@ class VLMEvaluator:
         )
         user_prompt = "Denke gründlich nach und gib dann NUR das JSON mit deiner Antwort zurück."
 
-        # Ovis2 API: Query mit <image> Tag
-        query = f"<image>\n{system_prompt}\n\n{user_prompt}"
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "image", "image": image},
+                    {"type": "text", "text": f"{system_prompt}\n\n{user_prompt}"},
+                ],
+            }
+        ]
 
-        # Ovis2 preprocess_inputs API
-        prompt, input_ids, pixel_values = self.model.preprocess_inputs(
-            query, [image], max_partition=9
+        # Ovis2 / Ovis2.5 preprocess_inputs
+        input_ids, pixel_values, grid_thws = self.model.preprocess_inputs(
+            messages=messages,
+            add_generation_prompt=True,
         )
-        attention_mask = torch.ne(input_ids, self.text_tokenizer.pad_token_id)
 
-        input_ids = input_ids.unsqueeze(0).to(self.model.device)
-        attention_mask = attention_mask.unsqueeze(0).to(self.model.device)
-        pixel_values = [pixel_values.to(dtype=self.visual_tokenizer.dtype, device=self.model.device)]
+        device = self.model.device
+        input_ids = input_ids.to(device)
+        if pixel_values is not None:
+            pixel_values = pixel_values.to(device, dtype=self.model.dtype)
+        if grid_thws is not None:
+            grid_thws = grid_thws.to(device)
 
         gen_kwargs = {
+            "inputs": input_ids,
             "pixel_values": pixel_values,
-            "attention_mask": attention_mask,
+            "grid_thws": grid_thws,
             "max_new_tokens": 512,
             "do_sample": False,
-            "top_p": None,
-            "top_k": None,
-            "temperature": None,
-            "repetition_penalty": None,
-            "eos_token_id": self.model.generation_config.eos_token_id,
-            "pad_token_id": self.text_tokenizer.pad_token_id,
-            "use_cache": True,
+            "temperature": 0.0,
+            "eos_token_id": self.tokenizer.eos_token_id,
+            "pad_token_id": self.tokenizer.pad_token_id,
         }
 
         start_time = time.time()
         with torch.inference_mode():
-            output_ids = self.model.generate(input_ids, **gen_kwargs)[0]
+            outputs = self.model.generate(**gen_kwargs)
         duration = time.time() - start_time
 
-        # Nur neue Tokens dekodieren
-        output_text = self.text_tokenizer.decode(
-            output_ids[input_ids.shape[1]:], skip_special_tokens=True
-        ).strip()
-
+        output_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
         result = parse_response(output_text)
 
         return {
@@ -207,8 +270,7 @@ class VLMEvaluator:
         except Exception:
             pass
         try:
-            del self.text_tokenizer
-            del self.visual_tokenizer
+            del self.tokenizer
         except Exception:
             pass
         free_gpu_memory()
@@ -227,7 +289,6 @@ def run_benchmark():
     with open(DATASET_PATH) as f:
         dataset = json.load(f)
 
-    # Resume-Logik
     processed_ids = set()
     if LOG_FILE.exists():
         with open(LOG_FILE, "r") as f:
