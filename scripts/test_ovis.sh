@@ -63,7 +63,7 @@ srun \
     --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
-    --task-prolog="$PROJECT_ROOT/scripts/install.sh" \
+    --task-prolog="$PROJECT_ROOT/scripts/install_ide.sh" \
     python "$PROJECT_ROOT/src/eval/models/test_ovis.py"
 
 echo "✅ Job abgeschlossen"
