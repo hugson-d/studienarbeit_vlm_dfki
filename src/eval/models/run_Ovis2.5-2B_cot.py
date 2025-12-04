@@ -1,13 +1,6 @@
 #!/usr/bin/env python3
 """
 VLM Benchmark für Känguru-Mathematik-Aufgaben
-Modelle: Ovis2 / Ovis2.5 (Multimodal/VLM)
-Unterstützte HF-IDs u.a.:
-- AIDC-AI/Ovis2-4B
-- AIDC-AI/Ovis2-8B
-- AIDC-AI/Ovis2-16B
-- AIDC-AI/Ovis2-34B
-- AIDC-AI/Ovis2.5-2B
 """
 
 import os
@@ -39,13 +32,7 @@ def parse_args():
     parser.add_argument(
         "--hf-id",
         type=str,
-        default="AIDC-AI/Ovis2.5-2B",
-        help=(
-            "HF-Model-ID, z.B. "
-            "AIDC-AI/Ovis2-4B, AIDC-AI/Ovis2-8B, "
-            "AIDC-AI/Ovis2-16B, AIDC-AI/Ovis2-34B, "
-            "AIDC-AI/Ovis2.5-2B"
-        ),
+        default="AIDC-AI/Ovis2.5-2B"
     )
     parser.add_argument(
         "--model-name",
