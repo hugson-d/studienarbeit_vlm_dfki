@@ -24,7 +24,7 @@ from pydantic import BaseModel, ValidationError, Field
 # SETUP & KONFIGURATION
 # ============================================================================
 
-MODEL_NAME = "Qwen2.5-VL-72B-Batch1-Concise"
+MODEL_NAME = "Qwen2.5-VL-72B-CoT"
 MODEL_HF_ID = "Qwen/Qwen2.5-VL-72B-Instruct"
 BATCH_SIZE = 1  # Parallelisierung
 USE_QUANTIZATION = True # Nur für 72B aktivieren
