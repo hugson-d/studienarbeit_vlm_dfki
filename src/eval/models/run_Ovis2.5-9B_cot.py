@@ -21,6 +21,8 @@ from tqdm import tqdm
 from pydantic import BaseModel, Field
 from huggingface_hub import login
 from transformers import AutoModelForCausalLM
+import transformers
+print(f"DEBUG: transformers version = {transformers.__version__}")
 
 # ============================================================================
 # ARGPARSE / KONFIG
