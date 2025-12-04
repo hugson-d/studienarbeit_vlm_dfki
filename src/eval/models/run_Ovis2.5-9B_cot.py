@@ -198,10 +198,11 @@ class VLMEvaluator:
             }
         ]
 
-        # Ovis2.5 preprocess_inputs
+        # Ovis2.5 preprocess_inputs (ohne Thinking-Modus)
         input_ids, pixel_values, grid_thws = self.model.preprocess_inputs(
             messages=messages,
             add_generation_prompt=True,
+            enable_thinking=False,
         )
 
         device = self.model.device
