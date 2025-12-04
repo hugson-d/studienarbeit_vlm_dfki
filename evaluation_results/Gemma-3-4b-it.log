@@ -1,0 +1,23 @@
+2025-12-03 14:26:52,781 - INFO - 🏗️ Lade Gemma-3-4b-it (4B)
+2025-12-03 14:26:52,799 - INFO -    Quantisierung (4-bit): False
+2025-12-03 14:26:53,121 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/processor_config.json "HTTP/1.1 200 OK"
+2025-12-03 14:26:53,249 - INFO - HTTP Request: GET https://huggingface.co/api/models/google/gemma-3-4b-it/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2025-12-03 14:26:53,373 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/processor_config.json "HTTP/1.1 200 OK"
+2025-12-03 14:26:53,503 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/chat_template.json "HTTP/1.1 200 OK"
+2025-12-03 14:26:53,635 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/chat_template.jinja "HTTP/1.1 404 Not Found"
+2025-12-03 14:26:53,762 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/audio_tokenizer_config.json "HTTP/1.1 404 Not Found"
+2025-12-03 14:26:53,896 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/processor_config.json "HTTP/1.1 200 OK"
+2025-12-03 14:26:54,025 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/preprocessor_config.json "HTTP/1.1 200 OK"
+2025-12-03 14:26:54,160 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/tokenizer_config.json "HTTP/1.1 200 OK"
+2025-12-03 14:26:54,324 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/tokenizer.json "HTTP/1.1 302 Found"
+2025-12-03 14:26:54,465 - INFO - HTTP Request: GET https://huggingface.co/api/models/google/gemma-3-4b-it/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2025-12-03 14:26:54,615 - INFO - HTTP Request: GET https://huggingface.co/api/models/google/gemma-3-4b-it/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2025-12-03 14:26:56,707 - INFO - HTTP Request: GET https://huggingface.co/api/models/google/gemma-3-4b-it/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2025-12-03 14:26:56,836 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/processor_config.json "HTTP/1.1 200 OK"
+2025-12-03 14:26:56,970 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/chat_template.json "HTTP/1.1 200 OK"
+2025-12-03 14:26:57,098 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/chat_template.jinja "HTTP/1.1 404 Not Found"
+2025-12-03 14:26:57,422 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/audio_tokenizer_config.json "HTTP/1.1 404 Not Found"
+2025-12-03 14:26:58,658 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/config.json "HTTP/1.1 200 OK"
+2025-12-03 14:27:00,853 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/generation_config.json "HTTP/1.1 200 OK"
+2025-12-03 14:27:01,009 - INFO - HTTP Request: HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/custom_generate/generate.py "HTTP/1.1 404 Not Found"
+2025-12-03 14:27:01,029 - INFO - ✅ Gemma-3-4b-it bereit auf cuda:0
