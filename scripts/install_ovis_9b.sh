@@ -1,54 +1,59 @@
 #!/bin/bash
 # =============================================================================
-# Install-Skript für Ovis2.5-9B Benchmark (Task-Prolog)
-# Wird einmal pro Node ausgeführt, bevor das Python-Skript startet
+# Install-Skript für Ovis2.5-9B Benchmark
+# Wird vor dem Python-Skript ausgeführt (via source)
 # =============================================================================
 
-set -euo pipefail
+set -e  # Bei Fehler abbrechen
 
-DONEFILE="/tmp/install_ovis_9b_done_${SLURM_JOBID}"
+echo "=========================================="
+echo "Installiere Dependencies für Ovis2.5-9B..."
+echo "=========================================="
 
-if [[ "${SLURM_LOCALID:-0}" == "0" ]]; then
-    echo "=========================================="
-    echo "Installiere Dependencies für Ovis2.5-9B..."
-    echo "=========================================="
+# Zeige aktuelle transformers Version VOR Installation
+echo "VORHER - transformers Version:"
+python -c "import transformers; print(transformers.__version__)" || echo "nicht installiert"
 
-    python -m pip install --upgrade pip --quiet
+python -m pip install --upgrade pip --quiet
 
-    # WICHTIG: NumPy auf 1.x pinnen BEVOR andere Packages installiert werden
-    # NumPy 2.x ist inkompatibel mit dem Container (pandas, scipy, sklearn, pyarrow)
-    pip install --quiet --no-warn-script-location \
-        "numpy<2.0"
+# WICHTIG: NumPy auf 1.x pinnen BEVOR andere Packages installiert werden
+# NumPy 2.x ist inkompatibel mit dem Container (pandas, scipy, sklearn, pyarrow)
+pip install --quiet --no-warn-script-location \
+    "numpy<2.0"
 
-    # torchvision passend zu Torch im Container
-    pip install --quiet --no-warn-script-location \
-        "torchvision==0.16.2"
+# torchvision passend zu Torch im Container
+pip install --quiet --no-warn-script-location \
+    "torchvision==0.16.2"
 
-    # Alte, evtl. inkompatible Versionen entfernen
-    pip uninstall -y transformers qwen-vl-utils || true
+# WICHTIG: Container transformers komplett entfernen und neu installieren
+pip uninstall -y transformers || true
 
-    # Versionen, mit denen Ovis entwickelt/getestet wurde
-    pip install --quiet --no-warn-script-location \
-        "transformers==4.51.3" \
-        "accelerate>=0.33.0" \
-        "huggingface_hub>=0.24.0" \
-        "pydantic>=2.0" \
-        "python-dotenv>=1.0" \
-        "pandas" \
-        "openpyxl>=3.1" \
-        "tqdm" \
-        "timm" \
-        "pillow>=10.0" \
-        "safetensors>=0.4.0"
+# Alte qwen-vl-utils entfernen
+pip uninstall -y qwen-vl-utils || true
 
-    # Verifiziere NumPy Version
-    echo "NumPy Version: $(python -c 'import numpy; print(numpy.__version__)')"
-    echo "Transformers Version: $(python -c 'import transformers; print(transformers.__version__)')"
+# Versionen, mit denen Ovis entwickelt/getestet wurde - mit --force-reinstall
+pip install --quiet --no-warn-script-location --force-reinstall \
+    "transformers==4.51.3"
 
-    echo "Installation für Ovis2.5-9B abgeschlossen"
-    touch "${DONEFILE}"
-else
-    echo "Task ${SLURM_LOCALID} wartet auf Installation..."
-    while [[ ! -f "${DONEFILE}" ]]; do sleep 1; done
-    echo "Installation fertig, Task ${SLURM_LOCALID} startet"
-fi
+# Restliche Dependencies
+pip install --quiet --no-warn-script-location \
+    "accelerate>=0.33.0" \
+    "huggingface_hub>=0.24.0" \
+    "pydantic>=2.0" \
+    "python-dotenv>=1.0" \
+    "pandas" \
+    "openpyxl>=3.1" \
+    "tqdm" \
+    "timm" \
+    "pillow>=10.0" \
+    "safetensors>=0.4.0"
+
+# Verifiziere Versionen NACH Installation
+echo "=========================================="
+echo "NACHHER - Installierte Versionen:"
+python -c "import transformers; print(f'transformers: {transformers.__version__}')"
+python -c "import numpy; print(f'numpy: {numpy.__version__}')"
+python -c "import torch; print(f'torch: {torch.__version__}')"
+echo "=========================================="
+
+echo "Installation für Ovis2.5-9B abgeschlossen"

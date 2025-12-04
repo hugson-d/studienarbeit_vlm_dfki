@@ -20,6 +20,8 @@ from pathlib import Path
 from tqdm import tqdm
 from pydantic import BaseModel, Field
 from huggingface_hub import login
+import transformers
+print(f"DEBUG: transformers version = {transformers.__version__}")
 from transformers import AutoModelForCausalLM
 
 # ============================================================================
