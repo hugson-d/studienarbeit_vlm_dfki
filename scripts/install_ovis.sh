@@ -22,11 +22,8 @@ if [[ "${SLURM_LOCALID:-0}" == "0" ]]; then
     # Alte, evtl. inkompatible Versionen entfernen
     pip uninstall -y transformers qwen-vl-utils || true
 
-    # Cache für Ovis2.5-9B löschen falls beschädigt (optional)
-    # rm -rf "$HF_HOME/hub/models--AIDC-AI--Ovis2.5-9B" || true
-
     # Versionen, mit denen Ovis entwickelt/getestet wurde
-    pip install --quiet --no-warn-script-location --force-reinstall \
+    pip install --quiet --no-warn-script-location \
         "transformers==4.51.3" \
         "accelerate>=0.33.0" \
         "huggingface_hub>=0.24.0" \
