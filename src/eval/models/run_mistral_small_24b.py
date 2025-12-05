@@ -18,7 +18,6 @@ from typing import Dict, List, Literal
 from pathlib import Path
 from tqdm import tqdm
 from pydantic import BaseModel, ValidationError, Field
-from datetime import datetime, timedelta
 
 # Projekt-Root
 _script_path = Path(__file__).resolve()
@@ -29,7 +28,7 @@ OUTPUT_DIR = PROJECT_ROOT / "evaluation_results"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # HuggingFace Login
-from huggingface_hub import login, hf_hub_download
+from huggingface_hub import login
 HF_TOKEN = os.getenv("HF_TOKEN")
 if HF_TOKEN:
     login(token=HF_TOKEN)
@@ -130,24 +129,7 @@ class VLMEvaluator:
         )
         self.model.eval()
         
-        # System Prompt (optional - kann auch ohne verwendet werden)
-        self.system_prompt = self._load_system_prompt()
-        
         logger.info(f"{MODEL_NAME} bereit")
-
-    def _load_system_prompt(self) -> str:
-        """Lädt den System Prompt von HuggingFace Hub"""
-        try:
-            file_path = hf_hub_download(repo_id=MODEL_HF_ID, filename="SYSTEM_PROMPT.txt")
-            with open(file_path, "r") as file:
-                system_prompt = file.read()
-            today = datetime.today().strftime("%Y-%m-%d")
-            yesterday = (datetime.today() - timedelta(days=1)).strftime("%Y-%m-%d")
-            model_name = MODEL_HF_ID.split("/")[-1]
-            return system_prompt.format(name=model_name, today=today, yesterday=yesterday)
-        except Exception as e:
-            logger.warning(f"System Prompt nicht gefunden, verwende Standard: {e}")
-            return ""
 
     def generate(self, image_path: str) -> Dict:
         full_path = DATA_DIR / image_path
@@ -166,8 +148,8 @@ class VLMEvaluator:
         img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
         image_url = f"data:image/png;base64,{img_base64}"
 
-        # PROMPT
-        user_prompt = (
+        # PROMPT (wie bei anderen Modellen)
+        system_prompt = (
             "Du bist ein mathematisches Assistenzsystem für Multiple-Choice-Aufgaben.\n\n"
             "AUFGABE: Analysiere das Bild und wähle die korrekte Antwort.\n\n"
             "ZWINGENDE AUSGABE - NUR DIESES FORMAT IST ERLAUBT:\n"
@@ -179,9 +161,13 @@ class VLMEvaluator:
             "- Bei Unsicherheit: Wähle die wahrscheinlichste Option (A-E).\n"
             "- Eine Antwort ist PFLICHT - du musst A, B, C, D oder E wählen."
         )
+        user_prompt = (
+            "Bestimme die korrekte Antwort basierend auf dem Bild. Gib nur das JSON zurück."
+        )
 
         # Mistral Message Format
         messages = [
+            {"role": "system", "content": system_prompt},
             {
                 "role": "user",
                 "content": [
@@ -190,10 +176,6 @@ class VLMEvaluator:
                 ],
             }
         ]
-        
-        # Optional: System Prompt hinzufügen
-        if self.system_prompt:
-            messages.insert(0, {"role": "system", "content": self.system_prompt})
 
         # Tokenisieren mit MistralTokenizer
         tokenized = self.tokenizer.encode_chat_completion(ChatCompletionRequest(messages=messages))
