@@ -57,13 +57,12 @@ echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
 # ------------------------------
-# Container mit Task-Prolog starten
+# Container mit inline Installation starten
 # ------------------------------
 srun \
     --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
-    --task-prolog="$PROJECT_ROOT/scripts/install_ovis.sh" \
-    python "$PROJECT_ROOT/src/eval/models/run_Ovis2.5-9B.py"
+    bash -c "source $PROJECT_ROOT/scripts/install_ovis.sh && python $PROJECT_ROOT/src/eval/models/run_Ovis2.5-9B.py"
 
 echo "✅ Job abgeschlossen"
