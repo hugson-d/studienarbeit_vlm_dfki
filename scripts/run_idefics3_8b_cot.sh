@@ -80,7 +80,7 @@ srun \
         echo "DEBUG: transformers: $(python -c \"import transformers; print(transformers.__version__)\")"
         echo "DEBUG: torchvision: $(python -c \"import torchvision; print(torchvision.__version__)\")"
         # Python-Skript ausführen
-        python '"$PROJECT_ROOT"'/src/eval/models/run_idefics3_8b.py
+        python '"$PROJECT_ROOT"'/src/eval/models/run_idefics3_8b_cot.py
     '
 
 echo "✅ Job abgeschlossen"
