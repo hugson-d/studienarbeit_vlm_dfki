@@ -54,17 +54,33 @@ echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
 # ------------------------------
-# Container mit inline Installation starten
+# Container mit venv + Installation starten
 # ------------------------------
 srun \
     --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
     bash -c '
-        echo "📦 Installiere Dependencies..."
-        pip install --upgrade --force-reinstall --no-warn-script-location "numpy<2.0" "transformers>=4.45.0" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0"
+        echo "📦 Erstelle venv und installiere Dependencies..."
+        # Venv erstellen (falls nicht vorhanden)
+        VENV_PATH="/netscratch/$USER/.venv/idefics3"
+        if [[ ! -d "$VENV_PATH" ]]; then
+            python -m venv "$VENV_PATH"
+            echo "✅ Venv erstellt: $VENV_PATH"
+        fi
+        # Venv aktivieren
+        source "$VENV_PATH/bin/activate"
+        # Dependencies installieren
+        pip install --upgrade pip
+        # WICHTIG: Alte flash-attn und torchvision aus Container isolieren
+        pip uninstall -y flash-attn torchvision 2>/dev/null || true
+        pip install "numpy<2.0" "transformers>=4.45.0" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0" "torch>=2.0" "torchvision>=0.15.0"
         echo "✅ Installation abgeschlossen"
+        echo "DEBUG: Python: $(which python)"
+        echo "DEBUG: transformers: $(python -c \"import transformers; print(transformers.__version__)\")"
+        echo "DEBUG: torchvision: $(python -c \"import torchvision; print(torchvision.__version__)\")"
+        # Python-Skript ausführen
         python '"$PROJECT_ROOT"'/src/eval/models/run_idefics3_8b.py
     '
 
-echo "Job abgeschlossen"
+echo "✅ Job abgeschlossen"
