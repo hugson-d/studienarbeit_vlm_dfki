@@ -75,8 +75,6 @@ srun \
         # Dependencies installieren
         pip install --upgrade pip
         pip install "numpy<2.0" "transformers>=4.37.2" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "timm>=0.9.16" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0" "torch>=2.0" "torchvision>=0.15.0"
-        # Flash Attention 2 (optional, aber empfohlen)
-        pip install "flash-attn>=2.3.0" --no-build-isolation || echo "⚠️ Flash Attention installation failed, continuing without it"
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
         echo "DEBUG: transformers: $(python -c \"import transformers; print(transformers.__version__)\")"
