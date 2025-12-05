@@ -3,7 +3,7 @@
 #SBATCH --partition=H100,A100-80GB,H100-SLT,A100-PCI
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
-
+#SBATCH --mem=80G
 #SBATCH --cpus-per-task=2
 #SBATCH --time=24:00:00
 #SBATCH --output=%x_%j.out
