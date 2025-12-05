@@ -54,13 +54,17 @@ echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
 # ------------------------------
-# Container mit Task-Prolog starten
+# Container mit inline Installation starten
 # ------------------------------
 srun \
     --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
-    --task-prolog="$PROJECT_ROOT/scripts/install_ide.sh" \
-    python "$PROJECT_ROOT/src/eval/models/run_idefics3_8b.py"
+    bash -c '
+        echo "📦 Installiere Dependencies..."
+        pip install --upgrade --force-reinstall --no-warn-script-location "numpy<2.0" "transformers>=4.45.0" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0"
+        echo "✅ Installation abgeschlossen"
+        python '"$PROJECT_ROOT"'/src/eval/models/run_idefics3_8b.py
+    '
 
 echo "Job abgeschlossen"

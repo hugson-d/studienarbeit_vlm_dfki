@@ -35,8 +35,7 @@ if HF_TOKEN:
 
 from transformers import (
     AutoProcessor,
-    AutoModelForImageTextToText,
-    BitsAndBytesConfig
+    AutoModelForVision2Seq
 )
 
 # ============================================================================
@@ -46,8 +45,6 @@ from transformers import (
 MODEL_NAME = "Idefics3-8B-Llama3"
 MODEL_HF_ID = "HuggingFaceM4/Idefics3-8B-Llama3"
 MODEL_PARAMS_B = 8
-
-USE_QUANTIZATION = False
 
 SEED = 42
 LOG_FILE = OUTPUT_DIR / f"{MODEL_NAME}_results.jsonl"
@@ -126,44 +123,15 @@ def free_gpu_memory():
 class VLMEvaluator:
     def __init__(self):
         logger.info(f"🏗️ Lade {MODEL_NAME} ({MODEL_PARAMS_B}B)")
-        logger.info(f"   Quantisierung (4-bit): {USE_QUANTIZATION}")
-
-        bnb_config = None
-        if USE_QUANTIZATION:
-            bnb_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_compute_dtype=torch.bfloat16,
-                bnb_4bit_use_double_quant=True
-            )
 
         # 1. Processor
-        try:
-            self.processor = AutoProcessor.from_pretrained(MODEL_HF_ID, trust_remote_code=True)
-        except Exception as e:
-            logger.error(f"Fehler beim Laden des Processors: {e}")
-            raise e
+        self.processor = AutoProcessor.from_pretrained(MODEL_HF_ID)
 
-        # 2. Modell
-        load_kwargs = {
-            "device_map": "auto",
-            "trust_remote_code": True,
-            "torch_dtype": torch.bfloat16,
-        }
-        if bnb_config:
-            load_kwargs["quantization_config"] = bnb_config
-
-        # Flash Attention Check
-        try:
-            import flash_attn  # noqa: F401
-            load_kwargs["attn_implementation"] = "flash_attention_2"
-            logger.info("   ⚡ Flash Attention 2 aktiviert")
-        except ImportError:
-            pass
-
-        self.model = AutoModelForImageTextToText.from_pretrained(
+        # 2. Modell (offizielle HF API)
+        self.model = AutoModelForVision2Seq.from_pretrained(
             MODEL_HF_ID,
-            **load_kwargs
+            device_map="auto",
+            torch_dtype=torch.bfloat16,
         ).eval()
 
         logger.info(f"✅ {MODEL_NAME} bereit auf {self.model.device}")
@@ -191,7 +159,7 @@ class VLMEvaluator:
         )
         user_prompt = "Bestimme die korrekte Antwort basierend auf dem Bild. Gib nur das JSON zurück."
 
-        # Chat Template Erstellung (HF-konform)
+        # Chat Template Erstellung (offizielle HF API)
         messages = [
             {
                 "role": "user",
@@ -202,38 +170,31 @@ class VLMEvaluator:
             }
         ]
 
-        # 1. Chat-Template -> Text-Prompt
-        prompt = self.processor.apply_chat_template(
+        # apply_chat_template mit direkter Tokenisierung und Bild (offizielle API)
+        inputs = self.processor.apply_chat_template(
             messages,
-            add_generation_prompt=True
-        )
-
-        # 2. Processor: Token + Bild
-        inputs = self.processor(
-            text=prompt,
-            images=[image],
-            return_tensors="pt"
+            images=[image],  # Bild hier übergeben!
+            add_generation_prompt=True,
+            tokenize=True,
+            return_dict=True,
+            return_tensors="pt",
         ).to(self.model.device)
 
         # Generierung
         start_time = time.time()
         with torch.no_grad():
-            generated_ids = self.model.generate(
+            outputs = self.model.generate(
                 **inputs,
                 max_new_tokens=128,
                 do_sample=False,
-                temperature=0.0,
             )
         duration = time.time() - start_time
 
         # Nur neue Tokens decodieren (Prompt entfernen)
         input_len = inputs["input_ids"].shape[-1]
-        trimmed_ids = generated_ids[0][input_len:]
-
         output_text = self.processor.decode(
-            trimmed_ids,
-            skip_special_tokens=True,
-            clean_up_tokenization_spaces=False
+            outputs[0][input_len:],
+            skip_special_tokens=True
         )
 
         # Parsing
