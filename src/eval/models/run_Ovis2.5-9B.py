@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 VLM Benchmark für Känguru-Mathematik-Aufgaben (Ovis2.5-9B Version)
+Final Fix: Cache-Robustheit + Ovis-Specific Arguments
 """
 
 import os
@@ -19,37 +20,28 @@ from pathlib import Path
 from tqdm import tqdm
 from pydantic import BaseModel, Field
 from huggingface_hub import login
-from transformers import AutoModelForCausalLM
+# WICHTIG: AutoConfig explizit importieren für den Fix
+from transformers import AutoModelForCausalLM, AutoConfig
 
 # ============================================================================
-# ARGPARSE / KONFIG
+# ARGPARSE
 # ============================================================================
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description="VLM Benchmark für Känguru-Mathematik-Aufgaben (Ovis2.5-9B)"
-    )
-    # ANPASSUNG: Default auf 9B
-    parser.add_argument(
-        "--hf-id",
-        type=str,
-        default="AIDC-AI/Ovis2.5-9B"
-    )
-    # ANPASSUNG: Default Name angepasst
-    parser.add_argument(
-        "--model-name",
-        type=str,
-        default="Ovis2.5-9B",
-        help="Interner Modellname für Logs/Dateien.",
-    )
+    parser = argparse.ArgumentParser(description="VLM Benchmark Ovis2.5-9B")
+    parser.add_argument("--hf-id", type=str, default="AIDC-AI/Ovis2.5-9B")
+    parser.add_argument("--model-name", type=str, default="Ovis2.5-9B")
+    # Optional: Thinking Mode per Flag aktivieren
+    parser.add_argument("--enable-thinking", action="store_true", help="Aktiviert Chain-of-Thought (langsamer, evtl. besser)")
     return parser.parse_args()
 
 args = parse_args()
 MODEL_HF_ID = args.hf_id
 MODEL_NAME = args.model_name
+ENABLE_THINKING = args.enable_thinking
 
 # ============================================================================
-# PFAD & LOGGING
+# PFADE & LOGGING
 # ============================================================================
 
 _script_path = Path(__file__).resolve()
@@ -66,10 +58,7 @@ EXCEL_FILE = OUTPUT_DIR / f"{MODEL_NAME}_summary.xlsx"
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(OUTPUT_DIR / f"{MODEL_NAME}.log")
-    ]
+    handlers=[logging.StreamHandler(), logging.FileHandler(OUTPUT_DIR / f"{MODEL_NAME}.log")]
 )
 logger = logging.getLogger(MODEL_NAME)
 
@@ -78,7 +67,7 @@ if HF_TOKEN:
     login(token=HF_TOKEN)
 
 # ============================================================================
-# UTILS & PARSING
+# UTILS
 # ============================================================================
 
 class KanguruAnswer(BaseModel):
@@ -86,21 +75,31 @@ class KanguruAnswer(BaseModel):
 
 def parse_response(output_text: str) -> Dict:
     clean_text = output_text.strip()
+    
+    # Falls Thinking Mode aktiv war, könnte viel Text vor dem JSON stehen.
+    # Wir suchen das letzte Vorkommen von JSON-Codeblöcken oder geschweiften Klammern.
+    
+    # 1. Versuch: Markdown Code Block
     if "```" in clean_text:
-        match = re.search(r"```(?:json)?\s*(.*?)\s*```", clean_text, re.DOTALL)
-        if match:
-            clean_text = match.group(1).strip()
+        # Finde ALLE Codeblöcke und nimm den letzten (falls Thinking auch Code enthält)
+        matches = re.findall(r"```(?:json)?\s*(.*?)\s*```", clean_text, re.DOTALL)
+        if matches:
+            clean_text = matches[-1].strip()
 
-    json_match = re.search(r"\{[^{}]*\}", clean_text, re.DOTALL)
-    if json_match:
+    # 2. Versuch: JSON Regex
+    # Suche nach dem letzten JSON-Objekt im Text
+    json_matches = re.findall(r"\{[^{}]*\}", clean_text, re.DOTALL)
+    if json_matches:
         try:
-            data = json.loads(json_match.group(0))
+            # Nimm das letzte gefundene Objekt (die Antwort kommt meist am Schluss)
+            data = json.loads(json_matches[-1])
             data = {k.lower(): v for k, v in data.items()}
             validated = KanguruAnswer(**data)
             return {"prediction": validated.answer, "format_valid": True, "error": None}
         except Exception:
             pass
 
+    # 3. Versuch: Regex Fallback
     patterns = [
         r"(?:antwort|answer|lösung|solution)[:\s]+([A-E])\b",
         r"\b([A-E])\s*(?:ist|is)\s+(?:richtig|correct)",
@@ -109,11 +108,7 @@ def parse_response(output_text: str) -> Dict:
     for p in patterns:
         m = re.search(p, clean_text, re.IGNORECASE)
         if m:
-            return {
-                "prediction": m.group(1).upper(),
-                "format_valid": False,
-                "error": "Regex Extraction",
-            }
+            return {"prediction": m.group(1).upper(), "format_valid": False, "error": "Regex Extraction"}
 
     return {"prediction": None, "format_valid": False, "error": "No valid answer"}
 
@@ -129,23 +124,34 @@ def free_gpu_memory():
         torch.cuda.empty_cache()
 
 # ============================================================================
-# EVALUATOR (OVIS2.5-9B)
+# EVALUATOR (OVIS2.5-9B ROBUST)
 # ============================================================================
 
 class VLMEvaluator:
     def __init__(self):
-        logger.info(f"Lade {MODEL_NAME} ({MODEL_HF_ID})")
-
+        logger.info(f"Initialisiere {MODEL_NAME} ({MODEL_HF_ID})...")
+        
         load_kwargs = {
             "trust_remote_code": True,
             "torch_dtype": torch.bfloat16,
             "low_cpu_mem_usage": True,
-            # ANPASSUNG: device_map="auto" ist sicherer für 9B, um OOM beim Laden zu vermeiden
-            "device_map": "auto", 
+            "device_map": "auto",
         }
 
+        # --- FIX FÜR DEN VALUE ERROR ---
+        # Wir laden zuerst die Config, damit der 'ovis' Modell-Typ registriert wird,
+        # bevor das schwere Modell geladen wird.
+        logger.info("Schritt 1: Lade Config und registriere Remote Code...")
+        try:
+            config = AutoConfig.from_pretrained(MODEL_HF_ID, trust_remote_code=True)
+        except Exception as e:
+            logger.warning(f"Konnte Config nicht vorab laden ({e}). Versuche direkten Load.")
+            config = None
+        
+        logger.info("Schritt 2: Lade Modell-Gewichte...")
         self.model = AutoModelForCausalLM.from_pretrained(
             MODEL_HF_ID,
+            config=config, # Wichtig!
             **load_kwargs,
         ).eval()
 
@@ -154,9 +160,9 @@ class VLMEvaluator:
         elif hasattr(self.model, "get_text_tokenizer"):
             self.tokenizer = self.model.get_text_tokenizer()
         else:
-            raise AttributeError("Modell bietet keinen text_tokenizer / get_text_tokenizer an.")
+            raise AttributeError("Modell hat keinen text_tokenizer.")
 
-        logger.info(f"{MODEL_NAME} bereit. Haupt-Device: {self.model.device}")
+        logger.info(f"{MODEL_NAME} erfolgreich geladen.")
 
     def generate(self, image_path: str) -> Dict:
         full_path = DATA_DIR / image_path
@@ -165,18 +171,13 @@ class VLMEvaluator:
 
         image = Image.open(full_path).convert("RGB")
 
+        # Prompt Design
         system_prompt = (
-            "Du bist ein mathematisches Assistenzsystem für Multiple-Choice-Aufgaben.\n\n"
-            "AUFGABE: Analysiere das Bild und wähle die korrekte Antwort.\n\n"
-            "ZWINGENDE AUSGABE - NUR DIESES FORMAT IST ERLAUBT:\n"
-            '{"answer": "X"}\n'
-            "wobei X EXAKT einer dieser Buchstaben sein MUSS: A, B, C, D oder E\n\n"
-            "WICHTIG:\n"
-            "- Deine GESAMTE Antwort besteht NUR aus diesem JSON-Objekt.\n"
-            "- KEINE anderen Zeichen, Wörter oder Erklärungen.\n"
-            "- Bei Unsicherheit: Wähle die wahrscheinlichste Option (A-E)."
+            "Du bist ein mathematisches Assistenzsystem.\n"
+            "Analysiere das Bild und wähle die korrekte Antwort (A, B, C, D, E).\n"
+            "Gib am Ende NUR ein JSON zurück: {'answer': 'X'}."
         )
-        user_prompt = "Bestimme die korrekte Antwort basierend auf dem Bild. Gib nur das JSON zurück."
+        user_prompt = "Löse die Aufgabe. Welche Antwort ist richtig?"
 
         messages = [
             {
@@ -188,14 +189,14 @@ class VLMEvaluator:
             }
         ]
 
-        # Preprocessing
+        # Parameter Setup basierend auf HuggingFace Snippet
+        # Wir nutzen die Argumente, aber steuern sie über args (Default: False)
         input_ids, pixel_values, grid_thws = self.model.preprocess_inputs(
             messages=messages,
             add_generation_prompt=True,
+            enable_thinking=ENABLE_THINKING, # HF Parameter
         )
 
-        # ANPASSUNG: Sicherstellen, dass Tensors auf dem gleichen Device wie das Modell sind.
-        # Bei device_map="auto" liegt der erste Layer meist auf cuda:0.
         device = self.model.device
         input_ids = input_ids.to(device)
         if pixel_values is not None:
@@ -203,15 +204,23 @@ class VLMEvaluator:
         if grid_thws is not None:
             grid_thws = grid_thws.to(device)
 
+        # Budget Definition (nur relevant wenn Thinking=True)
+        max_tokens = 3072 if ENABLE_THINKING else 512
+        thinking_budget = 2048 if ENABLE_THINKING else 0
+
         gen_kwargs = {
             "inputs": input_ids,
             "pixel_values": pixel_values,
             "grid_thws": grid_thws,
-            "max_new_tokens": 512,
+            "max_new_tokens": max_tokens,
             "do_sample": False,
             "temperature": 0.0,
             "eos_token_id": self.tokenizer.eos_token_id,
             "pad_token_id": self.tokenizer.pad_token_id,
+            # Neue Ovis Parameter:
+            "enable_thinking": ENABLE_THINKING,
+            "enable_thinking_budget": ENABLE_THINKING,
+            "thinking_budget": thinking_budget
         }
 
         start_time = time.time()
@@ -233,21 +242,17 @@ class VLMEvaluator:
     def cleanup(self):
         try:
             del self.model
-        except Exception:
-            pass
-        try:
             del self.tokenizer
-        except Exception:
+        except:
             pass
         free_gpu_memory()
 
 # ============================================================================
-# MAIN EXECUTION
+# MAIN
 # ============================================================================
 
 def run_benchmark():
     set_seed(SEED)
-
     if not DATASET_PATH.exists():
         logger.error(f"Dataset fehlt: {DATASET_PATH}")
         return
@@ -261,11 +266,9 @@ def run_benchmark():
             for line in f:
                 try:
                     processed_ids.add(json.loads(line)["task_id"])
-                except Exception:
-                    pass
+                except: pass
 
     evaluator = VLMEvaluator()
-
     correct_count = 0
     processed_count = 0
 
@@ -273,18 +276,14 @@ def run_benchmark():
         pbar = tqdm(dataset, desc=MODEL_NAME)
         for task in pbar:
             task_id = f"{task.get('year')}_{task.get('class')}_{task.get('task_id')}"
-
-            if task_id in processed_ids:
-                continue
+            if task_id in processed_ids: continue
 
             try:
                 result = evaluator.generate(task.get("image_path"))
-
                 gt = task.get("answer")
                 is_correct = (result["prediction"] == gt) if result["prediction"] else False
 
-                if is_correct:
-                    correct_count += 1
+                if is_correct: correct_count += 1
                 processed_count += 1
 
                 log_entry = {
@@ -292,46 +291,28 @@ def run_benchmark():
                     "task_id": task_id,
                     "year": task.get("year"),
                     "class": task.get("class"),
-                    "original_task_id": task.get("task_id"),
-                    "math_category": task.get("math_category"),
-                    "is_text_only": task.get("is_text_only"),
-                    "ground_truth": gt,
                     "prediction": result["prediction"],
+                    "ground_truth": gt,
                     "is_correct": is_correct,
-                    "format_valid": result.get("format_valid"),
-                    "error_type": result.get("error"),
-                    "inference_time": result.get("inference_time"),
-                    "input_tokens": result.get("input_tokens"),
+                    "format_valid": result["format_valid"],
+                    "inference_time": result["inference_time"]
                 }
-
                 f_log.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
                 f_log.flush()
-
+                
                 acc = correct_count / processed_count if processed_count > 0 else 0.0
                 pbar.set_postfix({"acc": f"{acc:.1%}"})
 
             except Exception as e:
-                logger.error(f"Fehler bei {task_id}: {e}")
-                if "out of memory" in str(e).lower():
-                    logger.critical("OOM Error, Abbruch.")
-                    break
+                logger.error(f"Fehler Task {task_id}: {e}")
+                if "out of memory" in str(e).lower(): break
 
     evaluator.cleanup()
-    generate_report()
-
-def generate_report():
-    if not LOG_FILE.exists():
-        return
-    df = pd.read_json(LOG_FILE, lines=True)
-    if df.empty:
-        return
-
-    df.to_excel(EXCEL_FILE, index=False)
-
-    print("\n" + "=" * 70)
-    print(f"ERGEBNISSE: {MODEL_NAME}")
-    print(f"  Accuracy:     {df['is_correct'].mean():.1%}")
-    print(f"  Valid JSON:   {df['format_valid'].mean():.1%}")
+    
+    if LOG_FILE.exists():
+        df = pd.read_json(LOG_FILE, lines=True)
+        df.to_excel(EXCEL_FILE, index=False)
+        print(f"Accuracy: {df['is_correct'].mean():.1%}")
 
 if __name__ == "__main__":
     run_benchmark()
