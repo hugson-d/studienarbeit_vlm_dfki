@@ -3,11 +3,14 @@
 #SBATCH --partition=H100,A100-80GB,H100-SLT,A100-PCI,A100-40GB
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
-#SBATCH --mem=64G
-#SBATCH --cpus-per-task=2
+#SBATCH --mem=80G
+#SBATCH --cpus-per-task=4
 #SBATCH --time=24:00:00
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err
+
+# ANMERKUNG: --mem auf 80G erhöht und cpus-per-task auf 4 für schnelleres Preprocessing
+# ANMERKUNG: A100-40GB ist das Minimum für Inferenz dieses Modells.
 
 set -euo pipefail
 
@@ -24,12 +27,10 @@ if [[ ! -f "$PROJECT_ROOT/dataset_final.json" ]]; then
     exit 1
 fi
 
-# Caches auf /netscratch (schneller + mehr Platz)
 export PIP_CACHE_DIR="/netscratch/$USER/.cache/pip"
 export HF_HOME="/netscratch/$USER/.cache/huggingface"
 mkdir -p "$PIP_CACHE_DIR" "$HF_HOME"
 
-# Optional: schnellerer Download
 export HF_HUB_ENABLE_HF_TRANSFER=1
 
 # HF Token laden
@@ -57,12 +58,13 @@ echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
 # ------------------------------
-# Container starten mit inline Installation
+# Container mit Task-Prolog starten
 # ------------------------------
 srun \
     --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
-    bash -c "source $PROJECT_ROOT/scripts/install_ovis_9b.sh && python $PROJECT_ROOT/src/eval/models/run_Ovis2.5-9B.py"
+    --task-prolog="$PROJECT_ROOT/scripts/install_ovis_9b.sh" \
+    python "$PROJECT_ROOT/src/eval/models/run_Ovis2.5-9B.py"
 
 echo "✅ Job abgeschlossen"

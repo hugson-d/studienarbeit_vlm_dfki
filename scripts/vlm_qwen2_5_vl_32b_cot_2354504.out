@@ -1,8 +1,0 @@
-⚠️ HF_TOKEN nicht gesetzt. Gated Modelle werden fehlschlagen.
-==========================================
-🚀 VLM Benchmark: Qwen2.5-VL-32B (Chain-of-Thought)
-PROJECT_ROOT: /netscratch/dhug/studienarbeit_vlm_dfki
-==========================================
-
-📊 Qwen2.5-VL-32B-Batch1-Concise | Acc: 34.0% | Avg Time: 1.05s
-✅ Job abgeschlossen
