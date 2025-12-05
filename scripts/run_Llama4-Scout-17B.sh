@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=80G
-#SBATCH --time=48:00:00
+#SBATCH --time=24:00:00
 
 # Logging-Verzeichnis erstellen
 mkdir -p ~/logs
