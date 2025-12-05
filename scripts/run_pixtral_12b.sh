@@ -61,10 +61,22 @@ srun \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
     bash -c '
-        echo "📦 Installiere opencv-python GLOBAL (für vLLM Subprozesse)..."
+        echo "📦 Installiere opencv-python GLOBAL für vLLM Subprozesse..."
         # KRITISCH: vLLM spawnt Subprozesse die Container-Python nutzen
-        # Daher muss opencv-python im Container-Python installiert werden
-        pip install --user "opencv-python-headless>=4.8.0"
+        # Installiere opencv in festes Verzeichnis
+        OPENCV_PATH="/netscratch/$USER/.vllm_deps"
+        mkdir -p "$OPENCV_PATH"
+        
+        # Nur installieren wenn noch nicht vorhanden
+        if [[ ! -f "$OPENCV_PATH/cv2/__init__.py" ]]; then
+            pip install --target="$OPENCV_PATH" "opencv-python-headless>=4.8.0" "numpy<2.0"
+            echo "✅ opencv-python installiert nach $OPENCV_PATH"
+        else
+            echo "✅ opencv-python bereits vorhanden in $OPENCV_PATH"
+        fi
+        
+        # PYTHONPATH für alle Prozesse (inkl. vLLM Subprozesse)
+        export PYTHONPATH="$OPENCV_PATH:$PYTHONPATH"
         python -c "import cv2; print(f\"Container cv2: {cv2.__version__}\")"
         
         echo "📦 Erstelle venv und installiere Dependencies..."
@@ -83,8 +95,8 @@ srun \
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
         python -c "import vllm; print(f\"vllm: {vllm.__version__}\")"
-        python -c "import cv2; print(f\"venv cv2: {cv2.__version__}\")"
-        # Python-Skript ausführen
+        echo "DEBUG: PYTHONPATH=$PYTHONPATH"
+        # Python-Skript ausführen (mit PYTHONPATH für Subprozesse)
         python '"$PROJECT_ROOT"'/src/eval/models/run_pixtral_12b.py
     '
 
