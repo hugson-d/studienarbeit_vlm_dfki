@@ -61,6 +61,12 @@ srun \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
     bash -c '
+        echo "📦 Installiere opencv-python GLOBAL (für vLLM Subprozesse)..."
+        # KRITISCH: vLLM spawnt Subprozesse die Container-Python nutzen
+        # Daher muss opencv-python im Container-Python installiert werden
+        pip install --user "opencv-python-headless>=4.8.0"
+        python -c "import cv2; print(f\"Container cv2: {cv2.__version__}\")"
+        
         echo "📦 Erstelle venv und installiere Dependencies..."
         # Venv erstellen (falls nicht vorhanden)
         VENV_PATH="/netscratch/$USER/.venv/pixtral"
@@ -73,14 +79,11 @@ srun \
         # Dependencies installieren
         pip install --upgrade pip
         # WICHTIG: vLLM + Mistral + NumPy<2.0
-        # opencv-python-headless für Server (kein GUI needed)
-        pip install "numpy<2.0" "vllm>=0.6.2" "mistral_common>=1.4.4" "transformers>=4.45.0" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0" "opencv-python-headless>=4.8.0"
+        pip install "numpy<2.0" "vllm>=0.6.2" "mistral_common>=1.4.4" "transformers>=4.45.0" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0"
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
-        echo "DEBUG: vllm: $(python -c \"import vllm; print(vllm.__version__)\")"
-        echo "DEBUG: cv2: $(python -c \"import cv2; print(cv2.__version__)\")"
-        # WICHTIG: PYTHONPATH für vLLM Subprozesse setzen
-        export PYTHONPATH="$VENV_PATH/lib/python3.10/site-packages:$PYTHONPATH"
+        python -c "import vllm; print(f\"vllm: {vllm.__version__}\")"
+        python -c "import cv2; print(f\"venv cv2: {cv2.__version__}\")"
         # Python-Skript ausführen
         python '"$PROJECT_ROOT"'/src/eval/models/run_pixtral_12b.py
     '
