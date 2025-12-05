@@ -29,9 +29,6 @@ export PIP_CACHE_DIR="/netscratch/$USER/.cache/pip"
 export HF_HOME="/netscratch/$USER/.cache/huggingface"
 mkdir -p "$PIP_CACHE_DIR" "$HF_HOME"
 
-# Optional: schnellerer Download
-export HF_HUB_ENABLE_HF_TRANSFER=1
-
 # HF Token laden
 for SECRET_FILE in "$PROJECT_ROOT/.env" "$HOME/.hf_token"; do
     if [[ -f "$SECRET_FILE" ]]; then
