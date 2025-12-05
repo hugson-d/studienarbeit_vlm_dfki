@@ -72,12 +72,15 @@ srun \
         source "$VENV_PATH/bin/activate"
         # Dependencies installieren
         pip install --upgrade pip
+        # WICHTIG: Alte torchvision aus Container isolieren (nms operator error)
+        pip uninstall -y torchvision 2>/dev/null || true
         # WICHTIG: numpy<2.0, bitsandbytes für 4-bit Quantisierung
-        pip install "numpy<2.0" "transformers>=4.48.0" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0" "torch>=2.0" "bitsandbytes>=0.41.0"
+        pip install "numpy<2.0" "transformers>=4.48.0" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0" "torch>=2.0" "torchvision>=0.15.0" "bitsandbytes>=0.41.0"
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
-        echo "DEBUG: transformers: $(python -c \"import transformers; print(transformers.__version__)\")"
-        echo "DEBUG: bitsandbytes: $(python -c \"import bitsandbytes; print(bitsandbytes.__version__)\")"
+        python -c "import transformers; print(f\"transformers: {transformers.__version__}\")"
+        python -c "import bitsandbytes; print(f\"bitsandbytes: {bitsandbytes.__version__}\")"
+        python -c "import torchvision; print(f\"torchvision: {torchvision.__version__}\")"
         # Python-Skript ausführen
         python '"$PROJECT_ROOT"'/src/eval/models/run_Llama4-Scout-17B.py
     '
