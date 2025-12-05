@@ -180,15 +180,12 @@ class VLMEvaluator:
             }
         ]
 
-        # apply_chat_template mit direkter Tokenisierung und Bild (offizielle API)
-        inputs = self.processor.apply_chat_template(
-            messages,
-            images=[image],  # Bild hier übergeben!
-            add_generation_prompt=True,
-            tokenize=True,
-            return_dict=True,
-            return_tensors="pt",
-        ).to(self.model.device)
+        # apply_chat_template für Prompt-Formatierung (offizielles HF Format)
+        prompt = self.processor.apply_chat_template(messages, add_generation_prompt=True)
+        
+        # Processor mit Text UND Bildern (wie in HF Beispiel)
+        inputs = self.processor(text=prompt, images=[image], return_tensors="pt")
+        inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
 
         # Generierung
         start_time = time.time()
