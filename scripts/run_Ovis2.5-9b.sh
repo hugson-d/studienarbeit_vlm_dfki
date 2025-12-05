@@ -57,23 +57,30 @@ echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
 # ------------------------------
-# Container mit inline Installation starten
+# Container mit venv + Installation starten
 # ------------------------------
 srun \
     --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
     bash -c '
-        echo "📦 Installiere Dependencies..."
-        # NumPy ZUERST installieren (kritisch für Kompatibilität!)
-        pip install --no-warn-script-location "numpy<2.0"
-        # Dann Rest der Pakete
-        pip install --upgrade --no-warn-script-location "transformers>=4.51.3" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "timm" "pillow>=10.0" "safetensors>=0.4.0"
+        echo "📦 Erstelle venv und installiere Dependencies..."
+        # Venv erstellen (falls nicht vorhanden)
+        VENV_PATH="/netscratch/$USER/.venv/ovis25_9b"
+        if [[ ! -d "$VENV_PATH" ]]; then
+            python -m venv "$VENV_PATH"
+            echo "✅ Venv erstellt: $VENV_PATH"
+        fi
+        # Venv aktivieren
+        source "$VENV_PATH/bin/activate"
+        # Dependencies installieren
+        pip install --upgrade pip
+        pip install "numpy<2.0" "transformers>=4.51.3" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "timm" "pillow>=10.0" "safetensors>=0.4.0" "torch>=2.0"
         echo "✅ Installation abgeschlossen"
-        echo "DEBUG: numpy version:"
-        python -c "import numpy; print(numpy.__version__)"
-        echo "DEBUG: transformers version:"
-        python -c "import transformers; print(transformers.__version__)"
+        echo "DEBUG: Python: $(which python)"
+        echo "DEBUG: numpy: $(python -c \"import numpy; print(numpy.__version__)\")"
+        echo "DEBUG: transformers: $(python -c \"import transformers; print(transformers.__version__)\")"
+        # Python-Skript ausführen
         python '"$PROJECT_ROOT"'/src/eval/models/run_Ovis2.5-9B.py
     '
 
