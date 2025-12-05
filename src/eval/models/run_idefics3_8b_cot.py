@@ -47,7 +47,7 @@ MODEL_HF_ID = "HuggingFaceM4/Idefics3-8B-Llama3"
 MODEL_PARAMS_B = 8
 
 SEED = 42
-LOG_FILE = OUTPUT_DIR / f"{MODEL_NAME}_results.jsonl"
+LOG_FILE = OUTPUT_DIR / "idefics-cot_results.jsonl"
 EXCEL_FILE = OUTPUT_DIR / f"{MODEL_NAME}_summary.xlsx"
 
 # Logging Setup
