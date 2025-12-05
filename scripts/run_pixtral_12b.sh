@@ -73,7 +73,7 @@ srun \
         # Dependencies installieren
         pip install --upgrade pip
         # WICHTIG: vLLM + Mistral + NumPy<2.0
-        pip install "numpy<2.0" "vllm>=0.6.2" "mistral_common>=1.4.4" "transformers>=4.45.0" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0"
+        pip install "numpy<2.0" "vllm>=0.6.2" "mistral_common>=1.4.4" "transformers>=4.45.0" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0" "opencv-python>=4.8.0"
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
         echo "DEBUG: vllm: $(python -c \"import vllm; print(vllm.__version__)\")"
