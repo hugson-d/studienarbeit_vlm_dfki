@@ -1,15 +1,15 @@
 #!/bin/bash
-#SBATCH --job-name=vlm_internvl3_78b
+#SBATCH --job-name=vlm_internvl3_78b_cot
 #SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,H200-AV,H200-PCI
-#SBATCH --gpus=1
+#SBATCH --gpus=2
 #SBATCH --ntasks=1
-#SBATCH --mem=128G
-#SBATCH --cpus-per-task=2
-#SBATCH --time=24:00:00
+#SBATCH --mem=120G
+#SBATCH --cpus-per-task=8
+#SBATCH --time=48:00:00
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err
 
-# 78B Modell - 4-Bit Quantisierung (im Python-Skript aktiviert ab >40B)
+# InternVL3-78B-CoT - FP16 mit Chain-of-Thought (benötigt 2 GPUs)
 
 set -euo pipefail
 
@@ -78,7 +78,7 @@ srun \
         pip uninstall -y flash-attn 2>/dev/null || true
         # Flash Attention komplett deaktivieren
         export USE_FLASH_ATTENTION=0
-        pip install "numpy<2.0" "transformers>=4.37.2" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "timm>=0.9.16" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0" "torch>=2.0" "torchvision>=0.15.0"
+        pip install "numpy<2.0" "transformers>=4.37.2" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "timm>=0.9.16" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0" "torch>=2.0" "torchvision>=0.15.0" "bitsandbytes>=0.41.0"
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
         echo "DEBUG: transformers: $(python -c \"import transformers; print(transformers.__version__)\")"
