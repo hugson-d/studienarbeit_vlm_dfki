@@ -146,7 +146,10 @@ class VLMEvaluator:
     def generate(self, image_path: str) -> Dict:
         full_path = DATA_DIR / image_path
         if not full_path.exists():
-            return {"error": "Image not found", "prediction": None}
+            logger.error(f"❌ Bild nicht gefunden: {full_path}")
+            logger.error(f"   DATA_DIR: {DATA_DIR}")
+            logger.error(f"   image_path: {image_path}")
+            return {"error": f"Image not found: {full_path}", "prediction": None}
 
         # Bild laden
         image = Image.open(full_path).convert("RGB")
