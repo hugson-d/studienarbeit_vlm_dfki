@@ -303,7 +303,11 @@ class VLMEvaluator:
 
         # Modell laden
         logger.info("   📥 Lade Modell...")
-        self.model = AutoModel.from_pretrained(MODEL_HF_ID, **load_kwargs).eval()
+        self.model = AutoModel.from_pretrained(
+            MODEL_HF_ID,
+            attn_implementation="eager",  # Flash Attention deaktiviert (Container hat alte Version)
+            **load_kwargs
+        ).eval()
         
         logger.info(f"✅ {MODEL_NAME} bereit")
 

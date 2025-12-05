@@ -237,6 +237,7 @@ class VLMEvaluator:
 
         self.model = AutoModel.from_pretrained(
             MODEL_HF_ID,
+            attn_implementation="eager",  # Flash Attention deaktiviert (Container hat alte Version)
             **load_kwargs,
         ).eval()
 
