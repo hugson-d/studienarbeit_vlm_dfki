@@ -61,6 +61,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(MODEL_NAME)
 
+# Reduziere transformers Verbosity
+import transformers
+transformers.logging.set_verbosity_error()
+
 # ============================================================================
 # UTILS & PARSING (Identisch zu anderen Modellen für Vergleichbarkeit)
 # ============================================================================
@@ -124,8 +128,11 @@ class VLMEvaluator:
     def __init__(self):
         logger.info(f"🏗️ Lade {MODEL_NAME} ({MODEL_PARAMS_B}B)")
 
-        # 1. Processor
-        self.processor = AutoProcessor.from_pretrained(MODEL_HF_ID)
+        # 1. Processor (use_fast=True reduziert Token-Output)
+        self.processor = AutoProcessor.from_pretrained(
+            MODEL_HF_ID,
+            use_fast=True
+        )
 
         # 2. Modell (offizielle HF API)
         self.model = AutoModelForVision2Seq.from_pretrained(
