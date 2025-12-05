@@ -61,23 +61,11 @@ srun \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
     bash -c '
-        echo "📦 Installiere opencv-python GLOBAL für vLLM Subprozesse..."
+        echo "📦 Installiere opencv-python DIREKT im Container (systemweit)..."
         # KRITISCH: vLLM spawnt Subprozesse die Container-Python nutzen
-        # Installiere opencv in festes Verzeichnis
-        OPENCV_PATH="/netscratch/$USER/.vllm_deps"
-        mkdir -p "$OPENCV_PATH"
-        
-        # Nur installieren wenn noch nicht vorhanden
-        if [[ ! -f "$OPENCV_PATH/cv2/__init__.py" ]]; then
-            pip install --target="$OPENCV_PATH" "opencv-python-headless>=4.8.0" "numpy<2.0"
-            echo "✅ opencv-python installiert nach $OPENCV_PATH"
-        else
-            echo "✅ opencv-python bereits vorhanden in $OPENCV_PATH"
-        fi
-        
-        # PYTHONPATH für alle Prozesse (inkl. vLLM Subprozesse)
-        export PYTHONPATH="$OPENCV_PATH:$PYTHONPATH"
-        python -c "import cv2; print(f\"Container cv2: {cv2.__version__}\")"
+        # opencv muss im Container-Python verfügbar sein, nicht nur in venv
+        pip3 install --break-system-packages "opencv-python-headless>=4.8.0" "numpy<2.0"
+        python3 -c "import cv2; print(f\"Container Python cv2: {cv2.__version__}\")"
         
         echo "📦 Erstelle venv und installiere Dependencies..."
         # Venv erstellen (falls nicht vorhanden)
@@ -93,10 +81,12 @@ srun \
         # WICHTIG: vLLM + Mistral + NumPy<2.0
         pip install "numpy<2.0" "vllm>=0.6.2" "mistral_common>=1.4.4" "transformers>=4.45.0" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0"
         echo "✅ Installation abgeschlossen"
-        echo "DEBUG: Python: $(which python)"
+        echo "DEBUG: Venv Python: $(which python)"
         python -c "import vllm; print(f\"vllm: {vllm.__version__}\")"
-        echo "DEBUG: PYTHONPATH=$PYTHONPATH"
-        # Python-Skript ausführen (mit PYTHONPATH für Subprozesse)
+        python -c "import cv2; print(f\"venv cv2: {cv2.__version__}\")"
+        echo "DEBUG: Container Python cv2 test:"
+        /usr/bin/python3 -c "import cv2; print(f\"Container cv2: {cv2.__version__}\")"
+        # Python-Skript ausführen
         python '"$PROJECT_ROOT"'/src/eval/models/run_pixtral_12b.py
     '
 
