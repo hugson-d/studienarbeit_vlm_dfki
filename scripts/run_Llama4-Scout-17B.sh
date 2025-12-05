@@ -1,39 +1,85 @@
 #!/bin/bash
-#SBATCH --job-name=llama4-scout-17b
-#SBATCH --output=/home/%u/logs/%x_%j.out
-#SBATCH --error=/home/%u/logs/%x_%j.err
-#SBATCH --partition=a100
-#SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=8
+#SBATCH --job-name=vlm_llama4_scout_17b
+#SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,H200-AV,H200-PCI
+#SBATCH --gpus=1
+#SBATCH --ntasks=1
 #SBATCH --mem=80G
 #SBATCH --time=24:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --output=%x_%j.out
+#SBATCH --error=%x_%j.err
 
-# Logging-Verzeichnis erstellen
-mkdir -p ~/logs
+set -euo pipefail
 
-echo "=============================================="
-echo "Job: $SLURM_JOB_NAME (ID: $SLURM_JOB_ID)"
-echo "Node: $SLURM_NODELIST"
-echo "Start: $(date)"
-echo "=============================================="
+# ------------------------------
+# Pfade und Umgebungsvariablen
+# ------------------------------
+PROJECT_ROOT="${SLURM_SUBMIT_DIR}"
+if [[ "$(basename "$PROJECT_ROOT")" == "scripts" ]]; then
+    PROJECT_ROOT="$(dirname "$PROJECT_ROOT")"
+fi
 
-# Environment
-source ~/.bashrc
-conda activate vlm_benchmark
+if [[ ! -f "$PROJECT_ROOT/dataset_final.json" ]]; then
+    echo "dataset_final.json nicht gefunden. Bitte aus dem Repo-Root starten."
+    exit 1
+fi
 
-# HuggingFace Token
-export HF_TOKEN="${HF_TOKEN:-$(cat ~/.huggingface/token 2>/dev/null)}"
+# Caches auf /netscratch (schneller + mehr Platz)
+export PIP_CACHE_DIR="/netscratch/$USER/.cache/pip"
+export HF_HOME="/netscratch/$USER/.cache/huggingface"
+mkdir -p "$PIP_CACHE_DIR" "$HF_HOME"
 
-# Projekt-Root setzen
-export VLM_PROJECT_ROOT="/home/$(whoami)/studienarbeit_vlm_dfki"
+# HF Token laden
+for SECRET_FILE in "$PROJECT_ROOT/.env" "$HOME/.hf_token"; do
+    if [[ -f "$SECRET_FILE" ]]; then
+        set -a
+        source "$SECRET_FILE"
+        set +a
+        break
+    fi
+done
 
-# GPU Info
-nvidia-smi
+if [[ -z "${HF_TOKEN:-}" ]]; then
+    echo "HF_TOKEN nicht gesetzt. Gated Modelle werden fehlschlagen."
+else
+    echo "HF_TOKEN geladen"
+fi
 
-# Skript ausführen
-cd $VLM_PROJECT_ROOT
-python src/eval/models/run_Llama4-Scout-17B.py
+export VLM_PROJECT_ROOT="$PROJECT_ROOT"
+export PYTHONUNBUFFERED=1
 
-echo "=============================================="
-echo "Ende: $(date)"
-echo "=============================================="
+echo "=========================================="
+echo "🚀 VLM Benchmark: Llama4-Scout-17B"
+echo "PROJECT_ROOT: $PROJECT_ROOT"
+echo "=========================================="
+
+# ------------------------------
+# Container mit venv + Installation starten
+# ------------------------------
+srun \
+    --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
+    --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
+    --container-workdir="$PROJECT_ROOT" \
+    bash -c '
+        echo "📦 Erstelle venv und installiere Dependencies..."
+        # Venv erstellen (falls nicht vorhanden)
+        VENV_PATH="/netscratch/$USER/.venv/llama4_scout"
+        if [[ ! -d "$VENV_PATH" ]]; then
+            python -m venv "$VENV_PATH"
+            echo "✅ Venv erstellt: $VENV_PATH"
+        fi
+        # Venv aktivieren
+        source "$VENV_PATH/bin/activate"
+        # Dependencies installieren
+        pip install --upgrade pip
+        # WICHTIG: numpy<2.0, bitsandbytes für 4-bit Quantisierung
+        pip install "numpy<2.0" "transformers>=4.48.0" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0" "torch>=2.0" "bitsandbytes>=0.41.0"
+        echo "✅ Installation abgeschlossen"
+        echo "DEBUG: Python: $(which python)"
+        echo "DEBUG: transformers: $(python -c \"import transformers; print(transformers.__version__)\")"
+        echo "DEBUG: bitsandbytes: $(python -c \"import bitsandbytes; print(bitsandbytes.__version__)\")"
+        # Python-Skript ausführen
+        python '"$PROJECT_ROOT"'/src/eval/models/run_Llama4-Scout-17B.py
+    '
+
+echo "✅ Job abgeschlossen"

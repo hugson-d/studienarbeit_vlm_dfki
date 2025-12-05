@@ -33,7 +33,7 @@ HF_TOKEN = os.getenv("HF_TOKEN")
 if HF_TOKEN:
     login(token=HF_TOKEN)
 
-from transformers import AutoProcessor, Llama4ForConditionalGeneration, BitsAndBytesConfig
+from transformers import AutoProcessor, AutoModelForMultimodalLM, BitsAndBytesConfig
 
 # ============================================================================
 # KONFIGURATION - LLAMA 4 SCOUT
@@ -130,7 +130,7 @@ class VLMEvaluator:
                 bnb_4bit_compute_dtype=torch.bfloat16,
                 bnb_4bit_use_double_quant=True,
             )
-            self.model = Llama4ForConditionalGeneration.from_pretrained(
+            self.model = AutoModelForMultimodalLM.from_pretrained(
                 MODEL_HF_ID,
                 quantization_config=quantization_config,
                 device_map="auto",
@@ -138,9 +138,8 @@ class VLMEvaluator:
             )
         else:
             # BF16 - benötigt ~218GB VRAM (Multi-GPU Setup)
-            self.model = Llama4ForConditionalGeneration.from_pretrained(
+            self.model = AutoModelForMultimodalLM.from_pretrained(
                 MODEL_HF_ID,
-                attn_implementation="flex_attention",
                 device_map="auto",
                 torch_dtype=torch.bfloat16,
                 trust_remote_code=True,
