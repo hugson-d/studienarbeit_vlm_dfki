@@ -65,8 +65,10 @@ srun \
     --container-workdir="$PROJECT_ROOT" \
     bash -c '
         echo "📦 Installiere Dependencies..."
-        pip install --quiet --no-warn-script-location "transformers>=4.51.3" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "timm" "pillow>=10.0" "safetensors>=0.4.0"
+        pip install --upgrade --force-reinstall --no-warn-script-location "transformers>=4.51.3" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "timm" "pillow>=10.0" "safetensors>=0.4.0"
         echo "✅ Installation abgeschlossen"
+        echo "DEBUG: transformers version:"
+        python -c "import transformers; print(transformers.__version__)"
         python '"$PROJECT_ROOT"'/src/eval/models/run_Ovis2.5-9B.py
     '
 
