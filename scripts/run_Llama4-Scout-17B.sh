@@ -74,12 +74,13 @@ srun \
         pip install --upgrade pip
         # WICHTIG: Alte torchvision aus Container isolieren (nms operator error)
         pip uninstall -y torchvision 2>/dev/null || true
-        # WICHTIG: numpy<2.0, bitsandbytes für 4-bit Quantisierung
-        # transformers>=4.51.0 für AutoModelForVision2Seq Support
-        pip install -q "numpy<2.0" transformers "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0" "torch>=2.0" "torchvision>=0.15.0" "bitsandbytes>=0.41.0"
+        # KRITISCH: transformers aus venv, nicht aus Container!
+        # --force-reinstall stellt sicher dass neue Version in venv installiert wird
+        pip install --force-reinstall -q "numpy<2.0" transformers "torch>=2.0" "torchvision>=0.15.0"
+        pip install -q "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0" "bitsandbytes>=0.41.0"
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
-        python -c "import transformers; print(f\"transformers: {transformers.__version__}\")"
+        python -c "import transformers; print(f\"transformers: {transformers.__version__} from {transformers.__file__}\")"
         python -c "import bitsandbytes; print(f\"bitsandbytes: {bitsandbytes.__version__}\")"
         python -c "import torchvision; print(f\"torchvision: {torchvision.__version__}\")"
         # Python-Skript ausführen
