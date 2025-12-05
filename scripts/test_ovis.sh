@@ -11,18 +11,19 @@
 
 set -euo pipefail
 
-# Projektpfad ermitteln
+# Projektpfad setup
 PROJECT_ROOT="${SLURM_SUBMIT_DIR}"
 if [[ "$(basename "$PROJECT_ROOT")" == "scripts" ]]; then
     PROJECT_ROOT="$(dirname "$PROJECT_ROOT")"
 fi
 
-# WICHTIG: Cache auf Netscratch legen (Home ist zu klein/langsam)
+# Environment Variablen
 export HF_HOME="/netscratch/$USER/.cache/huggingface"
 export TRANSFORMERS_CACHE="$HF_HOME"
+export HF_HUB_ENABLE_HF_TRANSFER=1
 mkdir -p "$HF_HOME"
 
-# HF Token laden
+# Token laden
 if [[ -f "$PROJECT_ROOT/.env" ]]; then
     set -a; source "$PROJECT_ROOT/.env"; set +a
 fi
@@ -30,14 +31,18 @@ fi
 export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
-echo "=== [JOB] Starte Ovis2.5-9B auf $(hostname) ==="
-echo "Cache Dir: $HF_HOME"
+echo "=========================================="
+echo "🚀 Start Job: Ovis2.5-9B (Wrapper Mode)"
+echo "PROJECT_ROOT: $PROJECT_ROOT"
+echo "=========================================="
+
+# WICHTIG: Kein --task-prolog mehr!
+# Wir rufen direkt 'bash scripts/entrypoint_ovis.sh' im Container auf.
 
 srun \
     --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
     --container-mounts=/netscratch:/netscratch,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
-    --task-prolog="$PROJECT_ROOT/scripts/install_ovis_9b_test.sh" \
-    python "$PROJECT_ROOT/src/eval/models/test.py"
+    bash "$PROJECT_ROOT/scripts/entrypoint_ovis.sh"
 
-echo "=== [JOB] Beendet ==="
+echo "✅ srun beendet"
