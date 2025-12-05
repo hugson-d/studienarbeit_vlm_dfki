@@ -138,17 +138,13 @@ class VLMEvaluator:
     def __init__(self):
         logger.info(f"Lade {MODEL_NAME} ({MODEL_HF_ID})")
 
-        load_kwargs = {
-            "trust_remote_code": True,
-            "torch_dtype": "auto",
-            "low_cpu_mem_usage": True,
-        }
-
-        device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = AutoModelForCausalLM.from_pretrained(
             MODEL_HF_ID,
-            **load_kwargs,
-        ).to(device).eval()
+            trust_remote_code=True,
+            torch_dtype=torch.bfloat16,
+            device_map="auto",
+            low_cpu_mem_usage=True,
+        ).eval()
 
         # Ovis text tokenizer
         # Ovis2.5 nutzt teilweise get_text_tokenizer(); Ovis2-Modelle stellen oft text_tokenizer bereit.
@@ -160,7 +156,7 @@ class VLMEvaluator:
         else:
             raise AttributeError("Modell bietet keinen text_tokenizer / get_text_tokenizer an.")
 
-        logger.info(f"{MODEL_NAME} bereit auf {self.model.device}")
+        logger.info(f"{MODEL_NAME} bereit auf {self.model.device} (dtype: {self.model.dtype})")
 
     def generate(self, image_path: str) -> Dict:
         full_path = DATA_DIR / image_path
