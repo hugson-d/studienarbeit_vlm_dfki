@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=vlm_mistral_small_24b
-#SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI,H200-AV,H200-PCI
+#SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
 #SBATCH --mem=80G
