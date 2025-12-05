@@ -74,6 +74,10 @@ srun \
         source "$VENV_PATH/bin/activate"
         # Dependencies installieren
         pip install --upgrade pip
+        # WICHTIG: Alte flash-attn Version aus Container entfernen
+        pip uninstall -y flash-attn 2>/dev/null || true
+        # Flash Attention komplett deaktivieren
+        export USE_FLASH_ATTENTION=0
         pip install "numpy<2.0" "transformers>=4.37.2" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "timm>=0.9.16" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0" "torch>=2.0" "torchvision>=0.15.0"
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
