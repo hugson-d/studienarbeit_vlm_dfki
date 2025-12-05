@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-VLM Benchmark für Känguru-Mathematik-Aufgaben
-Modell: AIDC-AI/Ovis2.5-9B (Multimodal/VLM)
+VLM Benchmark für Känguru-Mathematik-Aufgaben (Ovis2.5-9B Version)
 """
 
 import os
@@ -20,8 +19,6 @@ from pathlib import Path
 from tqdm import tqdm
 from pydantic import BaseModel, Field
 from huggingface_hub import login
-import transformers
-print(f"DEBUG: transformers version = {transformers.__version__}")
 from transformers import AutoModelForCausalLM
 
 # ============================================================================
@@ -32,17 +29,18 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="VLM Benchmark für Känguru-Mathematik-Aufgaben (Ovis2.5-9B)"
     )
+    # ANPASSUNG: Default auf 9B
     parser.add_argument(
         "--hf-id",
         type=str,
-        default="AIDC-AI/Ovis2.5-9B",
-        help="HF-Model-ID",
+        default="AIDC-AI/Ovis2.5-9B"
     )
+    # ANPASSUNG: Default Name angepasst
     parser.add_argument(
         "--model-name",
         type=str,
         default="Ovis2.5-9B",
-        help="Interner Modellname für Logs/Dateien (frei wählbar).",
+        help="Interner Modellname für Logs/Dateien.",
     )
     return parser.parse_args()
 
@@ -75,7 +73,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(MODEL_NAME)
 
-# HuggingFace Login
 HF_TOKEN = os.getenv("HF_TOKEN")
 if HF_TOKEN:
     login(token=HF_TOKEN)
@@ -89,13 +86,11 @@ class KanguruAnswer(BaseModel):
 
 def parse_response(output_text: str) -> Dict:
     clean_text = output_text.strip()
-    # Markdown Code-Block entfernen
     if "```" in clean_text:
         match = re.search(r"```(?:json)?\s*(.*?)\s*```", clean_text, re.DOTALL)
         if match:
             clean_text = match.group(1).strip()
 
-    # JSON Suche
     json_match = re.search(r"\{[^{}]*\}", clean_text, re.DOTALL)
     if json_match:
         try:
@@ -106,7 +101,6 @@ def parse_response(output_text: str) -> Dict:
         except Exception:
             pass
 
-    # Regex Fallback
     patterns = [
         r"(?:antwort|answer|lösung|solution)[:\s]+([A-E])\b",
         r"\b([A-E])\s*(?:ist|is)\s+(?:richtig|correct)",
@@ -146,15 +140,15 @@ class VLMEvaluator:
             "trust_remote_code": True,
             "torch_dtype": torch.bfloat16,
             "low_cpu_mem_usage": True,
+            # ANPASSUNG: device_map="auto" ist sicherer für 9B, um OOM beim Laden zu vermeiden
+            "device_map": "auto", 
         }
 
-        device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model = AutoModelForCausalLM.from_pretrained(
             MODEL_HF_ID,
             **load_kwargs,
-        ).to(device).eval()
+        ).eval()
 
-        # Ovis text tokenizer
         if hasattr(self.model, "text_tokenizer"):
             self.tokenizer = self.model.text_tokenizer
         elif hasattr(self.model, "get_text_tokenizer"):
@@ -162,7 +156,7 @@ class VLMEvaluator:
         else:
             raise AttributeError("Modell bietet keinen text_tokenizer / get_text_tokenizer an.")
 
-        logger.info(f"{MODEL_NAME} bereit auf {self.model.device}")
+        logger.info(f"{MODEL_NAME} bereit. Haupt-Device: {self.model.device}")
 
     def generate(self, image_path: str) -> Dict:
         full_path = DATA_DIR / image_path
@@ -180,8 +174,7 @@ class VLMEvaluator:
             "WICHTIG:\n"
             "- Deine GESAMTE Antwort besteht NUR aus diesem JSON-Objekt.\n"
             "- KEINE anderen Zeichen, Wörter oder Erklärungen.\n"
-            "- Bei Unsicherheit: Wähle die wahrscheinlichste Option (A-E).\n"
-            "- Eine Antwort ist PFLICHT - du musst A, B, C, D oder E wählen."
+            "- Bei Unsicherheit: Wähle die wahrscheinlichste Option (A-E)."
         )
         user_prompt = "Bestimme die korrekte Antwort basierend auf dem Bild. Gib nur das JSON zurück."
 
@@ -195,13 +188,14 @@ class VLMEvaluator:
             }
         ]
 
-        # Ovis2.5 preprocess_inputs (ohne Thinking-Modus)
+        # Preprocessing
         input_ids, pixel_values, grid_thws = self.model.preprocess_inputs(
             messages=messages,
             add_generation_prompt=True,
-            enable_thinking=False,
         )
 
+        # ANPASSUNG: Sicherstellen, dass Tensors auf dem gleichen Device wie das Modell sind.
+        # Bei device_map="auto" liegt der erste Layer meist auf cuda:0.
         device = self.model.device
         input_ids = input_ids.to(device)
         if pixel_values is not None:

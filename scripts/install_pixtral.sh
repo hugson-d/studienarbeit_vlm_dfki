@@ -26,6 +26,9 @@ if [[ "${SLURM_LOCALID:-0}" == "0" ]]; then
     pip install --quiet --no-warn-script-location \
         "mistral_common>=1.4.4"
     
+    # NumPy <2.0 für Kompatibilität mit Container-Paketen (pandas, scipy, sklearn)
+    pip install --quiet --no-warn-script-location "numpy<2.0"
+    
     # Zusätzliche Pakete
     pip install --quiet --no-warn-script-location \
         "huggingface_hub>=0.24.0" \
