@@ -3,7 +3,8 @@
 VLM Benchmark für Känguru-Mathematik-Aufgaben
 Modell: Qwen2.5-VL-3B (vLLM Backend mit Structured Outputs / JSON Schema)
 
-Verwendet GuidedDecodingParams(json=...) für strukturierte JSON-Ausgabe.
+Verwendet Structured Outputs für garantierte JSON-Ausgabe.
+Kompatibel mit vLLM >= 0.6.0 (nutzt guided_json Parameter).
 """
 
 import os
@@ -50,7 +51,15 @@ else:
 
 # vLLM Import
 from vllm import LLM, SamplingParams
-from vllm.sampling_params import GuidedDecodingParams
+
+# Versuche GuidedDecodingParams zu importieren (für neuere vLLM Versionen)
+try:
+    from vllm.sampling_params import GuidedDecodingParams
+    VLLM_HAS_GUIDED_DECODING = True
+    print("✅ GuidedDecodingParams verfügbar")
+except ImportError:
+    VLLM_HAS_GUIDED_DECODING = False
+    print("ℹ️ GuidedDecodingParams nicht verfügbar - nutze guided_json direkt")
 
 # ============================================================================
 # KONFIGURATION - DIESES MODELL
@@ -82,7 +91,6 @@ if not DATASET_PATH.exists():
 DATA_DIR = PROJECT_ROOT / "data"
 OUTPUT_DIR = PROJECT_ROOT / "evaluation_results"
 LOG_FILE = OUTPUT_DIR / f"{MODEL_NAME}_results.jsonl"
-EXCEL_FILE = OUTPUT_DIR / f"{MODEL_NAME}_summary.xlsx"
 SEED = 42
 
 # ============================================================================
@@ -231,15 +239,32 @@ class VLMEvaluator:
             dtype="bfloat16",
         )
         
-        # Guided Decoding mit JSON Schema
-        guided_params = GuidedDecodingParams(json=ANSWER_JSON_SCHEMA)
-        
-        # Sampling Parameter für deterministische Ausgabe mit guided decoding
-        self.sampling_params = SamplingParams(
-            max_tokens=50,  # Genug für {"answer": "X"}
-            temperature=0.0,  # Greedy decoding (deterministisch)
-            guided_decoding=guided_params,
-        )
+        # Sampling Parameter erstellen - je nach vLLM Version
+        if VLLM_HAS_GUIDED_DECODING:
+            # Neuere vLLM Version: GuidedDecodingParams
+            logger.info("   📋 Nutze GuidedDecodingParams (neuere vLLM)")
+            guided_params = GuidedDecodingParams(json=ANSWER_JSON_SCHEMA)
+            self.sampling_params = SamplingParams(
+                max_tokens=50,
+                temperature=0.0,
+                guided_decoding=guided_params,
+            )
+        else:
+            # Ältere vLLM Version: guided_json direkt in SamplingParams
+            logger.info("   📋 Nutze guided_json direkt (ältere vLLM)")
+            try:
+                self.sampling_params = SamplingParams(
+                    max_tokens=50,
+                    temperature=0.0,
+                    guided_json=ANSWER_JSON_SCHEMA,
+                )
+            except TypeError:
+                # Falls guided_json auch nicht verfügbar ist
+                logger.warning("   ⚠️ Keine Guided Decoding Unterstützung - nutze Fallback")
+                self.sampling_params = SamplingParams(
+                    max_tokens=50,
+                    temperature=0.0,
+                )
         
         logger.info(f"✅ {MODEL_NAME} bereit mit vLLM + JSON Schema Guided Decoding")
         logger.info(f"   Schema: {ANSWER_JSON_SCHEMA}")
@@ -438,8 +463,6 @@ def generate_report():
         logger.warning("Log-Datei ist leer!")
         return
     
-    df.to_excel(EXCEL_FILE, index=False)
-    
     print("\n" + "="*70)
     print(f"📊 ERGEBNISSE: {MODEL_NAME}")
     print("="*70)
@@ -468,7 +491,6 @@ def generate_report():
             print(f"  {cls:30s} {cls_acc:.1%}")
     
     print("\n" + "="*70)
-    print(f"📁 Excel: {EXCEL_FILE}")
     print(f"📜 Logs:  {LOG_FILE}")
 
 
