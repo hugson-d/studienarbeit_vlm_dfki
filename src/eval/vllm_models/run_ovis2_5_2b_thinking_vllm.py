@@ -70,6 +70,15 @@ MODEL_NAME = "Ovis2.5-2B-Thinking-vLLM"
 MODEL_HF_ID = "AIDC-AI/Ovis2.5-2B"
 MODEL_PARAMS_B = 2
 
+# Thinking-Mode Konfiguration (siehe HF Referenz: max_new_tokens > thinking_budget + 25)
+THINKING_BUDGET = 2048
+MAX_NEW_TOKENS = 3072
+THINKING_EXTRA_OPTIONS = {
+    "enable_thinking": True,
+    "enable_thinking_budget": True,
+    "thinking_budget": THINKING_BUDGET,
+}
+
 # Cache-Verzeichnis für Modelle (auf Cluster: /netscratch)
 MODEL_CACHE_DIR = os.environ.get("HF_HOME", "/netscratch/$USER/.cache/huggingface")
 
@@ -218,7 +227,7 @@ class VLMEvaluator:
         logger.info(f"🏗️ Lade {MODEL_NAME} ({MODEL_PARAMS_B}B) mit vLLM")
         logger.info(f"   HuggingFace ID: {MODEL_HF_ID}")
         logger.info(f"   ⚡ Guided Decoding (JSON Schema) aktiviert")
-        logger.info(f"   🧠 Thinking Mode: max_tokens=4096")
+        logger.info(f"   🧠 Thinking Mode: max_tokens={MAX_NEW_TOKENS} / thinking_budget={THINKING_BUDGET}")
 
         # vLLM LLM initialisieren
         logger.info("   📥 Lade Modell mit vLLM...")
@@ -236,25 +245,28 @@ class VLMEvaluator:
             logger.info("   📋 Nutze StructuredOutputsParams (neue vLLM API)")
             structured_outputs = StructuredOutputsParams(json=ANSWER_JSON_SCHEMA)
             self.sampling_params = SamplingParams(
-                max_tokens=4096,  # Thinking Mode: Mehr Tokens für Reasoning
+                max_tokens=MAX_NEW_TOKENS,
                 temperature=0.0,
                 structured_outputs=structured_outputs,
+                extra_options=THINKING_EXTRA_OPTIONS,
             )
         else:
             # Ältere vLLM Version: guided_json direkt in SamplingParams
             logger.info("   📋 Nutze guided_json direkt (ältere vLLM)")
             try:
                 self.sampling_params = SamplingParams(
-                    max_tokens=4096,  # Thinking Mode: Mehr Tokens für Reasoning
+                    max_tokens=MAX_NEW_TOKENS,
                     temperature=0.0,
                     guided_json=ANSWER_JSON_SCHEMA,
+                    extra_options=THINKING_EXTRA_OPTIONS,
                 )
             except TypeError:
                 # Falls guided_json auch nicht verfügbar ist
                 logger.warning("   ⚠️ Keine Guided Decoding Unterstützung - nutze Fallback")
                 self.sampling_params = SamplingParams(
-                    max_tokens=4096,  # Thinking Mode: Mehr Tokens für Reasoning
+                    max_tokens=MAX_NEW_TOKENS,
                     temperature=0.0,
+                    extra_options=THINKING_EXTRA_OPTIONS,
                 )
         
         logger.info(f"✅ {MODEL_NAME} bereit mit vLLM + JSON Schema Guided Decoding")
