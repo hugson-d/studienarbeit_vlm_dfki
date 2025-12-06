@@ -237,10 +237,8 @@ class VLMEvaluator:
             trust_remote_code=True,
             max_model_len=4096,
             gpu_memory_utilization=0.9,
-            dtype="bfloat16",
             load_format="bitsandbytes",
             quantization="bitsandbytes",
-            bnb_4bit_compute_dtype="float16",
         )
         
         # Sampling Parameter erstellen - je nach vLLM Version
