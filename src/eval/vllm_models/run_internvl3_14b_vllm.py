@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 VLM Benchmark für Känguru-Mathematik-Aufgaben
-Modell: Qwen2.5-VL-72B (vLLM Backend mit Structured Outputs / JSON Schema)
+Modell: InternVL3-14B (vLLM Backend mit Structured Outputs / JSON Schema)
 
 Verwendet Structured Outputs für garantierte JSON-Ausgabe.
 Kompatibel mit vLLM >= 0.6.0 (nutzt guided_json Parameter).
@@ -65,9 +65,9 @@ except ImportError:
 # KONFIGURATION - DIESES MODELL
 # ============================================================================
 
-MODEL_NAME = "Qwen2.5-VL-72B-4bit-vLLM"
-MODEL_HF_ID = "Qwen/Qwen2.5-VL-72B-Instruct"
-MODEL_PARAMS_B = 72
+MODEL_NAME = "InternVL3-14B-vLLM"
+MODEL_HF_ID = "OpenGVLab/InternVL3-14B"
+MODEL_PARAMS_B = 14
 
 # Cache-Verzeichnis für Modelle (auf Cluster: /netscratch)
 MODEL_CACHE_DIR = os.environ.get("HF_HOME", "/netscratch/$USER/.cache/huggingface")
@@ -228,7 +228,6 @@ class VLMEvaluator:
         logger.info(f"🏗️ Lade {MODEL_NAME} ({MODEL_PARAMS_B}B) mit vLLM")
         logger.info(f"   HuggingFace ID: {MODEL_HF_ID}")
         logger.info(f"   ⚡ Guided Decoding (JSON Schema) aktiviert")
-        logger.info(f"   🔧 4-bit Quantization (bitsandbytes) aktiviert")
 
         # vLLM LLM initialisieren
         logger.info("   📥 Lade Modell mit vLLM...")
@@ -238,9 +237,6 @@ class VLMEvaluator:
             max_model_len=4096,
             gpu_memory_utilization=0.9,
             dtype="bfloat16",
-            load_format="bitsandbytes",
-            quantization="bitsandbytes",
-            bnb_4bit_compute_dtype="float16",
         )
         
         # Sampling Parameter erstellen - je nach vLLM Version
@@ -302,30 +298,26 @@ class VLMEvaluator:
                             "url": f"data:{mime_type};base64,{image_b64}"
                         }
                     },
-                    {
-                        "type": "text",
-                        "text": user_prompt
-                    }
-                ]
-            }
+                    {"type": "text", "text": user_prompt},
+                ],
+            },
         ]
-        
+
+        # Generierung
         start_time = time.time()
         
-        # vLLM Chat Completion mit Guided Decoding
         outputs = self.llm.chat(
             messages=messages,
             sampling_params=self.sampling_params,
+            use_tqdm=False
         )
         
         duration = time.time() - start_time
         
-        # Ausgabe extrahieren
-        output_text = outputs[0].outputs[0].text.strip()
+        generated_text = outputs[0].outputs[0].text
         input_tokens = len(outputs[0].prompt_token_ids) if outputs[0].prompt_token_ids else 0
         
-        # JSON parsen und validieren
-        result = parse_response(output_text)
+        result = parse_response(generated_text)
         
         return {
             "prediction": result["prediction"],
@@ -333,7 +325,7 @@ class VLMEvaluator:
             "error": result["error"],
             "inference_time": round(duration, 4),
             "input_tokens": input_tokens,
-            "raw_output": output_text
+            "raw_output": generated_text
         }
 
     def cleanup(self):
@@ -406,7 +398,9 @@ def run_benchmark():
                     continue
                 
                 try:
-                    result = evaluator.generate(item["image_path"])
+                    # Pfad im Dataset ist relativ zu DATA_DIR
+                    image_path = item["image_path"]
+                    result = evaluator.generate(image_path)
                     
                     ground_truth = item.get("answer")
                     is_correct = result["prediction"] is not None and result["prediction"] == ground_truth

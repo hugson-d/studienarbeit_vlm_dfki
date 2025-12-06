@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=vlm_qwen2_5_vl_72b_vllm_json
+#SBATCH --job-name=vlm_qwen2_5_vl_72b_4bit_vllm_json
 #SBATCH --partition=H100,H200,A100-80GB,H100-SLT
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
-#SBATCH --mem=128G
+#SBATCH --mem=64G
 #SBATCH --time=24:00:00
 #SBATCH --cpus-per-task=4
 #SBATCH --output=%x_%j.out
@@ -49,7 +49,7 @@ export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
 echo "=========================================="
-echo "🚀 VLM Benchmark: Qwen2.5-VL-72B (vLLM + JSON Schema Guided Decoding)"
+echo "🚀 VLM Benchmark: Qwen2.5-VL-72B 4-bit (vLLM + JSON Schema Guided Decoding)"
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
@@ -93,16 +93,19 @@ srun \
             "pandas" \
             "tqdm" \
             "pillow>=10.0" \
-            "qwen-vl-utils>=0.0.8"
+            "qwen-vl-utils>=0.0.8" \
+            "bitsandbytes>=0.43.0"
         
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
         python -c "import vllm; print(f\"vLLM Version: {vllm.__version__}\")"
         python -c "import transformers; print(f\"Transformers: {transformers.__version__}\")"
         python -c "import pydantic; print(f\"Pydantic: {pydantic.__version__}\")"
+        python -c "import bitsandbytes; print(f\"bitsandbytes: {bitsandbytes.__version__}\")"
         python -c "import xgrammar; print(\"xgrammar: verfügbar\")" 2>/dev/null || echo "xgrammar: nicht installiert (fallback auf outlines)"
         
         # Python-Skript ausführen
+        echo "▶️ Starte Qwen2.5-VL-72B 4-bit Evaluation mit vLLM..."
         python '"$PROJECT_ROOT"'/src/eval/vllm_models/run_qwen2_5_vl_72b_vllm.py
     '
 
