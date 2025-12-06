@@ -55,7 +55,7 @@ except ImportError:
 # ============================================================================
 
 MODEL_NAME = "InternVL3-78B-vLLM"
-MODEL_HF_ID = "OpenGVLab/InternVL3-78B"
+MODEL_HF_ID = "OpenGVLab/InternVL3-78B-AWQ"
 
 # Suchlogik für Dataset, falls PROJECT_ROOT variiert
 DATASET_PATH = PROJECT_ROOT / "dataset_final.json"
