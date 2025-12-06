@@ -80,6 +80,9 @@ srun \
         pip uninstall -y numpy 2>/dev/null || true
         pip install "numpy<2.0"
         
+        # WICHTIG: pandas und opencv neu installieren mit NumPy <2.0
+        pip uninstall -y pandas opencv-python 2>/dev/null || true
+        
         # WICHTIG: Alte flash-attn und torchvision aus Container entfernen
         pip uninstall -y flash-attn torchvision 2>/dev/null || true
         
@@ -88,8 +91,8 @@ srun \
             "torch>=2.1.0" \
             "torchvision>=0.16.0"
         
-        # vLLM mit Vision Support (>= 0.6.0 für guided_decoding)
-        pip install -q --no-deps "vllm>=0.6.0"
+        # vLLM mit Vision Support (>= 0.6.0 für structured outputs)
+        pip install -q "vllm>=0.6.0"
         pip install -q xgrammar
         
         # mistral-common für Pixtral Tokenizer
@@ -99,6 +102,7 @@ srun \
         # WICHTIG: --no-deps für opencv-python und pandas, um NumPy nicht zu überschreiben
         pip install -q --no-deps "opencv-python>=4.8.0"
         pip install -q --no-deps "pandas"
+        pip install -q --no-deps "openpyxl"
         
         pip install -q \
             "transformers>=4.45.0" \
