@@ -48,31 +48,69 @@ fi
 export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
-# ------------------------------
-# Virtual Environment
-# ------------------------------
-VENV_PATH="/netscratch/$USER/.venv/vllm_qwen"
-
-if [[ ! -d "$VENV_PATH" ]]; then
-    echo "❌ Venv nicht gefunden unter: $VENV_PATH"
-    echo "Bitte erst das Setup-Skript ausführen oder Pfad anpassen."
-    exit 1
-fi
-
-echo "🚀 Aktiviere Venv: $VENV_PATH"
-source "$VENV_PATH/bin/activate"
+echo "=========================================="
+echo "🚀 VLM Benchmark: Idefics3-8B (vLLM + JSON Schema Guided Decoding)"
+echo "PROJECT_ROOT: $PROJECT_ROOT"
+echo "=========================================="
 
 # ------------------------------
-# Skript ausführen
+# Container mit venv + vLLM Installation starten
 # ------------------------------
-SCRIPT_PATH="$PROJECT_ROOT/src/eval/vllm_models/run_idefics3_8b_vllm.py"
+srun \
+    --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
+    --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
+    --container-workdir="$PROJECT_ROOT" \
+    bash -c '
+        echo "📦 Erstelle venv und installiere vLLM Dependencies..."
+        
+        # Venv erstellen (falls nicht vorhanden)
+        VENV_PATH="/netscratch/$USER/.venv/vllm_qwen"
+        if [[ ! -d "$VENV_PATH" ]]; then
+            python -m venv "$VENV_PATH"
+            echo "✅ Venv erstellt: $VENV_PATH"
+        fi
+        
+        # Venv aktivieren
+        source "$VENV_PATH/bin/activate"
+        
+        # Dependencies installieren
+        pip install --upgrade pip
+        
+        # vLLM mit Vision Support (>= 0.6.0 für guided_decoding)
+        pip install -q "vllm>=0.6.0"
+        
+        # xgrammar für Structured Output Backend (JSON Schema)
+        pip install -q xgrammar
+        
+        # Zusätzliche Dependencies
+        pip install -q \
+            "numpy<2.0" \
+            "transformers>=4.45.0" \
+            "accelerate>=0.33.0" \
+            "huggingface_hub>=0.24.0" \
+            "pydantic>=2.0" \
+            "python-dotenv>=1.0" \
+            "pandas" \
+            "tqdm" \
+            "pillow>=10.0" \
+            "qwen-vl-utils>=0.0.8"
+        
+        echo "✅ Installation abgeschlossen"
+        echo "DEBUG: Python: $(which python)"
+        python -c "import vllm; print(f\"vLLM Version: {vllm.__version__}\")"
 
-if [[ ! -f "$SCRIPT_PATH" ]]; then
-    echo "❌ Python-Skript nicht gefunden: $SCRIPT_PATH"
-    exit 1
-fi
-
-echo "▶️ Starte Idefics3-8B Evaluation mit vLLM..."
-python3 "$SCRIPT_PATH"
+        # ------------------------------
+        # Skript ausführen
+        # ------------------------------
+        SCRIPT_PATH="'"$PROJECT_ROOT"'/src/eval/vllm_models/run_idefics3_8b_vllm.py"
+        
+        if [[ ! -f "$SCRIPT_PATH" ]]; then
+            echo "❌ Python-Skript nicht gefunden: $SCRIPT_PATH"
+            exit 1
+        fi
+        
+        echo "▶️ Starte Idefics3-8B Evaluation mit vLLM..."
+        python3 "$SCRIPT_PATH"
+    '
 
 echo "✅ Job beendet."
