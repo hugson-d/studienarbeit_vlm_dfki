@@ -35,32 +35,32 @@ try:
     _env_file = PROJECT_ROOT / ".env"
     if _env_file.exists():
         load_dotenv(_env_file)
-        print(f"✅ .env geladen aus: {_env_file}")
+        # .env loaded
     else:
         load_dotenv()  # Fallback: aktuelles Verzeichnis
 except ImportError:
-    print("ℹ️ python-dotenv nicht installiert - nutze Umgebungsvariablen")
+    pass
 
 # HuggingFace Login
 from huggingface_hub import login
 HF_TOKEN = os.getenv("HF_TOKEN")
 if HF_TOKEN:
     login(token=HF_TOKEN)
-    print(f"✅ HuggingFace Login erfolgreich")
+    # HF login ok
 else:
-    print("⚠️ HF_TOKEN nicht gesetzt - gated models werden fehlschlagen!")
+    pass
 
 # vLLM Import
 from vllm import LLM, SamplingParams
 
 # Versuche GuidedDecodingParams zu importieren (für neuere vLLM Versionen)
 try:
-    from vllm.sampling_params import GuidedDecodingParams
-    VLLM_HAS_GUIDED_DECODING = True
-    print("✅ GuidedDecodingParams verfügbar")
+    from vllm.sampling_params import StructuredOutputsParams
+    VLLM_HAS_STRUCTURED_OUTPUTS = True
+    # Structured outputs available
 except ImportError:
-    VLLM_HAS_GUIDED_DECODING = False
-    print("ℹ️ GuidedDecodingParams nicht verfügbar - nutze guided_json direkt")
+    VLLM_HAS_STRUCTURED_OUTPUTS = False
+    pass
 
 # ============================================================================
 # KONFIGURATION - DIESES MODELL
@@ -141,18 +141,7 @@ def set_seed(seed: int):
     random.seed(seed)
 
 
-def free_gpu_memory():
-    gc.collect()
-    try:
-        import torch
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
-            torch.cuda.ipc_collect()
-    except ImportError:
-        pass
-    time.sleep(1)
-
-
+# GPU memory cleanup removed - using gc.collect() only
 # ============================================================================
 # ANTWORT-PARSING MIT PYDANTIC
 # ============================================================================
@@ -242,14 +231,14 @@ class VLMEvaluator:
         )
         
         # Sampling Parameter erstellen - je nach vLLM Version
-        if VLLM_HAS_GUIDED_DECODING:
+        if VLLM_HAS_STRUCTURED_OUTPUTS:
             # Neuere vLLM Version: GuidedDecodingParams
-            logger.info("   📋 Nutze GuidedDecodingParams (neuere vLLM)")
-            guided_params = GuidedDecodingParams(json=ANSWER_JSON_SCHEMA)
+            logger.info("   📋 Nutze StructuredOutputsParams (neue vLLM API)")
+            structured_outputs = StructuredOutputsParams(json=ANSWER_JSON_SCHEMA)
             self.sampling_params = SamplingParams(
                 max_tokens=4096,  # Thinking Mode: Mehr Tokens für Reasoning
                 temperature=0.0,
-                guided_decoding=guided_params,
+                structured_outputs=structured_outputs,
             )
         else:
             # Ältere vLLM Version: guided_json direkt in SamplingParams
@@ -334,7 +323,7 @@ class VLMEvaluator:
         logger.info(f"🧹 Räume {MODEL_NAME} auf...")
         if hasattr(self, 'llm'):
             del self.llm
-        free_gpu_memory()
+        gc.collect()
 
 
 # ============================================================================

@@ -32,27 +32,27 @@ try:
     _env_file = PROJECT_ROOT / ".env"
     if _env_file.exists():
         load_dotenv(_env_file)
-        print(f".env geladen aus: {_env_file}")
+        # .env loaded
     else:
         load_dotenv()
 except ImportError:
-    print("python-dotenv nicht installiert")
+    pass
 
 from huggingface_hub import login
 HF_TOKEN = os.getenv("HF_TOKEN")
 if HF_TOKEN:
     login(token=HF_TOKEN)
-    print("HF Login ok")
+    # HF login ok
 else:
-    print("HF_TOKEN fehlt")
+    pass
 
 from vllm import LLM, SamplingParams
 
 try:
-    from vllm.sampling_params import GuidedDecodingParams
-    VLLM_HAS_GUIDED_DECODING = True
+    from vllm.sampling_params import StructuredOutputsParams
+    VLLM_HAS_STRUCTURED_OUTPUTS = True
 except ImportError:
-    VLLM_HAS_GUIDED_DECODING = False
+    VLLM_HAS_STRUCTURED_OUTPUTS = False
 
 # MODEL CONFIG
 MODEL_NAME = "Pixtral-12B-vLLM"
@@ -100,17 +100,7 @@ logger = logging.getLogger(MODEL_NAME)
 def set_seed(seed:int):
     random.seed(seed)
 
-def free_gpu_memory():
-    gc.collect()
-    try:
-        import torch
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
-            torch.cuda.ipc_collect()
-    except:
-        pass
-    time.sleep(1)
-
+# GPU memory cleanup removed - using gc.collect() only
 # PARSING
 
 def parse_response(output_text:str)->Dict[str,Union[str,bool,None]]:
@@ -156,14 +146,11 @@ class VLMEvaluator:
             gpu_memory_utilization=0.9,
             dtype="bfloat16",
         )
-        if VLLM_HAS_GUIDED_DECODING:
-            guided=GuidedDecodingParams(json=ANSWER_JSON_SCHEMA)
-            self.sampling_params = SamplingParams(max_tokens=50,temperature=0.0,guided_decoding=guided)
+        if VLLM_HAS_STRUCTURED_OUTPUTS:
+            structured_outputs=StructuredOutputsParams(json=ANSWER_JSON_SCHEMA)
+            self.sampling_params = SamplingParams(max_tokens=50,temperature=0.0,structured_outputs=structured_outputs)
         else:
-            try:
-                self.sampling_params=SamplingParams(max_tokens=50,temperature=0.0,guided_json=ANSWER_JSON_SCHEMA)
-            except:
-                self.sampling_params=SamplingParams(max_tokens=50,temperature=0.0)
+            self.sampling_params=SamplingParams(max_tokens=50,temperature=0.0)
 
     def generate(self,image_path:str)->Dict:
         p=DATA_DIR / image_path
@@ -197,7 +184,7 @@ class VLMEvaluator:
     def cleanup(self):
         if hasattr(self,'llm'):
             del self.llm
-        free_gpu_memory()
+        gc.collect()
 
 # DATASET
 

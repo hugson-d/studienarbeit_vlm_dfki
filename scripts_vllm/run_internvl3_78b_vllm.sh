@@ -3,7 +3,7 @@
 #SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
-#SBATCH --mem=64G
+#SBATCH --mem=128G
 #SBATCH --time=24:00:00
 #SBATCH --cpus-per-task=4
 #SBATCH --output=%x_%j.out
@@ -49,8 +49,8 @@ export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 export USE_FLASH_ATTENTION=0
 
-echo "==========================================\"
-echo "🚀 VLM Benchmark: InternVL3-78B-4bit (vLLM + 4-bit Quantization + JSON Schema)"
+echo "=========================================="
+echo "🚀 VLM Benchmark: InternVL3-78B (vLLM + JSON Schema Guided Decoding)"
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
