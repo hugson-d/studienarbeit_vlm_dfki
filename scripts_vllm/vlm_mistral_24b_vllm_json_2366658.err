@@ -1,0 +1,130 @@
+Job 2366658: Running on node(s) serv-3316
+Job 2366658: Started at 2025-12-06 17:44:12+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2366658&from=1765039452000
+srun: jobinfo: version v1.0.0
+Job 2366658: Running on node(s) serv-3316
+Job 2366658: Started at 2025-12-06 17:44:13+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2366658&from=1765039453000
+Job 2366658: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
+Job 2366658: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 21.4 seconds
+Error: [Errno 13] Permission denied: '/netscratch/root'
+/usr/bin/bash: line 12: /netscratch/root/.venv/vllm_qwen/bin/activate: No such file or directory
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))': /index/tiktoken/
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+contourpy 1.2.0 requires numpy<2.0,>=1.20, but you have numpy 2.2.6 which is incompatible.
+cudf 23.10.0 requires numba<0.58,>=0.57, but you have numba 0.61.2 which is incompatible.
+cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 2.2.6 which is incompatible.
+dask-cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 2.2.6 which is incompatible.
+matplotlib 3.8.2 requires numpy<2,>=1.21, but you have numpy 2.2.6 which is incompatible.
+spacy 3.7.2 requires typer<0.10.0,>=0.3.0, but you have typer 0.20.0 which is incompatible.
+torch-tensorrt 2.2.0a0 requires torch<2.3.0,>=2.1.0.dev, but you have torch 2.9.0 which is incompatible.
+torchtext 0.17.0a0 requires torch==2.2.0a0+81ea7a4, but you have torch 2.9.0 which is incompatible.
+weasel 0.3.4 requires typer<0.10.0,>=0.3.0, but you have typer 0.20.0 which is incompatible.
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+cudf 23.10.0 requires numba<0.58,>=0.57, but you have numba 0.61.2 which is incompatible.
+cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 1.26.4 which is incompatible.
+dask-cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 1.26.4 which is incompatible.
+opencv-python-headless 4.12.0.88 requires numpy<2.3.0,>=2; python_version >= "3.9", but you have numpy 1.26.4 which is incompatible.
+spacy 3.7.2 requires typer<0.10.0,>=0.3.0, but you have typer 0.20.0 which is incompatible.
+torch-tensorrt 2.2.0a0 requires torch<2.3.0,>=2.1.0.dev, but you have torch 2.9.0 which is incompatible.
+torchtext 0.17.0a0 requires torch==2.2.0a0+81ea7a4, but you have torch 2.9.0 which is incompatible.
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+[2025-12-06 17:48:40] INFO run_mistral_small_24b_vllm.py:349: 📂 Dataset geladen: 3557 Aufgaben
+[2025-12-06 17:48:40] INFO run_mistral_small_24b_vllm.py:385: 🚀 Starte Mistral-Small-3.2-24B-vLLM: 3557/3557 Tasks ausstehend
+[2025-12-06 17:48:40] INFO run_mistral_small_24b_vllm.py:228: 🏗️ Lade Mistral-Small-3.2-24B-vLLM (24B) mit vLLM
+[2025-12-06 17:48:40] INFO run_mistral_small_24b_vllm.py:229:    HuggingFace ID: mistralai/Mistral-Small-3.2-24B-Instruct-2506
+[2025-12-06 17:48:40] INFO run_mistral_small_24b_vllm.py:230:    ⚡ Guided Decoding (JSON Schema) aktiviert
+[2025-12-06 17:48:40] INFO run_mistral_small_24b_vllm.py:233:    📥 Lade Modell mit vLLM...
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+[2025-12-06 17:48:49] WARNING imports.py:37: Warning: Your installation of OpenCV appears to be broken: module 'cv2.dnn' has no attribute 'DictValue'.Please follow the instructions at https://github.com/opencv/opencv-python/issues/884 to correct your environment. The import of cv2 has been skipped.
+[2025-12-06 17:48:49] INFO tekken.py:187: Non special vocabulary size is 130072 with 1000 special tokens.
+[2025-12-06 17:48:49] INFO tekken.py:545: Cutting non special vocabulary to first 130072 tokens.
+The following generation flags are not valid and may be ignored: ['temperature']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+[2025-12-06 17:48:51] INFO tekken.py:187: Non special vocabulary size is 130072 with 1000 special tokens.
+[2025-12-06 17:48:51] INFO tekken.py:545: Cutting non special vocabulary to first 130072 tokens.
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m Process EngineCore_DP0:
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m Traceback (most recent call last):
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     self.run()
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/lib/python3.10/multiprocessing/process.py", line 108, in run
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     self._target(*self._args, **self._kwargs)
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 847, in run_engine_core
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     raise e
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 834, in run_engine_core
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     engine_core = EngineCoreProc(*args, **kwargs)
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 610, in __init__
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     super().__init__(
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 102, in __init__
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     self.model_executor = executor_class(vllm_config)
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/executor/abstract.py", line 101, in __init__
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     self._init_executor()
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/executor/uniproc_executor.py", line 47, in _init_executor
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     self.driver_worker.init_device()
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/worker/worker_base.py", line 326, in init_device
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     self.worker.init_device()  # type: ignore
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/worker/gpu_worker.py", line 262, in init_device
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     self.model_runner = GPUModelRunner(self.vllm_config, self.device)
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/worker/gpu_model_runner.py", line 557, in __init__
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     MultiModalBudget(
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/worker/utils.py", line 42, in __init__
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     max_tokens_by_modality = mm_registry.get_max_tokens_per_item_by_modality(
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/multimodal/registry.py", line 167, in get_max_tokens_per_item_by_modality
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     return profiler.get_mm_max_contiguous_tokens(
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/multimodal/profiling.py", line 369, in get_mm_max_contiguous_tokens
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     return self._get_mm_max_tokens(seq_len, mm_counts, mm_embeddings_only=False)
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/multimodal/profiling.py", line 351, in _get_mm_max_tokens
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     mm_inputs = self._get_dummy_mm_inputs(seq_len, mm_counts)
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/multimodal/profiling.py", line 263, in _get_dummy_mm_inputs
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     processor_inputs = factory.get_dummy_processor_inputs(
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/model_executor/models/pixtral.py", line 291, in get_dummy_processor_inputs
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     res = tokenizer.mistral.encode_chat_completion(request)
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/mistral_common/tokens/tokenizers/mistral.py", line 379, in encode_chat_completion
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     return self.instruct_tokenizer.encode_instruct(instruct_request)
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/mistral_common/tokens/tokenizers/instruct.py", line 181, in encode_instruct
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     new_tokens, new_images, new_audios = self.encode_user_message(
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/mistral_common/tokens/tokenizers/instruct.py", line 917, in encode_user_message
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     tokens, images, audio = super().encode_user_message(
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/mistral_common/tokens/tokenizers/instruct.py", line 451, in encode_user_message
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     tokens, image, audio = self.encode_user_content(
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/mistral_common/tokens/tokenizers/instruct.py", line 890, in encode_user_content
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     tokens, images, audio = self._encode_content_chunks(content)
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/mistral_common/tokens/tokenizers/instruct.py", line 709, in _encode_content_chunks
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     chunk_tokens, maybe_image, maybe_audio = self._encode_content_chunk(chunk)
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/mistral_common/tokens/tokenizers/instruct.py", line 688, in _encode_content_chunk
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     img_encoding = self.image_encoder(chunk)
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/mistral_common/tokens/tokenizers/image.py", line 215, in __call__
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     processed_image = transform_image(image, new_image_size)
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m   File "/usr/local/lib/python3.10/dist-packages/mistral_common/tokens/tokenizers/image.py", line 157, in transform_image
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m     np_image = cv2.resize(np.array(_convert_to_rgb(image), dtype=np.float32), new_size, interpolation=cv2.INTER_CUBIC)
+[0;36m(EngineCore_DP0 pid=1097248)[0;0m NameError: name 'cv2' is not defined
+Traceback (most recent call last):
+  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/vllm_models/run_mistral_small_24b_vllm.py", line 498, in <module>
+    run_benchmark()
+  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/vllm_models/run_mistral_small_24b_vllm.py", line 387, in run_benchmark
+    evaluator = VLMEvaluator()
+  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/vllm_models/run_mistral_small_24b_vllm.py", line 236, in __init__
+    self.llm = LLM(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/entrypoints/llm.py", line 334, in __init__
+    self.llm_engine = LLMEngine.from_engine_args(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/llm_engine.py", line 183, in from_engine_args
+    return cls(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/llm_engine.py", line 109, in __init__
+    self.engine_core = EngineCoreClient.make_client(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core_client.py", line 93, in make_client
+    return SyncMPClient(vllm_config, executor_class, log_stats)
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core_client.py", line 642, in __init__
+    super().__init__(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core_client.py", line 471, in __init__
+    with launch_core_engines(vllm_config, executor_class, log_stats) as (
+  File "/usr/lib/python3.10/contextlib.py", line 142, in __exit__
+    next(self.gen)
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/utils.py", line 903, in launch_core_engines
+    wait_for_engine_startup(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/utils.py", line 960, in wait_for_engine_startup
+    raise RuntimeError(
+RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+srun: error: serv-3316: task 0: Exited with exit code 1

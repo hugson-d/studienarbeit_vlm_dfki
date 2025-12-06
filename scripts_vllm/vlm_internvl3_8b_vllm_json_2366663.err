@@ -1,0 +1,12 @@
+Job 2366663: Running on node(s) serv-3316
+Job 2366663: Started at 2025-12-06 18:13:57+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2366663&from=1765041237000
+srun: jobinfo: version v1.0.0
+Job 2366663: Running on node(s) serv-3316
+Job 2366663: Started at 2025-12-06 18:13:58+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2366663&from=1765041238000
+Job 2366663: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
+Job 2366663: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 20.9 seconds
+Error: [Errno 13] Permission denied: '/netscratch/root'
+/usr/bin/bash: line 12: /netscratch/root/.venv/vllm_internvl/bin/activate: No such file or directory
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv

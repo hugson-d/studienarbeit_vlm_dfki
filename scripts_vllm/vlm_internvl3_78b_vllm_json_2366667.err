@@ -1,0 +1,4 @@
+Job 2366667: Running on node(s) serv-3316
+Job 2366667: Started at 2025-12-06 18:14:14+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2366667&from=1765041254000
+/var/spool/slurm/d/job2366667/slurm_script: line 53: syntax error near unexpected token `('

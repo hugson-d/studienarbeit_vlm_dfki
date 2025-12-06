@@ -1,0 +1,8 @@
+Job 2366665: Running on node(s) serv-3315
+Job 2366665: Started at 2025-12-06 18:14:08+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2366665&from=1765041248000
+srun: jobinfo: version v1.0.0
+Job 2366665: Running on node(s) serv-3315
+Job 2366665: Started at 2025-12-06 18:14:09+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2366665&from=1765041249000
+Job 2366665: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh

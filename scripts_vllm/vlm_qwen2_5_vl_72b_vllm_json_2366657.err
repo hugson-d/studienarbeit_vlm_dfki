@@ -1,0 +1,170 @@
+Job 2366657: Running on node(s) serv-3346
+Job 2366657: Started at 2025-12-06 17:39:54+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2366657&from=1765039194000
+srun: jobinfo: version v1.0.0
+Job 2366657: Running on node(s) serv-3346
+Job 2366657: Started at 2025-12-06 17:39:55+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2366657&from=1765039195000
+Job 2366657: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
+Job 2366657: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 13.1 seconds
+Error: [Errno 13] Permission denied: '/netscratch/root'
+/usr/bin/bash: line 12: /netscratch/root/.venv/vllm_qwen/bin/activate: No such file or directory
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+contourpy 1.2.0 requires numpy<2.0,>=1.20, but you have numpy 2.2.6 which is incompatible.
+cudf 23.10.0 requires numba<0.58,>=0.57, but you have numba 0.61.2 which is incompatible.
+cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 2.2.6 which is incompatible.
+dask-cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 2.2.6 which is incompatible.
+matplotlib 3.8.2 requires numpy<2,>=1.21, but you have numpy 2.2.6 which is incompatible.
+spacy 3.7.2 requires typer<0.10.0,>=0.3.0, but you have typer 0.20.0 which is incompatible.
+torch-tensorrt 2.2.0a0 requires torch<2.3.0,>=2.1.0.dev, but you have torch 2.9.0 which is incompatible.
+torchtext 0.17.0a0 requires torch==2.2.0a0+81ea7a4, but you have torch 2.9.0 which is incompatible.
+weasel 0.3.4 requires typer<0.10.0,>=0.3.0, but you have typer 0.20.0 which is incompatible.
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+cudf 23.10.0 requires numba<0.58,>=0.57, but you have numba 0.61.2 which is incompatible.
+cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 1.26.4 which is incompatible.
+dask-cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 1.26.4 which is incompatible.
+opencv-python-headless 4.12.0.88 requires numpy<2.3.0,>=2; python_version >= "3.9", but you have numpy 1.26.4 which is incompatible.
+spacy 3.7.2 requires typer<0.10.0,>=0.3.0, but you have typer 0.20.0 which is incompatible.
+torch-tensorrt 2.2.0a0 requires torch<2.3.0,>=2.1.0.dev, but you have torch 2.9.0 which is incompatible.
+torchtext 0.17.0a0 requires torch==2.2.0a0+81ea7a4, but you have torch 2.9.0 which is incompatible.
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+[2025-12-06 17:43:40] INFO run_qwen2_5_vl_72b_vllm.py:351: 📂 Dataset geladen: 3557 Aufgaben
+[2025-12-06 17:43:40] INFO run_qwen2_5_vl_72b_vllm.py:387: 🚀 Starte Qwen2.5-VL-72B-vLLM: 3557/3557 Tasks ausstehend
+[2025-12-06 17:43:40] INFO run_qwen2_5_vl_72b_vllm.py:228: 🏗️ Lade Qwen2.5-VL-72B-vLLM (72B) mit vLLM
+[2025-12-06 17:43:40] INFO run_qwen2_5_vl_72b_vllm.py:229:    HuggingFace ID: Qwen/Qwen2.5-VL-72B-Instruct
+[2025-12-06 17:43:40] INFO run_qwen2_5_vl_72b_vllm.py:230:    ⚡ Guided Decoding (JSON Schema) aktiviert
+[2025-12-06 17:43:40] INFO run_qwen2_5_vl_72b_vllm.py:233:    📥 Lade Modell mit vLLM...
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m The image processor of type `Qwen2VLImageProcessor` is now loaded as a fast processor by default, even if the model checkpoint was saved with a slow processor. This is a breaking change and may produce slightly different outputs. To continue using the slow processor, instantiate this class with `use_fast=False`. Note that this behavior will be extended to all models in a future release.
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m [2025-12-06 17:43:56] INFO _optional_torch_c_dlpack.py:119: JIT-compiling torch-c-dlpack-ext to cache...
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:   0% Completed | 0/38 [00:00<?, ?it/s]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:   3% Completed | 1/38 [00:13<08:35, 13.94s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:   5% Completed | 2/38 [00:28<08:33, 14.27s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:   8% Completed | 3/38 [00:41<07:53, 13.54s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  11% Completed | 4/38 [00:54<07:43, 13.63s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  13% Completed | 5/38 [01:08<07:34, 13.77s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  16% Completed | 6/38 [01:16<06:16, 11.76s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  18% Completed | 7/38 [01:30<06:27, 12.49s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  21% Completed | 8/38 [01:43<06:20, 12.68s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  24% Completed | 9/38 [01:58<06:21, 13.16s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  26% Completed | 10/38 [02:11<06:12, 13.30s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  29% Completed | 11/38 [02:27<06:22, 14.18s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  32% Completed | 12/38 [02:44<06:28, 14.94s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  34% Completed | 13/38 [02:59<06:10, 14.82s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  37% Completed | 14/38 [03:14<06:03, 15.13s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  39% Completed | 15/38 [03:29<05:44, 14.97s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  42% Completed | 16/38 [03:45<05:32, 15.13s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  45% Completed | 17/38 [04:00<05:22, 15.36s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  47% Completed | 18/38 [04:15<05:00, 15.04s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  50% Completed | 19/38 [04:29<04:39, 14.72s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  53% Completed | 20/38 [04:44<04:25, 14.78s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  55% Completed | 21/38 [04:58<04:10, 14.72s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  58% Completed | 22/38 [05:12<03:50, 14.39s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  61% Completed | 23/38 [05:26<03:35, 14.40s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  63% Completed | 24/38 [05:41<03:25, 14.65s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  66% Completed | 25/38 [05:45<02:28, 11.44s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  68% Completed | 26/38 [05:46<01:38,  8.19s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  71% Completed | 27/38 [05:47<01:04,  5.91s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  74% Completed | 28/38 [05:47<00:43,  4.31s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  76% Completed | 29/38 [05:48<00:28,  3.20s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  79% Completed | 30/38 [05:48<00:19,  2.42s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  82% Completed | 31/38 [05:49<00:13,  1.86s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  84% Completed | 32/38 [05:50<00:08,  1.48s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  87% Completed | 33/38 [05:50<00:06,  1.22s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  89% Completed | 34/38 [05:51<00:03,  1.03it/s]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  92% Completed | 35/38 [05:51<00:02,  1.18it/s]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  95% Completed | 36/38 [05:52<00:01,  1.31it/s]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards:  97% Completed | 37/38 [05:52<00:00,  1.40it/s]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards: 100% Completed | 38/38 [05:53<00:00,  1.49it/s]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Loading safetensors checkpoint shards: 100% Completed | 38/38 [05:53<00:00,  9.30s/it]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m 
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Process EngineCore_DP0:
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m Traceback (most recent call last):
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     self.run()
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/lib/python3.10/multiprocessing/process.py", line 108, in run
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     self._target(*self._args, **self._kwargs)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 847, in run_engine_core
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     raise e
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 834, in run_engine_core
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     engine_core = EngineCoreProc(*args, **kwargs)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 610, in __init__
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     super().__init__(
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 109, in __init__
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     num_gpu_blocks, num_cpu_blocks, kv_cache_config = self._initialize_kv_caches(
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 235, in _initialize_kv_caches
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     available_gpu_memory = self.model_executor.determine_available_memory()
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/executor/abstract.py", line 126, in determine_available_memory
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     return self.collective_rpc("determine_available_memory")
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/executor/uniproc_executor.py", line 75, in collective_rpc
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     result = run_method(self.driver_worker, method, args, kwargs)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/serial_utils.py", line 479, in run_method
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     return func(*args, **kwargs)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     return func(*args, **kwargs)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/worker/gpu_worker.py", line 324, in determine_available_memory
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     self.model_runner.profile_run()
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/worker/gpu_model_runner.py", line 4322, in profile_run
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     dummy_encoder_outputs = self.model.embed_multimodal(
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/model_executor/models/qwen2_5_vl.py", line 1528, in embed_multimodal
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     image_embeddings = self._process_image_input(multimodal_input)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/model_executor/models/qwen2_5_vl.py", line 1307, in _process_image_input
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     image_embeds = self.visual(pixel_values, grid_thw=grid_thw_list)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     return self._call_impl(*args, **kwargs)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     return forward_call(*args, **kwargs)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/model_executor/models/qwen2_5_vl.py", line 902, in forward
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     hidden_states = blk(
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/compilation/decorators.py", line 360, in __call__
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     return self.forward(*args, **kwargs)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/model_executor/models/qwen2_5_vl.py", line 492, in forward
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     x = residual + self.mlp(x_fused_norm)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     return self._call_impl(*args, **kwargs)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     return forward_call(*args, **kwargs)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/model_executor/models/qwen2_5_vl.py", line 295, in forward
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     x = self.act_fn(gate_up)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     return self._call_impl(*args, **kwargs)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     return forward_call(*args, **kwargs)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/model_executor/custom_op.py", line 46, in forward
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     return self._forward_method(*args, **kwargs)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/model_executor/layers/activation.py", line 87, in forward_native
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     return F.silu(x[..., :d]) * x[..., d:]
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m   File "/usr/local/lib/python3.10/dist-packages/torch/nn/functional.py", line 2371, in silu
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m     return torch._C._nn.silu(input)
+[0;36m(EngineCore_DP0 pid=3868598)[0;0m torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 432.00 MiB. GPU 0 has a total capacity of 139.80 GiB of which 167.25 MiB is free. Including non-PyTorch memory, this process has 139.63 GiB memory in use. Of the allocated memory 138.78 GiB is allocated by PyTorch, and 122.13 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Traceback (most recent call last):
+  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/vllm_models/run_qwen2_5_vl_72b_vllm.py", line 498, in <module>
+    run_benchmark()
+  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/vllm_models/run_qwen2_5_vl_72b_vllm.py", line 389, in run_benchmark
+    evaluator = VLMEvaluator()
+  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/vllm_models/run_qwen2_5_vl_72b_vllm.py", line 234, in __init__
+    self.llm = LLM(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/entrypoints/llm.py", line 334, in __init__
+    self.llm_engine = LLMEngine.from_engine_args(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/llm_engine.py", line 183, in from_engine_args
+    return cls(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/llm_engine.py", line 109, in __init__
+    self.engine_core = EngineCoreClient.make_client(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core_client.py", line 93, in make_client
+    return SyncMPClient(vllm_config, executor_class, log_stats)
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core_client.py", line 642, in __init__
+    super().__init__(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core_client.py", line 471, in __init__
+    with launch_core_engines(vllm_config, executor_class, log_stats) as (
+  File "/usr/lib/python3.10/contextlib.py", line 142, in __exit__
+    next(self.gen)
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/utils.py", line 903, in launch_core_engines
+    wait_for_engine_startup(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/utils.py", line 960, in wait_for_engine_startup
+    raise RuntimeError(
+RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+srun: error: serv-3346: task 0: Exited with exit code 1

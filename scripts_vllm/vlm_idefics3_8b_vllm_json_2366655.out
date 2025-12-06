@@ -1,0 +1,3 @@
+✅ HF_TOKEN geladen
+❌ Venv nicht gefunden unter: /netscratch/dhug/.venv/vllm_qwen
+Bitte erst das Setup-Skript ausführen oder Pfad anpassen.
