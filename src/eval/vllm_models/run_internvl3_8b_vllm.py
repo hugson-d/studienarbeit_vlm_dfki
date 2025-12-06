@@ -249,6 +249,11 @@ class VLMEvaluator:
         logger.info(f"   Schema: {ANSWER_JSON_SCHEMA}")
 
     def generate(self, image_path: str) -> Dict:
+        # Handle multi-image tasks (image_path can be a list)
+        if isinstance(image_path, list):
+            # For now, use only the first image (multi-image support needs special handling)
+            image_path = image_path[0] if image_path else ""
+        
         full_path = DATA_DIR / image_path
         if not full_path.exists():
             raise FileNotFoundError(f"Bild nicht gefunden: {full_path}")
