@@ -77,6 +77,7 @@ srun \
         # mistral-common für Tokenizer, transformers für Mistral3ForConditionalGeneration
         pip install --force-reinstall -q "numpy<2.0" transformers "torch>=2.0" "torchvision>=0.15.0"
         pip install -q "mistral-common>=1.5.0" "accelerate>=0.33.0" "huggingface_hub>=0.24.0" "pydantic>=2.0" "python-dotenv>=1.0" "pandas" "openpyxl>=3.1" "tqdm" "pillow>=10.0" "safetensors>=0.4.0"
+        pip install vllm --upgrade
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
         python -c "import transformers; print(f\"transformers: {transformers.__version__} from {transformers.__file__}\")"
