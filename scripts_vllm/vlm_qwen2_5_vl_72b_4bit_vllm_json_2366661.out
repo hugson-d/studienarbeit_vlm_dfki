@@ -17,3 +17,14 @@ Installing collected packages: pip
     Uninstalling pip-23.3.1:
       Successfully uninstalled pip-23.3.1
 Successfully installed pip-25.3
+✅ Installation abgeschlossen
+DEBUG: Python: /usr/bin/python
+vLLM Version: 0.12.0
+Transformers: 4.57.3
+Pydantic: 2.12.5
+bitsandbytes: 0.48.2
+xgrammar: verfügbar
+▶️ Starte Qwen2.5-VL-72B 4-bit Evaluation mit vLLM...
+✅ .env geladen aus: /netscratch/dhug/studienarbeit_vlm_dfki/.env
+✅ HuggingFace Login erfolgreich
+ℹ️ GuidedDecodingParams nicht verfügbar - nutze guided_json direkt

@@ -10,3 +10,43 @@ Job 2366661: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqs
 Error: [Errno 13] Permission denied: '/netscratch/root'
 /usr/bin/bash: line 12: /netscratch/root/.venv/vllm_qwen/bin/activate: No such file or directory
 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+contourpy 1.2.0 requires numpy<2.0,>=1.20, but you have numpy 2.2.6 which is incompatible.
+cudf 23.10.0 requires numba<0.58,>=0.57, but you have numba 0.61.2 which is incompatible.
+cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 2.2.6 which is incompatible.
+dask-cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 2.2.6 which is incompatible.
+matplotlib 3.8.2 requires numpy<2,>=1.21, but you have numpy 2.2.6 which is incompatible.
+spacy 3.7.2 requires typer<0.10.0,>=0.3.0, but you have typer 0.20.0 which is incompatible.
+torch-tensorrt 2.2.0a0 requires torch<2.3.0,>=2.1.0.dev, but you have torch 2.9.0 which is incompatible.
+torchtext 0.17.0a0 requires torch==2.2.0a0+81ea7a4, but you have torch 2.9.0 which is incompatible.
+weasel 0.3.4 requires typer<0.10.0,>=0.3.0, but you have typer 0.20.0 which is incompatible.
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+cudf 23.10.0 requires numba<0.58,>=0.57, but you have numba 0.61.2 which is incompatible.
+cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 1.26.4 which is incompatible.
+dask-cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 1.26.4 which is incompatible.
+opencv-python-headless 4.12.0.88 requires numpy<2.3.0,>=2; python_version >= "3.9", but you have numpy 1.26.4 which is incompatible.
+spacy 3.7.2 requires typer<0.10.0,>=0.3.0, but you have typer 0.20.0 which is incompatible.
+torch-tensorrt 2.2.0a0 requires torch<2.3.0,>=2.1.0.dev, but you have torch 2.9.0 which is incompatible.
+torchtext 0.17.0a0 requires torch==2.2.0a0+81ea7a4, but you have torch 2.9.0 which is incompatible.
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+[2025-12-06 18:17:52] INFO run_qwen2_5_vl_72b_vllm.py:355: 📂 Dataset geladen: 3557 Aufgaben
+[2025-12-06 18:17:52] INFO run_qwen2_5_vl_72b_vllm.py:391: 🚀 Starte Qwen2.5-VL-72B-4bit-vLLM: 3557/3557 Tasks ausstehend
+[2025-12-06 18:17:52] INFO run_qwen2_5_vl_72b_vllm.py:228: 🏗️ Lade Qwen2.5-VL-72B-4bit-vLLM (72B) mit vLLM
+[2025-12-06 18:17:52] INFO run_qwen2_5_vl_72b_vllm.py:229:    HuggingFace ID: Qwen/Qwen2.5-VL-72B-Instruct
+[2025-12-06 18:17:52] INFO run_qwen2_5_vl_72b_vllm.py:230:    ⚡ Guided Decoding (JSON Schema) aktiviert
+[2025-12-06 18:17:52] INFO run_qwen2_5_vl_72b_vllm.py:231:    🔧 4-bit Quantization (bitsandbytes) aktiviert
+[2025-12-06 18:17:52] INFO run_qwen2_5_vl_72b_vllm.py:234:    📥 Lade Modell mit vLLM...
+Traceback (most recent call last):
+  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/vllm_models/run_qwen2_5_vl_72b_vllm.py", line 502, in <module>
+    run_benchmark()
+  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/vllm_models/run_qwen2_5_vl_72b_vllm.py", line 393, in run_benchmark
+    evaluator = VLMEvaluator()
+  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/vllm_models/run_qwen2_5_vl_72b_vllm.py", line 235, in __init__
+    self.llm = LLM(
+  File "/usr/local/lib/python3.10/dist-packages/vllm/entrypoints/llm.py", line 300, in __init__
+    engine_args = EngineArgs(
+TypeError: EngineArgs.__init__() got an unexpected keyword argument 'bnb_4bit_compute_dtype'
+srun: error: serv-3340: task 0: Exited with exit code 1

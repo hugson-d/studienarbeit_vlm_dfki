@@ -20,3 +20,9 @@ Successfully installed pip-25.3
 Found existing installation: torchvision 0.17.0a0
 Uninstalling torchvision-0.17.0a0:
   Successfully uninstalled torchvision-0.17.0a0
+✅ Installation abgeschlossen
+DEBUG: Python: /usr/bin/python
+vLLM Version: 0.12.0
+transformers: 4.57.3
+mistral_common: 1.8.6
+▶️ Starte Mistral-Small-24B Evaluation mit vLLM...
