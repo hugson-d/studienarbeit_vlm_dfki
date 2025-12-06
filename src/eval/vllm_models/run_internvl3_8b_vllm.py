@@ -262,20 +262,13 @@ class VLMEvaluator:
         image_b64 = load_image_base64(full_path)
         mime_type = get_image_mime_type(full_path)
         
-        # Prompt matching transformers variant (strict JSON format)
+        # Prompt mit Hinweis auf JSON-Format
         system_prompt = (
-            "Du bist ein mathematisches Assistenzsystem für Multiple-Choice-Aufgaben.\n\n"
-            "AUFGABE: Analysiere das Bild und wähle die korrekte Antwort.\n\n"
-            "ZWINGENDE AUSGABE - NUR DIESES FORMAT IST ERLAUBT:\n"
-            '{"answer": "X"}\n'
-            "wobei X EXAKT einer dieser Buchstaben sein MUSS: A, B, C, D oder E\n\n"
-            "WICHTIG:\n"
-            "- Deine GESAMTE Antwort besteht NUR aus diesem JSON-Objekt.\n"
-            "- KEINE anderen Zeichen, Wörter oder Erklärungen.\n"
-            "- Bei Unsicherheit: Wähle die wahrscheinlichste Option (A-E).\n"
-            "- Eine Antwort ist PFLICHT - du musst A, B, C, D oder E wählen."
+            "Du bist ein mathematisches Assistenzsystem für Multiple-Choice-Aufgaben.\n"
+            "Analysiere das Bild und wähle die korrekte Antwort: A, B, C, D oder E.\n\n"
+            "Antworte im JSON-Format: {\"answer\": \"X\"} wobei X = A, B, C, D oder E."
         )
-        user_prompt = "Bestimme die korrekte Antwort basierend auf dem Bild. Gib nur das JSON zurück."
+        user_prompt = "Bestimme die richtige Antwort. Gib deine Antwort als JSON zurück."
 
         # OpenAI-kompatibles Message-Format für vLLM
         messages = [
