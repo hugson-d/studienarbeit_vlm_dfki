@@ -236,14 +236,14 @@ class VLMEvaluator:
             logger.info("   📋 Nutze StructuredOutputsParams (neue vLLM API)")
             structured_outputs = StructuredOutputsParams(json=ANSWER_JSON_SCHEMA)
             self.sampling_params = SamplingParams(
-                max_tokens=50,
+                max_tokens=512,
                 temperature=0.0,
                 structured_outputs=structured_outputs,
             )
         else:
             logger.warning("   ⚠️ Keine Structured Outputs Unterstützung - nutze Fallback")
             self.sampling_params = SamplingParams(
-                max_tokens=50,
+                max_tokens=512,
                 temperature=0.0,
             )
         

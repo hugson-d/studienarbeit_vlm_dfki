@@ -145,9 +145,9 @@ class VLMEvaluator:
         
         if VLLM_HAS_STRUCTURED_OUTPUTS:
             structured_outputs = StructuredOutputsParams(json=ANSWER_JSON_SCHEMA)
-            self.sampling_params = SamplingParams(max_tokens=50, temperature=0.0, structured_outputs=structured_outputs)
+            self.sampling_params = SamplingParams(max_tokens=512, temperature=0.0, structured_outputs=structured_outputs)
         else:
-            self.sampling_params = SamplingParams(max_tokens=50, temperature=0.0)
+            self.sampling_params = SamplingParams(max_tokens=512, temperature=0.0)
         
         logger.info(f"Model loaded: {MODEL_NAME} ({MODEL_PARAMS_B}B)")
 
