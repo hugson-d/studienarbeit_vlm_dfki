@@ -64,7 +64,7 @@ srun \
         echo "📦 Erstelle venv und installiere vLLM Dependencies..."
         
         # Venv erstellen (falls nicht vorhanden)
-        VENV_PATH="/netscratch/$USER/.venv/vllm_qwen"
+        VENV_PATH="/netscratch/$USER/.venv/vllm_mistral"
         if [[ ! -d "$VENV_PATH" ]]; then
             python -m venv "$VENV_PATH"
             echo "✅ Venv erstellt: $VENV_PATH"
@@ -86,14 +86,15 @@ srun \
         # mistral-common für Tokenizer, transformers für Mistral3ForConditionalGeneration
         pip install --force-reinstall -q transformers "torch>=2.0" "torchvision>=0.15.0"
         
-        # vLLM mit Vision Support (>= 0.6.0 für guided_decoding)
-        pip install -q --no-deps "vllm>=0.6.0"
+        # vLLM mit Vision Support (>= 0.6.0 für structured outputs)
+        pip install -q "vllm>=0.6.0"
         pip install -q xgrammar
         
         # Zusätzliche Dependencies (inklusive OpenCV und mistral-common)
         # WICHTIG: --no-deps für opencv-python und pandas, um NumPy nicht zu überschreiben
         pip install -q --no-deps "opencv-python>=4.8.0"
         pip install -q --no-deps "pandas"
+        pip install -q --no-deps "openpyxl"
         
         pip install -q \
             "mistral-common>=1.5.0" \
