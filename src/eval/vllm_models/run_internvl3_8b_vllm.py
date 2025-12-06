@@ -168,8 +168,12 @@ class VLMEvaluator:
         
         # 2. Manueller Prompt-Bau (Umgeht den kaputten Chat-Template)
         # InternVL erwartet <image> oft ganz am Anfang oder im User-Block
-        system_text = "Antworte nur mit JSON: {\"answer\": \"X\"} (X=A-E)."
-        user_text = "Löse die Aufgabe. Ausgabe JSON."
+        system_text = (
+            "Du bist ein mathematisches Assistenzsystem für Multiple-Choice-Aufgaben.\n"
+            "Analysiere das Bild und wähle die korrekte Antwort: A, B, C, D oder E.\n\n"
+            "Antworte im JSON-Format: {\"answer\": \"X\"} wobei X = A, B, C, D oder E."
+        )
+        user_text = "Bestimme die richtige Antwort. Gib deine Antwort als JSON zurück."
         
         # Konstruktion eines einfachen Prompts, der für vLLM funktioniert
         # Wir nutzen das Format: <image>\nSYSTEM: ...\nUSER: ...

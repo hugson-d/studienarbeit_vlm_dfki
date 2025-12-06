@@ -2,7 +2,8 @@
 """
 VLM Benchmark für Känguru-Mathematik-Aufgaben
 Modell: InternVL3-78B (vLLM Backend)
-Status: FIX für "List concatenation error" und "Image path list"
+Status: FIX für "TypeError: can only concatenate str (not list)"
+Methode: Bypass des Chat-Templates via llm.generate()
 """
 
 import os
@@ -12,12 +13,12 @@ import re
 import time
 import random
 import gc
-import base64
 import pandas as pd
 from typing import Dict, List, Union
 from pathlib import Path
 from tqdm import tqdm
 from enum import Enum
+from PIL import Image  # Wichtig für vLLM Input
 
 from pydantic import BaseModel, Field
 
@@ -108,18 +109,6 @@ ANSWER_JSON_SCHEMA = KanguruAnswer.model_json_schema()
 def set_seed(seed: int):
     random.seed(seed)
 
-def load_image_base64(image_path: Path) -> str:
-    with open(image_path, "rb") as f:
-        return base64.b64encode(f.read()).decode("utf-8")
-
-def get_image_mime_type(image_path: Path) -> str:
-    suffix = image_path.suffix.lower()
-    return {
-        ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
-        ".png": "image/png", ".gif": "image/gif",
-        ".webp": "image/webp", ".bmp": "image/bmp"
-    }.get(suffix, "image/jpeg")
-
 def parse_response(output_text: str) -> Dict[str, Union[str, bool, None]]:
     clean_text = output_text.strip()
     try:
@@ -163,6 +152,7 @@ class VLMEvaluator:
             max_model_len=4096,
             gpu_memory_utilization=0.9,
             dtype="bfloat16",
+            limit_mm_per_prompt={"image": 1},
         )
         
         if VLLM_HAS_STRUCTURED_OUTPUTS:
@@ -176,38 +166,38 @@ class VLMEvaluator:
 
     def generate(self, image_rel_path: str) -> Dict:
         full_path = DATA_DIR / image_rel_path
-        
+
         if not full_path.exists():
             raise FileNotFoundError(f"Bild fehlt: {full_path}")
-            
-        image_b64 = load_image_base64(full_path)
-        mime_type = get_image_mime_type(full_path)
-        
-        messages = [
-            {"role": "system", "content": "Du bist ein mathematisches Assistenzsystem für Multiple-Choice-Aufgaben.\n"
+
+        image = Image.open(full_path).convert("RGB")
+
+        system_text = (
+            "Du bist ein mathematisches Assistenzsystem für Multiple-Choice-Aufgaben.\n"
             "Analysiere das Bild und wähle die korrekte Antwort: A, B, C, D oder E.\n\n"
-            "Antworte im JSON-Format: {\"answer\": \"X\"} wobei X = A, B, C, D oder E."},
-            {
-                "role": "user",
-                "content": [
-                    {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{image_b64}"}},
-                    {"type": "text", "text": "Bestimme die richtige Antwort. Gib deine Antwort als JSON zurück."},
-                ],
-            },
-        ]
+            "Antworte im JSON-Format: {\"answer\": \"X\"} wobei X = A, B, C, D oder E."
+        )
+        user_text = "Bestimme die richtige Antwort. Gib deine Antwort als JSON zurück."
+
+        prompt = f"<image>\nSystem: {system_text}\nUser: {user_text}\nAssistant:"
+
+        inputs = {
+            "prompt": prompt,
+            "multi_modal_data": {"image": image},
+        }
 
         start_time = time.time()
-        outputs = self.llm.chat(messages=messages, sampling_params=self.sampling_params, use_tqdm=False)
+        outputs = self.llm.generate([inputs], sampling_params=self.sampling_params, use_tqdm=False)
         duration = time.time() - start_time
-        
+
         generated_text = outputs[0].outputs[0].text
         input_tokens = len(outputs[0].prompt_token_ids) if outputs[0].prompt_token_ids else 0
-        
+
         result = parse_response(generated_text)
         result.update({
             "inference_time": round(duration, 4),
             "input_tokens": input_tokens,
-            "raw_output": generated_text
+            "raw_output": generated_text,
         })
         return result
 
