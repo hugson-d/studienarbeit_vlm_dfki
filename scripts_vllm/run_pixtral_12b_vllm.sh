@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=vlm_mistral_24b_vllm_json
+#SBATCH --job-name=vlm_pixtral_12b_vllm_json
 #SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
@@ -49,7 +49,7 @@ export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
 echo "=========================================="
-echo "🚀 VLM Benchmark: Mistral-Small-24B (vLLM + JSON Schema Guided Decoding)"
+echo "🚀 VLM Benchmark: Pixtral-12B (vLLM + JSON Schema Guided Decoding)"
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
@@ -64,7 +64,7 @@ srun \
         echo "📦 Erstelle venv und installiere vLLM Dependencies..."
         
         # Venv erstellen (falls nicht vorhanden)
-        VENV_PATH="/netscratch/$USER/.venv/vllm_qwen"
+        VENV_PATH="/netscratch/$USER/.venv/vllm_pixtral"
         if [[ ! -d "$VENV_PATH" ]]; then
             python -m venv "$VENV_PATH"
             echo "✅ Venv erstellt: $VENV_PATH"
@@ -80,50 +80,51 @@ srun \
         pip uninstall -y numpy 2>/dev/null || true
         pip install "numpy<2.0"
         
-        # WICHTIG: Alte torchvision aus Container isolieren (nms operator error)
-        pip uninstall -y torchvision 2>/dev/null || true
+        # WICHTIG: Alte flash-attn und torchvision aus Container entfernen
+        pip uninstall -y flash-attn torchvision 2>/dev/null || true
         
-        # mistral-common für Tokenizer, transformers für Mistral3ForConditionalGeneration
-        pip install --force-reinstall -q transformers "torch>=2.0" "torchvision>=0.15.0"
+        # Torch Stack neu installieren (force-reinstall für Kompatibilität)
+        pip install --force-reinstall -q \
+            "torch>=2.1.0" \
+            "torchvision>=0.16.0"
         
         # vLLM mit Vision Support (>= 0.6.0 für guided_decoding)
         pip install -q --no-deps "vllm>=0.6.0"
         pip install -q xgrammar
         
-        # Zusätzliche Dependencies (inklusive OpenCV und mistral-common)
+        # mistral-common für Pixtral Tokenizer
+        pip install -q "mistral-common>=1.5.0"
+        
+        # Zusätzliche Dependencies
         # WICHTIG: --no-deps für opencv-python und pandas, um NumPy nicht zu überschreiben
         pip install -q --no-deps "opencv-python>=4.8.0"
         pip install -q --no-deps "pandas"
         
         pip install -q \
-            "mistral-common>=1.5.0" \
+            "transformers>=4.45.0" \
             "accelerate>=0.33.0" \
             "huggingface_hub>=0.24.0" \
             "pydantic>=2.0" \
             "python-dotenv>=1.0" \
             "tqdm" \
-            "pillow>=10.0" \
-            "safetensors>=0.4.0"
+            "pillow>=10.0"
         
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
         python -c "import vllm; print(f\"vLLM Version: {vllm.__version__}\")"
-        python -c "import transformers; print(f\"transformers: {transformers.__version__}\")"
-        python -c "import cv2; print(f\"OpenCV Version: {cv2.__version__}\")"
+        python -c "import transformers; print(f\"Transformers: {transformers.__version__}\")"
         python -c "import mistral_common; print(f\"mistral_common: {mistral_common.__version__}\")"
 
-        # ------------------------------
-        # Skript ausführen
-        # ------------------------------
-        SCRIPT_PATH="'"$PROJECT_ROOT"'/src/eval/vllm_models/run_mistral_small_24b_vllm.py"
+        # Python-Skript ausführen
+        SCRIPT_PATH="'"$PROJECT_ROOT"'/src/eval/vllm_models/run_pixtral_12b_vllm.py"
         
         if [[ ! -f "$SCRIPT_PATH" ]]; then
             echo "❌ Python-Skript nicht gefunden: $SCRIPT_PATH"
             exit 1
         fi
         
-        echo "▶️ Starte Mistral-Small-24B Evaluation mit vLLM..."
-        python3 "$SCRIPT_PATH"
+        echo "▶️ Starte Pixtral-12B Evaluation mit vLLM..."
+        python "$SCRIPT_PATH"
     '
 
 echo "✅ Job beendet."
