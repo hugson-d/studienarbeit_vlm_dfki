@@ -75,14 +75,13 @@ srun \
         
         # Dependencies installieren
         pip install --upgrade pip
-        
+
+        # WICHTIG: Container Wheels, die gegen NumPy 2.x gebaut sind, vorab entfernen
+        pip uninstall -y pandas opencv-python pyarrow soxr numpy 2>/dev/null || true
+
         # WICHTIG: NumPy 1.x erzwingen (Kompatibilität mit OpenCV/pandas)
-        pip uninstall -y numpy 2>/dev/null || true
         pip install "numpy<2.0"
-        
-        # WICHTIG: pandas und opencv aus Container deinstallieren (NumPy 2.x Inkompatibilität)
-        pip uninstall -y pandas opencv-python 2>/dev/null || true
-        
+
         # WICHTIG: Alte torchvision aus Container isolieren (nms operator error)
         pip uninstall -y torchvision 2>/dev/null || true
         
@@ -94,10 +93,11 @@ srun \
         pip install -q xgrammar
         
         # Zusätzliche Dependencies (inklusive OpenCV und mistral-common)
-        # WICHTIG: --no-deps für opencv-python und pandas, um NumPy nicht zu überschreiben
+        # WICHTIG: --no-deps für opencv-python/pandas/openpyxl, um NumPy-Upgrade zu verhindern
         pip install -q --no-deps "opencv-python>=4.8.0"
         pip install -q --no-deps "pandas"
         pip install -q --no-deps "openpyxl"
+        pip install -q --no-deps "soxr"
         
         pip install -q \
             "mistral-common>=1.5.0" \

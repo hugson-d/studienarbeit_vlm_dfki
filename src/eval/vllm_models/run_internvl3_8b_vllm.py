@@ -2,7 +2,8 @@
 """
 VLM Benchmark für Känguru-Mathematik-Aufgaben
 Modell: InternVL3-8B (vLLM Backend)
-Status: FIX für "List concatenation error" und "Image path list"
+Status: FIX für "TypeError: can only concatenate str (not list)"
+Methode: Bypass des Chat-Templates via llm.generate()
 """
 
 import os
@@ -12,12 +13,12 @@ import re
 import time
 import random
 import gc
-import base64
 import pandas as pd
 from typing import Dict, List, Union
 from pathlib import Path
 from tqdm import tqdm
 from enum import Enum
+from PIL import Image  # Wichtig für vLLM Input
 
 from pydantic import BaseModel, Field
 
@@ -56,10 +57,9 @@ except ImportError:
 MODEL_NAME = "InternVL3-8B-vLLM"
 MODEL_HF_ID = "OpenGVLab/InternVL3-8B"
 
-# Suchlogik für Dataset, falls PROJECT_ROOT variiert
+# Suchlogik für Dataset
 DATASET_PATH = PROJECT_ROOT / "dataset_final.json"
 if not DATASET_PATH.exists():
-    # Suche rekursiv nach oben
     _search = _script_path.parent
     for _ in range(5):
         if (_search / "dataset_final.json").exists():
@@ -108,18 +108,6 @@ ANSWER_JSON_SCHEMA = KanguruAnswer.model_json_schema()
 def set_seed(seed: int):
     random.seed(seed)
 
-def load_image_base64(image_path: Path) -> str:
-    with open(image_path, "rb") as f:
-        return base64.b64encode(f.read()).decode("utf-8")
-
-def get_image_mime_type(image_path: Path) -> str:
-    suffix = image_path.suffix.lower()
-    return {
-        ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
-        ".png": "image/png", ".gif": "image/gif",
-        ".webp": "image/webp", ".bmp": "image/bmp"
-    }.get(suffix, "image/jpeg")
-
 def parse_response(output_text: str) -> Dict[str, Union[str, bool, None]]:
     clean_text = output_text.strip()
     try:
@@ -127,42 +115,37 @@ def parse_response(output_text: str) -> Dict[str, Union[str, bool, None]]:
         validated = KanguruAnswer(**data)
         return {"prediction": validated.answer.value, "format_valid": True, "error": None}
     except Exception as e:
-        # Fallback Regex
         match = re.search(r'"answer"\s*:\s*"([A-E])"', clean_text)
         if match:
              return {"prediction": match.group(1), "format_valid": False, "error": "Regex Fallback"}
         return {"prediction": None, "format_valid": False, "error": str(e)}
 
-# ============================================================================
-# ROBUSTE ID GENERIERUNG (FIX FÜR CRASH)
-# ============================================================================
-
 def create_task_id(item: Dict) -> str:
-    """Erstellt eine ID und behandelt Listen in 'class' robust."""
     year = item.get('year', 'unknown')
     cls = item.get('class', 'unknown')
     task_id = item.get('task_id', 'unknown')
     
-    # FIX: Falls Klasse eine Liste ist ["11", "12"], mache daraus "11-12"
     if isinstance(cls, list):
         cls = "-".join(map(str, cls))
         
     return f"{year}_{cls}_{task_id}"
 
 # ============================================================================
-# EVALUATOR KLASSE
+# EVALUATOR KLASSE (MIT LLM.GENERATE FIX)
 # ============================================================================
 
 class VLMEvaluator:
     def __init__(self):
         logger.info(f"🏗️ Lade {MODEL_NAME} mit vLLM")
         
+        # WICHTIG: limit_mm_per_prompt erlaubt vLLM, Bilder im Prompt zu akzeptieren
         self.llm = LLM(
             model=MODEL_HF_ID,
             trust_remote_code=True,
             max_model_len=4096,
             gpu_memory_utilization=0.9,
             dtype="bfloat16",
+            limit_mm_per_prompt={"image": 1}, # Sicherstellen, dass Multi-Modal aktiv ist
         )
         
         if VLLM_HAS_STRUCTURED_OUTPUTS:
@@ -180,24 +163,32 @@ class VLMEvaluator:
         if not full_path.exists():
             raise FileNotFoundError(f"Bild fehlt: {full_path}")
             
-        image_b64 = load_image_base64(full_path)
-        mime_type = get_image_mime_type(full_path)
+        # 1. Bild als PIL Image laden (für vLLM generate API)
+        image = Image.open(full_path).convert("RGB")
         
-        messages = [
-            {"role": "system", "content": "Du bist ein mathematisches Assistenzsystem für Multiple-Choice-Aufgaben.\n"
-            "Analysiere das Bild und wähle die korrekte Antwort: A, B, C, D oder E.\n\n"
-            "Antworte im JSON-Format: {\"answer\": \"X\"} wobei X = A, B, C, D oder E."},
-            {
-                "role": "user",
-                "content": [
-                    {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{image_b64}"}},
-                    {"type": "text", "text": "Bestimme die richtige Antwort. Gib deine Antwort als JSON zurück."},
-                ],
-            },
-        ]
+        # 2. Manueller Prompt-Bau (Umgeht den kaputten Chat-Template)
+        # InternVL erwartet <image> oft ganz am Anfang oder im User-Block
+        system_text = "Antworte nur mit JSON: {\"answer\": \"X\"} (X=A-E)."
+        user_text = "Löse die Aufgabe. Ausgabe JSON."
+        
+        # Konstruktion eines einfachen Prompts, der für vLLM funktioniert
+        # Wir nutzen das Format: <image>\nSYSTEM: ...\nUSER: ...
+        prompt = f"<image>\nSystem: {system_text}\nUser: {user_text}\nAssistant:"
+
+        # 3. Inputs vorbereiten
+        inputs = {
+            "prompt": prompt,
+            "multi_modal_data": {"image": image},
+        }
 
         start_time = time.time()
-        outputs = self.llm.chat(messages=messages, sampling_params=self.sampling_params, use_tqdm=False)
+        
+        # 4. Generate aufrufen (nicht chat!)
+        outputs = self.llm.generate(
+            [inputs], # Liste von Inputs
+            sampling_params=self.sampling_params,
+            use_tqdm=False
+        )
         duration = time.time() - start_time
         
         generated_text = outputs[0].outputs[0].text
@@ -230,7 +221,6 @@ def run_benchmark():
     with open(DATASET_PATH, 'r', encoding='utf-8') as f:
         dataset = json.load(f)
     
-    # Bereits verarbeitete Tasks laden
     processed = set()
     if LOG_FILE.exists():
         with open(LOG_FILE, 'r', encoding='utf-8') as f:
@@ -249,25 +239,22 @@ def run_benchmark():
             pbar = tqdm(dataset, desc=MODEL_NAME, unit="task")
             
             for item in pbar:
-                # 1. FIX: Robuste ID Erstellung
                 task_id = create_task_id(item)
                 
                 if task_id in processed:
                     continue
                 
                 try:
-                    # 2. FIX: Robuste Bildpfad-Extraktion
                     image_path_raw = item.get("image_path")
                     if isinstance(image_path_raw, list):
-                        image_path = image_path_raw[0] # Nimm erstes Element der Liste
+                        image_path = image_path_raw[0]
                     else:
                         image_path = image_path_raw
                         
                     if not isinstance(image_path, str):
-                        logger.warning(f"⚠️ {task_id}: Ungültiger Pfad-Typ: {type(image_path_raw)}")
+                        logger.warning(f"⚠️ {task_id}: Ungültiger Pfad-Typ")
                         continue
 
-                    # Inferenz
                     result = evaluator.generate(image_path)
                     
                     ground_truth = item.get("answer")
@@ -280,7 +267,7 @@ def run_benchmark():
                         "model": MODEL_NAME,
                         "task_id": task_id,
                         "year": item.get("year"),
-                        "class": item.get("class"), # Originaldaten behalten
+                        "class": item.get("class"),
                         "math_category": item.get("math_category"),
                         "ground_truth": ground_truth,
                         "prediction": result["prediction"],
@@ -297,7 +284,6 @@ def run_benchmark():
                     
                 except Exception as e:
                     logger.error(f"❌ {task_id}: {e}")
-                    # Bei OOM abbrechen, sonst weitermachen
                     if "out of memory" in str(e).lower(): break
             
             pbar.close()
