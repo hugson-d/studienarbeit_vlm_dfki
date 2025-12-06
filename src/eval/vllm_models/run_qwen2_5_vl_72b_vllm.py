@@ -50,8 +50,8 @@ try:
 except ImportError:
     VLLM_HAS_STRUCTURED_OUTPUTS = False
 
-MODEL_NAME = "Qwen2.5-VL-72B-vLLM"
-MODEL_HF_ID = "Qwen/Qwen2.5-VL-72B-Instruct"
+MODEL_NAME = "Qwen2.5-VL-72B-AWQ-vLLM"
+MODEL_HF_ID = "Qwen/Qwen2.5-VL-72B-Instruct-AWQ"
 MODEL_PARAMS_B = 72
 
 DATASET_PATH = PROJECT_ROOT / "dataset_final.json"
@@ -136,7 +136,6 @@ class VLMEvaluator:
     def __init__(self):
         self.llm = LLM(
             model=MODEL_HF_ID,
-            trust_remote_code=True,
             max_model_len=4096,
             gpu_memory_utilization=0.9,
             dtype="half",
