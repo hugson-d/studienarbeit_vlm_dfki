@@ -80,6 +80,9 @@ srun \
         pip uninstall -y numpy 2>/dev/null || true
         pip install "numpy<2.0"
         
+        # WICHTIG: pandas und opencv aus Container deinstallieren (NumPy 2.x Inkompatibilität)
+        pip uninstall -y pandas opencv-python 2>/dev/null || true
+        
         # WICHTIG: Alte torchvision aus Container isolieren (nms operator error)
         pip uninstall -y torchvision 2>/dev/null || true
         
