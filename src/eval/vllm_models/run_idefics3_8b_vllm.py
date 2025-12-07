@@ -223,9 +223,10 @@ class VLMEvaluator:
         self.llm = LLM(
             model=MODEL_HF_ID,
             trust_remote_code=True,
-            max_model_len=4096,
+            max_model_len=8192,  # ERHÖHT von 4096 auf 8192 (oder 16384 wenn GPU RAM reicht)
             gpu_memory_utilization=0.9,
             dtype="bfloat16",
+            limit_mm_per_prompt={"image": 1}, 
         )
         
         # Sampling Parameter erstellen - je nach vLLM Version
@@ -253,19 +254,19 @@ class VLMEvaluator:
         if not full_path.exists():
             raise FileNotFoundError(f"Bild nicht gefunden: {full_path}")
         
-        # Bild als Base64 laden
         image_b64 = load_image_base64(full_path)
         mime_type = get_image_mime_type(full_path)
         
-        # Prompt mit Hinweis auf JSON-Format
         system_prompt = (
             "Du bist ein mathematisches Assistenzsystem für Multiple-Choice-Aufgaben.\n"
             "Analysiere das Bild und wähle die korrekte Antwort: A, B, C, D oder E.\n\n"
             "Antworte im JSON-Format: {\"answer\": \"X\"} wobei X = A, B, C, D oder E."
         )
-        user_prompt = "Bestimme die richtige Antwort. Gib deine Antwort als JSON zurück."
+        
+        # ÄNDERUNG: Explizites <image> Token und klarere Anweisung
+        # Idefics3 profitiert davon, wenn das Bild-Token im Textfluss steht.
+        user_prompt = "Hier ist die Aufgabe:\n<image>\nBestimme die richtige Antwort basierend auf dem Bild. Gib deine Antwort als JSON zurück."
 
-        # OpenAI-kompatibles Message-Format für vLLM
         messages = [
             {"role": "system", "content": system_prompt},
             {
