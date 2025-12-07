@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=vlm_ovis2_5_2b_thinking_vllm_json
+#SBATCH --job-name=vlm_ovis2_5_9b_vllm_json_cot_voting
 #SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
-#SBATCH --mem=64G
+#SBATCH --mem=80G
 #SBATCH --time=24:00:00
 #SBATCH --cpus-per-task=4
 #SBATCH --output=%x_%j.out
@@ -49,7 +49,7 @@ export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
 echo "=========================================="
-echo "🚀 VLM Benchmark: Ovis2.5-2B Thinking (vLLM + JSON Schema Guided Decoding)"
+echo "🚀 VLM Benchmark: Ovis2.5-9B (vLLM + JSON Schema Guided Decoding)"
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
@@ -102,14 +102,14 @@ srun \
         # ------------------------------
         # Skript ausführen
         # ------------------------------
-        SCRIPT_PATH="'"$PROJECT_ROOT"'/src/eval/vllm_models/run_ovis2_5_2b_thinking_vllm.py"
+        SCRIPT_PATH="'"$PROJECT_ROOT"'/src/eval/vllm_models/run_ovis2_5_9b_vllm_cot_voting.py"
         
         if [[ ! -f "$SCRIPT_PATH" ]]; then
             echo "❌ Python-Skript nicht gefunden: $SCRIPT_PATH"
             exit 1
         fi
         
-        echo "▶️ Starte Ovis2.5-2B Thinking Evaluation mit vLLM..."
+        echo "▶️ Starte Ovis2.5-9B Evaluation mit vLLM..."
         python3 "$SCRIPT_PATH"
     '
 
