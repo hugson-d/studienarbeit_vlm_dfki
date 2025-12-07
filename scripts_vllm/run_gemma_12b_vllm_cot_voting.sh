@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=vlm_gemma_27b_vllm_json
+#SBATCH --job-name=vlm_gemma_12b_vllm_json_cot_voting
 #SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
@@ -49,7 +49,7 @@ export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
 echo "=========================================="
-echo "🚀 VLM Benchmark: Gemma-3-27B (vLLM + JSON Schema Guided Decoding)"
+echo "🚀 VLM Benchmark: Gemma-3-12B (vLLM + JSON Schema Guided Decoding)"
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
@@ -103,7 +103,7 @@ srun \
         python -c "import xgrammar; print(\"xgrammar: verfügbar\")" 2>/dev/null || echo "xgrammar: nicht installiert (fallback auf outlines)"
         
         # Python-Skript ausführen
-        python '"$PROJECT_ROOT"'/src/eval/vllm_models/run_gemma_32b_vllm.py
+        python '"$PROJECT_ROOT"'/src/eval/vllm_models/run_gemma_12b_vllm_cot_voting.py
     '
 
 echo "✅ Job abgeschlossen"

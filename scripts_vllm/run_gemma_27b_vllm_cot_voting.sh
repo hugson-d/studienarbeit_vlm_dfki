@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=vlm_gemma_27b_vllm_json
+#SBATCH --job-name=vlm_gemma_27b_vllm_json_cot_voting
 #SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
-#SBATCH --mem=64G
+#SBATCH --mem=128G
 #SBATCH --time=24:00:00
 #SBATCH --cpus-per-task=4
 #SBATCH --output=%x_%j.out
@@ -103,7 +103,7 @@ srun \
         python -c "import xgrammar; print(\"xgrammar: verfügbar\")" 2>/dev/null || echo "xgrammar: nicht installiert (fallback auf outlines)"
         
         # Python-Skript ausführen
-        python '"$PROJECT_ROOT"'/src/eval/vllm_models/run_gemma_32b_vllm.py
+        python '"$PROJECT_ROOT"'/src/eval/vllm_models/run_gemma_27b_vllm_cot_voting.py
     '
 
 echo "✅ Job abgeschlossen"
