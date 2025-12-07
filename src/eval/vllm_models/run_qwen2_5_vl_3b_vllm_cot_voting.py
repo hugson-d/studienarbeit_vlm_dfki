@@ -31,12 +31,14 @@ except ImportError:
 # KONFIGURATION
 # ============================================================================
 
-MODEL_NAME = "Qwen2.5-VL-3B-CoT-Voting"
-MODEL_HF_ID = "Qwen/Qwen2.5-VL-3B-Instruct"
-
 # Voting Parameter
-N_VOTING_PATHS = 5      # Anzahl der generierten Pfade pro Aufgabe
+N_VOTING_PATHS = 5      # Empfehlung: 5 (Sweetspot) oder 10 (Max Präzision, langsam)
 TEMPERATURE = 0.7       # Temperatur > 0 für Diversität in den Pfaden
+
+# Modell Name für Log-Datei (automatisch mit n-Zahl)
+BASE_MODEL_NAME = "Qwen2.5-VL-3B-Instruct"
+MODEL_NAME = f"{BASE_MODEL_NAME}_CoT-Voting_n{N_VOTING_PATHS}"
+MODEL_HF_ID = "Qwen/Qwen2.5-VL-3B-Instruct"
 
 # Projekt-Setup
 _script_path = Path(__file__).resolve()
@@ -105,9 +107,9 @@ class VLMEvaluator:
     def __init__(self):
         logger.info(f"🏗️ Lade {MODEL_HF_ID} mit vLLM")
         logger.info(f"⚙️ Config: CoT + Voting (k={N_VOTING_PATHS}, T={TEMPERATURE})")
+        logger.info(f"📁 Output File: {LOG_FILE}")
 
         # Modell initialisieren
-        # Qwen2.5-VL benötigt oft hohes Context Window für Bilder
         self.llm = LLM(
             model=MODEL_HF_ID,
             trust_remote_code=True,
@@ -173,12 +175,8 @@ class VLMEvaluator:
 
         for output in outputs:
             try:
-                # Da Structured Output aktiv ist, ist text valides JSON
                 data = json.loads(output.text)
-                
-                # Pydantic Validierung (zur Sicherheit)
                 validated = CoTResponse(**data)
-                
                 predictions.append(validated.answer.value)
                 reasoning_traces.append(validated.reasoning)
             except Exception:
@@ -199,13 +197,13 @@ class VLMEvaluator:
         most_common = counts.most_common(1)[0]
         winner_answer = most_common[0]
         votes = most_common[1]
-        confidence = votes / len(outputs) # z.B. 4/5 = 0.8
+        confidence = votes / len(outputs)
 
         return {
             "prediction": winner_answer,
             "confidence": confidence,
             "vote_distribution": dict(counts),
-            "reasoning_traces": reasoning_traces, # Speichern für qualitative Analyse
+            "reasoning_traces": reasoning_traces, 
             "error": None if parse_errors == 0 else f"{parse_errors} paths failed",
             "inference_time": round(duration, 4),
             "input_tokens": input_tokens
@@ -256,7 +254,6 @@ def run_benchmark():
                     continue
 
                 try:
-                    # Generierung mit Voting
                     result = evaluator.generate_with_voting(item["image_path"])
                     
                     ground_truth = item.get("answer")
@@ -266,7 +263,7 @@ def run_benchmark():
                         correct_count += 1
                     processed_count += 1
                     
-                    # Log Entry
+                    # Log Entry - Text wird hier gekürzt
                     log_entry = {
                         "task_id": task_id,
                         "ground_truth": ground_truth,
@@ -274,8 +271,7 @@ def run_benchmark():
                         "is_correct": is_correct,
                         "confidence": result["confidence"],
                         "vote_distribution": result.get("vote_distribution"),
-                        # Wir speichern nur das erste Reasoning im Log, um Platz zu sparen
-                        # (für Full-Log ggf. entfernen)
+                        # Gekürztes Reasoning für Log-Datei (spart Platz)
                         "sample_reasoning": result.get("reasoning_traces", [""])[0][:500] + "...",
                         "inference_time": result["inference_time"],
                         "math_category": item.get("math_category"),
@@ -285,7 +281,6 @@ def run_benchmark():
                     f_log.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
                     f_log.flush()
                     
-                    # Pbar Update
                     acc = correct_count / processed_count
                     pbar.set_postfix({
                         "acc": f"{acc:.1%}", 
