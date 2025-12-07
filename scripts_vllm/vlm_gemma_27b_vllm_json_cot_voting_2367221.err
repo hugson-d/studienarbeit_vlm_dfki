@@ -1,0 +1,16 @@
+Job 2367221: Running on node(s) serv-3342
+Job 2367221: Started at 2025-12-07 17:57:35+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2367221&from=1765126655000
+srun: jobinfo: version v1.0.0
+Job 2367221: Running on node(s) serv-3342
+Job 2367221: Started at 2025-12-07 17:57:36+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2367221&from=1765126656000
+Job 2367221: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
+Job 2367221: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 13.0 seconds
+Error: [Errno 13] Permission denied: '/netscratch/root'
+/usr/bin/bash: line 12: /netscratch/root/.venv/vllm_qwen/bin/activate: No such file or directory
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))': /index/interegular/
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd: error: *** STEP 2367221.0 ON serv-3342 CANCELLED AT 2025-12-07T17:58:41 ***
+slurmstepd: error: *** JOB 2367221 ON serv-3342 CANCELLED AT 2025-12-07T17:58:41 ***
