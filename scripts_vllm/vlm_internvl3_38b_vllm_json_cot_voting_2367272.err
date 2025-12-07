@@ -1,111 +1,0 @@
-Job 2367272: Running on node(s) serv-3333
-Job 2367272: Started at 2025-12-07 18:48:10+0100
-Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2367272&from=1765129690000
-srun: jobinfo: version v1.0.0
-Job 2367272: Running on node(s) serv-3333
-Job 2367272: Started at 2025-12-07 18:48:13+0100
-Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2367272&from=1765129693000
-Job 2367272: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
-Job 2367272: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 20.0 seconds
-Error: [Errno 13] Permission denied: '/netscratch/root'
-/usr/bin/bash: line 12: /netscratch/root/.venv/vllm_internvl/bin/activate: No such file or directory
-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
-ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
-transformer-engine 1.1.0+cf6fc89 requires flash-attn!=2.0.9,!=2.1.0,<=2.3.3,>=1.0.6, which is not installed.
-contourpy 1.2.0 requires numpy<2.0,>=1.20, but you have numpy 2.2.6 which is incompatible.
-cudf 23.10.0 requires numba<0.58,>=0.57, but you have numba 0.61.2 which is incompatible.
-cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 2.2.6 which is incompatible.
-dask-cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 2.2.6 which is incompatible.
-matplotlib 3.8.2 requires numpy<2,>=1.21, but you have numpy 2.2.6 which is incompatible.
-spacy 3.7.2 requires typer<0.10.0,>=0.3.0, but you have typer 0.20.0 which is incompatible.
-torch-tensorrt 2.2.0a0 requires torch<2.3.0,>=2.1.0.dev, but you have torch 2.9.0 which is incompatible.
-torchtext 0.17.0a0 requires torch==2.2.0a0+81ea7a4, but you have torch 2.9.0 which is incompatible.
-weasel 0.3.4 requires typer<0.10.0,>=0.3.0, but you have typer 0.20.0 which is incompatible.
-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
-ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
-cudf 23.10.0 requires numba<0.58,>=0.57, but you have numba 0.61.2 which is incompatible.
-cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 1.26.4 which is incompatible.
-dask-cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 1.26.4 which is incompatible.
-opencv-python-headless 4.12.0.88 requires numpy<2.3.0,>=2; python_version >= "3.9", but you have numpy 1.26.4 which is incompatible.
-spacy 3.7.2 requires typer<0.10.0,>=0.3.0, but you have typer 0.20.0 which is incompatible.
-torch-tensorrt 2.2.0a0 requires torch<2.3.0,>=2.1.0.dev, but you have torch 2.9.0 which is incompatible.
-torchtext 0.17.0a0 requires torch==2.2.0a0+81ea7a4, but you have torch 2.9.0 which is incompatible.
-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
-Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
-[2025-12-07 18:52:51] INFO run_internvl3_38b_vllm_cot_voting.py:281: 🚀 Starte InternVL3-38B-CoT-Voting_n5: 3557 Aufgaben offen
-[2025-12-07 18:52:51] INFO run_internvl3_38b_vllm_cot_voting.py:140: 🏗️ Lade InternVL3-38B-CoT-Voting_n5 mit vLLM
-[2025-12-07 18:52:51] INFO run_internvl3_38b_vllm_cot_voting.py:141: ⚙️ Config: CoT + Voting (k=5, T=0.7)
-The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
-[2025-12-07 18:52:52] INFO configuration_internvl_chat.py:69: vision_select_layer: -1
-[2025-12-07 18:52:52] INFO configuration_internvl_chat.py:70: ps_version: v2
-[2025-12-07 18:52:52] INFO configuration_internvl_chat.py:71: min_dynamic_patch: 1
-[2025-12-07 18:52:52] INFO configuration_internvl_chat.py:72: max_dynamic_patch: 12
-[0;36m(EngineCore_DP0 pid=418653)[0;0m [2025-12-07 18:53:04] INFO _optional_torch_c_dlpack.py:119: JIT-compiling torch-c-dlpack-ext to cache...
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:   0% Completed | 0/16 [00:00<?, ?it/s]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:   6% Completed | 1/16 [00:17<04:29, 17.95s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  12% Completed | 2/16 [00:35<04:07, 17.68s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  19% Completed | 3/16 [00:56<04:08, 19.12s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  25% Completed | 4/16 [01:11<03:30, 17.52s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  31% Completed | 5/16 [01:23<02:50, 15.52s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  38% Completed | 6/16 [01:38<02:35, 15.57s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  44% Completed | 7/16 [01:54<02:20, 15.66s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  50% Completed | 8/16 [02:10<02:05, 15.64s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  56% Completed | 9/16 [02:26<01:49, 15.71s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  62% Completed | 10/16 [02:41<01:33, 15.60s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  69% Completed | 11/16 [02:57<01:18, 15.63s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  75% Completed | 12/16 [03:13<01:02, 15.74s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  81% Completed | 13/16 [03:29<00:47, 15.84s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  88% Completed | 14/16 [03:45<00:31, 15.82s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards:  94% Completed | 15/16 [04:02<00:16, 16.19s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards: 100% Completed | 16/16 [04:17<00:00, 15.87s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Loading safetensors checkpoint shards: 100% Completed | 16/16 [04:17<00:00, 16.09s/it]
-[0;36m(EngineCore_DP0 pid=418653)[0;0m 
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Process EngineCore_DP0:
-[0;36m(EngineCore_DP0 pid=418653)[0;0m Traceback (most recent call last):
-[0;36m(EngineCore_DP0 pid=418653)[0;0m   File "/usr/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
-[0;36m(EngineCore_DP0 pid=418653)[0;0m     self.run()
-[0;36m(EngineCore_DP0 pid=418653)[0;0m   File "/usr/lib/python3.10/multiprocessing/process.py", line 108, in run
-[0;36m(EngineCore_DP0 pid=418653)[0;0m     self._target(*self._args, **self._kwargs)
-[0;36m(EngineCore_DP0 pid=418653)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 847, in run_engine_core
-[0;36m(EngineCore_DP0 pid=418653)[0;0m     raise e
-[0;36m(EngineCore_DP0 pid=418653)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 834, in run_engine_core
-[0;36m(EngineCore_DP0 pid=418653)[0;0m     engine_core = EngineCoreProc(*args, **kwargs)
-[0;36m(EngineCore_DP0 pid=418653)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 610, in __init__
-[0;36m(EngineCore_DP0 pid=418653)[0;0m     super().__init__(
-[0;36m(EngineCore_DP0 pid=418653)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 109, in __init__
-[0;36m(EngineCore_DP0 pid=418653)[0;0m     num_gpu_blocks, num_cpu_blocks, kv_cache_config = self._initialize_kv_caches(
-[0;36m(EngineCore_DP0 pid=418653)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core.py", line 243, in _initialize_kv_caches
-[0;36m(EngineCore_DP0 pid=418653)[0;0m     kv_cache_configs = get_kv_cache_configs(
-[0;36m(EngineCore_DP0 pid=418653)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/core/kv_cache_utils.py", line 1335, in get_kv_cache_configs
-[0;36m(EngineCore_DP0 pid=418653)[0;0m     check_enough_kv_cache_memory(
-[0;36m(EngineCore_DP0 pid=418653)[0;0m   File "/usr/local/lib/python3.10/dist-packages/vllm/v1/core/kv_cache_utils.py", line 686, in check_enough_kv_cache_memory
-[0;36m(EngineCore_DP0 pid=418653)[0;0m     raise ValueError(
-[0;36m(EngineCore_DP0 pid=418653)[0;0m ValueError: No available memory for the cache blocks. Try increasing `gpu_memory_utilization` when initializing the engine.
-Traceback (most recent call last):
-  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/vllm_models/run_internvl3_38b_vllm_cot_voting.py", line 354, in <module>
-    run_benchmark()
-  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/vllm_models/run_internvl3_38b_vllm_cot_voting.py", line 283, in run_benchmark
-    evaluator = VLMEvaluator()
-  File "/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/vllm_models/run_internvl3_38b_vllm_cot_voting.py", line 144, in __init__
-    self.llm = LLM(
-  File "/usr/local/lib/python3.10/dist-packages/vllm/entrypoints/llm.py", line 334, in __init__
-    self.llm_engine = LLMEngine.from_engine_args(
-  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/llm_engine.py", line 183, in from_engine_args
-    return cls(
-  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/llm_engine.py", line 109, in __init__
-    self.engine_core = EngineCoreClient.make_client(
-  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core_client.py", line 93, in make_client
-    return SyncMPClient(vllm_config, executor_class, log_stats)
-  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core_client.py", line 642, in __init__
-    super().__init__(
-  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/core_client.py", line 471, in __init__
-    with launch_core_engines(vllm_config, executor_class, log_stats) as (
-  File "/usr/lib/python3.10/contextlib.py", line 142, in __exit__
-    next(self.gen)
-  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/utils.py", line 903, in launch_core_engines
-    wait_for_engine_startup(
-  File "/usr/local/lib/python3.10/dist-packages/vllm/v1/engine/utils.py", line 960, in wait_for_engine_startup
-    raise RuntimeError(
-RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
-srun: error: serv-3333: task 0: Exited with exit code 1

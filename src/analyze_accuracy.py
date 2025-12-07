@@ -12,6 +12,7 @@ from pathlib import Path
 RESULTS_DIR = Path("/Users/dennishug/Desktop/vlm_repo/results_vllm")
 
 def analyze_results():
+    print("Starte Analyse...")
     if not RESULTS_DIR.exists():
         print(f"Ordner {RESULTS_DIR} nicht gefunden!")
         return
@@ -32,6 +33,11 @@ def analyze_results():
                 try:
                     entry = json.loads(line.strip())
                     model = entry.get('model')
+                    if not model:
+                        # Extrahiere Modellname aus Dateiname
+                        filename = file_path.stem  # ohne .jsonl
+                        model = filename.replace('_results', '').replace('_', '-')
+                    
                     if not model:
                         continue
 
