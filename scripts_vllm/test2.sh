@@ -85,6 +85,7 @@ srun \
         # Zusätzliche Dependencies
         pip install -q \
             "numpy<2.0" \
+            "opencv-python<4.8" \
             "transformers>=4.45.0" \
             "accelerate>=0.33.0" \
             "huggingface_hub>=0.24.0" \
