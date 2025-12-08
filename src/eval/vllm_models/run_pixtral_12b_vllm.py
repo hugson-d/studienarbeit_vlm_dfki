@@ -20,30 +20,6 @@ import pandas as pd
 from tqdm import tqdm
 from pydantic import BaseModel, Field
 
-import sys
-# ... deine anderen imports ...
-
-# --- HACK START: OpenCV Fix für Pixtral ---
-try:
-    import cv2
-except ImportError:
-    import sys
-    print("Warnung: cv2 Import fehlgeschlagen. Versuche headless fallback...", file=sys.stderr)
-    try:
-        from cv2 import cv2
-    except ImportError:
-        pass
-
-# Wir zwingen cv2 in die System-Module, falls mistral_common es dort sucht
-if 'cv2' in sys.modules:
-    # Manchmal sucht mistral_common nach 'cv2' aber der Import hieß anders
-    pass
-else:
-    try:
-        import cv2
-        sys.modules['cv2'] = cv2
-    except ImportError:
-        pass
 # ----------------------------------------------------------------------------
 # UMWELTVARIABLEN & SETUP
 # ----------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-VLM Benchmark für Känguru-Mathematik-Aufgaben
-Modell: moonshotai/Kimi-VL-A3B-Thinking-2506
+VLM Benchmark für DeepSeek-VL2
+Modell: deepseek-ai/deepseek-vl2-small (16B)
 """
 
 import os
@@ -12,6 +12,7 @@ import time
 import random
 import gc
 import base64
+import sys
 from pathlib import Path
 from enum import Enum
 from typing import Dict, List, Union
@@ -21,12 +22,24 @@ from tqdm import tqdm
 from pydantic import BaseModel, Field
 
 # ----------------------------------------------------------------------------
+# HACK: OpenCV & DeepSeek Fixes
+# ----------------------------------------------------------------------------
+try:
+    import cv2
+except ImportError:
+    import sys
+    try:
+        from cv2 import cv2
+        sys.modules['cv2'] = cv2
+    except ImportError:
+        pass
+
+# ----------------------------------------------------------------------------
 # SETUP
 # ----------------------------------------------------------------------------
 _script_path = Path(__file__).resolve()
 PROJECT_ROOT = Path(os.environ.get("VLM_PROJECT_ROOT", _script_path.parent.parent.parent.parent))
 
-# Dotenv
 try:
     from dotenv import load_dotenv
     _env_file = PROJECT_ROOT / ".env"
@@ -34,12 +47,10 @@ try:
     else: load_dotenv()
 except ImportError: pass
 
-# HF Login
 from huggingface_hub import login
 HF_TOKEN = os.getenv("HF_TOKEN")
 if HF_TOKEN: login(token=HF_TOKEN)
 
-# vLLM
 from vllm import LLM, SamplingParams
 try:
     from vllm.sampling_params import StructuredOutputsParams
@@ -48,13 +59,14 @@ except ImportError:
     VLLM_HAS_STRUCTURED_OUTPUTS = False
 
 # ----------------------------------------------------------------------------
-# CONFIG
+# KONFIGURATION
 # ----------------------------------------------------------------------------
-MODEL_NAME = "Kimi-VL-A3B"
-MODEL_HF_ID = "moonshotai/Kimi-VL-A3B-Thinking-2506" 
+# WÄHLE: "deepseek-ai/deepseek-vl2-tiny", "deepseek-ai/deepseek-vl2-small" (16B), "deepseek-ai/deepseek-vl2" (27B)
+MODEL_NAME = "DeepSeek-VL2"
+MODEL_HF_ID = "deepseek-ai/deepseek-vl2"
+MODEL_CACHE_DIR = os.environ.get("HF_HOME", "/netscratch/$USER/.cache/huggingface")
 
 DATASET_PATH = PROJECT_ROOT / "dataset_final.json"
-# Fallback Dataset Suche
 if not DATASET_PATH.exists():
     _search = _script_path.parent
     for _ in range(5):
@@ -106,6 +118,9 @@ def parse_response(output_text: str) -> Dict:
 def load_image_base64(path: Path) -> str:
     with open(path, "rb") as f: return base64.b64encode(f.read()).decode("utf-8")
 
+def get_image_mime_type(path: Path) -> str:
+    return "image/png" if path.suffix.lower() == ".png" else "image/jpeg"
+
 # ----------------------------------------------------------------------------
 # EVALUATOR
 # ----------------------------------------------------------------------------
@@ -113,37 +128,47 @@ class VLMEvaluator:
     def __init__(self):
         logger.info(f"🏗️ Lade {MODEL_NAME} ({MODEL_HF_ID})")
         
+        # DeepSeek-VL2 Config
         self.llm = LLM(
             model=MODEL_HF_ID,
             trust_remote_code=True,
-            max_model_len=32768,  # Reduziert von 131072 auf 32K für weniger VRAM
-            max_num_seqs=1,       # Reduziert von 8 auf 1 für weniger Parallelität
-            limit_mm_per_prompt={"image": 256},  # Reduziert von 256 auf 128
-            gpu_memory_utilization=0.85,  # Etwas weniger als 0.9
+            max_model_len=8192,         # 8k reicht für Benchmarks, spart VRAM
+            gpu_memory_utilization=0.9,
+            limit_mm_per_prompt={"image": 1},
             dtype="bfloat16",
         )
         
         if VLLM_HAS_STRUCTURED_OUTPUTS:
             self.sampling_params = SamplingParams(
-                max_tokens=1024, 
+                max_tokens=512, 
                 temperature=0.0,
                 structured_outputs=StructuredOutputsParams(json=ANSWER_JSON_SCHEMA)
             )
         else:
-            self.sampling_params = SamplingParams(max_tokens=1024, temperature=0.0)
+            self.sampling_params = SamplingParams(max_tokens=512, temperature=0.0)
 
     def generate(self, image_path: str) -> Dict:
         p = DATA_DIR / image_path
         if not p.exists(): return {"error": "Image missing", "prediction": None}
         
         b64 = load_image_base64(p)
-        messages = [{
-            "role": "user",
-            "content": [
-                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}"}},
-                {"type": "text", "text": "Löse die Aufgabe. Gib nur das JSON {'answer': 'X'} zurück."}
-            ]
-        }]
+        mime = get_image_mime_type(p)
+        
+        # DeepSeek VL2 System Prompt
+        system_prompt = "Du bist ein hilfreicher Assistent für Mathematik. Antworte im JSON Format."
+        
+        # Hinweis: vLLM fügt den <image_placeholder> meist automatisch ein,
+        # wenn 'image_url' im Content ist und trust_remote_code=True.
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {
+                "role": "user",
+                "content": [
+                    {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{b64}"}},
+                    {"type": "text", "text": "Löse die Aufgabe. Wähle A, B, C, D oder E. Ausgabeformat: JSON {\"answer\": \"...\"}"}
+                ]
+            }
+        ]
         
         t0 = time.time()
         out = self.llm.chat(messages=messages, sampling_params=self.sampling_params, use_tqdm=False)
@@ -160,41 +185,40 @@ class VLMEvaluator:
         gc.collect()
 
 # ----------------------------------------------------------------------------
-# MAIN
+# MAIN (Kompakt)
 # ----------------------------------------------------------------------------
 def run_benchmark():
     set_seed(SEED)
-    if not DATASET_PATH.exists(): return
-    data = json.load(open(DATASET_PATH))
+    data = json.load(open(DATASET_PATH)) if DATASET_PATH.exists() else []
+    if not data: return
+    
     processed = set()
     if LOG_FILE.exists():
         processed = {json.loads(line).get("task_id") for line in open(LOG_FILE) if line.strip()}
     
-    queue = [d for d in data if f"{d.get('year')}_{d.get('class')}_{d.get('task_id')}" not in processed]
-    if not queue: return
-
     evaluator = VLMEvaluator()
     try:
         with open(LOG_FILE, 'a') as f:
-            pbar = tqdm(queue, desc=MODEL_NAME)
+            pbar = tqdm(data, desc=MODEL_NAME)
             correct = 0
-            for i, item in enumerate(pbar):
+            count = 0
+            for item in pbar:
                 tid = f"{item.get('year')}_{item.get('class')}_{item.get('task_id')}"
+                if tid in processed: continue
+                
                 try:
                     res = evaluator.generate(item["image_path"])
                     ok = res["prediction"] == item["answer"]
                     if ok: correct += 1
+                    count += 1
                     
                     log = {
-                        "task_id": tid,
-                        "ground_truth": item["answer"],
-                        "prediction": res["prediction"],
-                        "is_correct": ok,
-                        "raw": res.get("raw_output"),
-                        **item
+                        "model": MODEL_NAME, "task_id": tid, "ground_truth": item["answer"],
+                        "prediction": res["prediction"], "is_correct": ok, **res,
+                        "year": item.get("year"), "class": item.get("class"), "math_category": item.get("math_category")
                     }
                     f.write(json.dumps(log) + "\n"); f.flush()
-                    pbar.set_postfix({"acc": f"{correct/(i+1):.1%}"})
+                    pbar.set_postfix({"acc": f"{correct/count:.1%}"})
                 except Exception as e:
                     logger.error(f"{tid}: {e}")
                     if "out of memory" in str(e).lower(): break
