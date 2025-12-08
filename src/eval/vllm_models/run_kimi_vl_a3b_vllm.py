@@ -116,10 +116,10 @@ class VLMEvaluator:
         self.llm = LLM(
             model=MODEL_HF_ID,
             trust_remote_code=True,
-            max_model_len=131072,
-            max_num_seqs=8,
-            limit_mm_per_prompt={"image": 256},
-            gpu_memory_utilization=0.9,
+            max_model_len=32768,  # Reduziert von 131072 auf 32K für weniger VRAM
+            max_num_seqs=1,       # Reduziert von 8 auf 1 für weniger Parallelität
+            limit_mm_per_prompt={"image": 256},  # Reduziert von 256 auf 128
+            gpu_memory_utilization=0.85,  # Etwas weniger als 0.9
             dtype="bfloat16",
         )
         
