@@ -74,7 +74,9 @@ srun \
         source "$VENV_PATH/bin/activate"
         
         # Dependencies installieren
-        pip install --upgrade pip
+        pip install --upgrade pip 
+
+        pip install flash-attn --no-build-isolation
         
         # vLLM mit Vision Support (>= 0.6.0 für guided_decoding)
         pip install -q "vllm>=0.6.0"

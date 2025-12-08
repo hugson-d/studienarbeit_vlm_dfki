@@ -80,7 +80,9 @@ srun \
         pip install "vllm>=0.6.3" "numpy<2.0" pandas tqdm pydantic python-dotenv opencv-python-headless
         
         # xgrammar für Structured Output Backend (JSON Schema)
-        pip install -q xgrammar
+        pip install -q xgrammar  
+
+        pip install --upgrade mistral_common
         
         # Zusätzliche Dependencies
         pip install -q \
