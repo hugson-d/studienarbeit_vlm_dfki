@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=vlm_qwen2_5_vl_3b_vllm_json
+#SBATCH --job-name=vlm_qwen3_vl_4b_vllm
 #SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
@@ -49,7 +49,6 @@ export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
 echo "=========================================="
-echo "🚀 VLM Benchmark: Qwen2.5-VL-3B (vLLM + JSON Schema Guided Decoding)"
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
@@ -104,7 +103,7 @@ srun \
         python -c "import xgrammar; print(\"xgrammar: verfügbar\")" 2>/dev/null || echo "xgrammar: nicht installiert (fallback auf outlines)"
         
         # Python-Skript ausführen
-        python '"$PROJECT_ROOT"'/src/eval/vllm_models/run_qwen2_5_vl_3b_vllm.py
+        python '"$PROJECT_ROOT"'/src/eval/vllm_models/run_qwen3_vl_4b_vllm.py
     '
 
 echo "✅ Job abgeschlossen"

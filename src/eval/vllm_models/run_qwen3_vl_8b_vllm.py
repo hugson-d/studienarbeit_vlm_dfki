@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-"""
-VLM Benchmark für Känguru-Mathematik-Aufgaben
-Modell: Qwen2.5-VL-3B (vLLM Backend mit Structured Outputs / JSON Schema)
-
-Verwendet Structured Outputs für garantierte JSON-Ausgabe.
-Kompatibel mit vLLM >= 0.6.0 (nutzt guided_json Parameter).
-"""
 
 import os
 import json
@@ -65,9 +57,9 @@ except ImportError:
 # KONFIGURATION - DIESES MODELL
 # ============================================================================
 
-MODEL_NAME = "tttt"
+MODEL_NAME = "Qwen3-VL-8B-Instruct"
 MODEL_HF_ID = "Qwen/Qwen3-VL-8B-Instruct"
-MODEL_PARAMS_B = 3
+MODEL_PARAMS_B = 2
 
 # Cache-Verzeichnis für Modelle (auf Cluster: /netscratch)
 MODEL_CACHE_DIR = os.environ.get("HF_HOME", "/netscratch/$USER/.cache/huggingface")
