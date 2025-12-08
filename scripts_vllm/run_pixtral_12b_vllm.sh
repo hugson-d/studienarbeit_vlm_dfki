@@ -37,7 +37,7 @@ srun \
     # Verhindert, dass Container-Pakete in unser Venv bluten
     unset PYTHONPATH
     
-    VENV_DIR="/netscratch/$USER/.venv/pixtral_stable"
+    VENV_DIR="/tmp/pixtral_stable"
     
     # Optional: Einmalig neu erstellen, wenn Probleme bestehen
     if [[ ! -d "$VENV_DIR" ]]; then
@@ -48,6 +48,7 @@ srun \
     source "$VENV_DIR/bin/activate"
 
     pip install --upgrade pip
+    pip install "numpy<2.0"  # Erzwinge kompatible Version zuerst
 
     # 1. Alles Alte weg
     pip uninstall -y mistral-common mistral_common opencv-python opencv-python-headless || true
