@@ -65,8 +65,8 @@ except ImportError:
 # KONFIGURATION - DIESES MODELL
 # ============================================================================
 
-MODEL_NAME = "xxx"
-MODEL_HF_ID = "Qwen/Qwen3-VL-8B-Instruct"  # HuggingFace Modell-ID
+MODEL_NAME = "tttt"
+MODEL_HF_ID = "Qwen/Qwen3-VL-8B-Instruct"
 MODEL_PARAMS_B = 3
 
 # Cache-Verzeichnis für Modelle (auf Cluster: /netscratch)

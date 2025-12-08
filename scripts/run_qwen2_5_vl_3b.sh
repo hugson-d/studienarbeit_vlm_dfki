@@ -61,6 +61,6 @@ srun \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
     --task-prolog="$PROJECT_ROOT/scripts/install.sh" \
-    python "$PROJECT_ROOT/src/eval/models/sss.py"
+    python "$PROJECT_ROOT/src/eval/models/ss.py"
 
 echo "✅ Job abgeschlossen"
