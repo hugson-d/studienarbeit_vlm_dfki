@@ -2,7 +2,7 @@
 """
 VLM Benchmark: Känguru-Mathematik
 Modell: HuggingFaceM4/Idefics3-8B-Llama3 (vLLM)
-Methode: CoT + Voting (n=5) + Structured Outputs
+Methode: CoT + Voting (n=5) + Structured Outputs + HF-Chat-Template
 """
 
 import os
@@ -19,6 +19,7 @@ from pathlib import Path
 from tqdm import tqdm
 from enum import Enum
 from pydantic import BaseModel, Field
+from PIL import Image  # NEU: für Bildübergabe an vLLM
 
 # vLLM Imports
 from vllm import LLM, SamplingParams
@@ -28,6 +29,9 @@ try:
 except ImportError:
     VLLM_HAS_STRUCTURED_OUTPUTS = False
     raise ImportError("vLLM Version zu alt oder Structured Outputs nicht verfügbar.")
+
+# HF Processor für Chat-Template
+from transformers import AutoProcessor
 
 # ============================================================================
 # KONFIGURATION
@@ -92,6 +96,8 @@ COT_JSON_SCHEMA = CoTResponse.model_json_schema()
 def set_seed(seed: int):
     random.seed(seed)
 
+# (load_image_base64 / get_image_mime_type bleiben ungenutzt, können aber stehen bleiben,
+# falls du sie später noch brauchst)
 def load_image_base64(image_path: Path) -> str:
     with open(image_path, "rb") as f:
         return base64.b64encode(f.read()).decode("utf-8")
@@ -101,30 +107,39 @@ def get_image_mime_type(image_path: Path) -> str:
     return "image/png" if suffix == ".png" else "image/jpeg"
 
 # ============================================================================
-# EVALUATOR MIT VOTING
+# EVALUATOR MIT VOTING + CHAT-TEMPLATE
 # ============================================================================
 
 class VLMEvaluator:
     def __init__(self):
         logger.info(f"🏗️ Lade {MODEL_HF_ID} mit vLLM")
         logger.info(f"⚙️ Config: CoT + Voting (k={N_VOTING_PATHS}, T={TEMPERATURE})")
+        logger.info(f"📋 Structured Outputs mit Schema: reasoning + answer (A–E)")
 
-        # Idefics3 Setup
-        # WICHTIG: Idefics3 braucht viel Platz für Bild-Tokens (Splitting strategy).
+        # 1) HF-Processor nur für Chat-Template
+        self.processor = AutoProcessor.from_pretrained(MODEL_HF_ID)
+
+        # 2) vLLM-LMM (Idefics3)
         self.llm = LLM(
             model=MODEL_HF_ID,
             trust_remote_code=True,
-            max_model_len=8192,  # Genug Platz für CoT + viele Bild-Patches
+            max_model_len=8192,  # genug Platz für Bild-Patches + CoT
             gpu_memory_utilization=0.9,
             dtype="bfloat16",
             limit_mm_per_prompt={"image": 1},
+            # optional: Bild-Preprocessing/Größe feintunen
+            mm_processor_kwargs={
+                "size": {
+                    "longest_edge": 3 * 364
+                }
+            },
         )
         
-        # Sampling für Voting
+        # 3) Sampling für Voting + Structured Outputs
         self.sampling_params = SamplingParams(
-            n=N_VOTING_PATHS,            # Generiere 5 Pfade
-            temperature=TEMPERATURE,     # 0.7 für Kreativität
-            max_tokens=1024,             # Genug Platz für Reasoning
+            n=N_VOTING_PATHS,                        # 5 Pfade
+            temperature=TEMPERATURE,                 # Diversität
+            max_tokens=1024,                         # Platz für Reasoning
             structured_outputs=StructuredOutputsParams(json=COT_JSON_SCHEMA),
         )
 
@@ -133,39 +148,53 @@ class VLMEvaluator:
         if not full_path.exists():
             raise FileNotFoundError(f"Bild nicht gefunden: {full_path}")
         
-        image_b64 = load_image_base64(full_path)
-        mime_type = get_image_mime_type(full_path)
+        # Bild als PIL-Image (vLLM kümmert sich um Vorverarbeitung)
+        image = Image.open(full_path).convert("RGB")
         
-        # Konsistenter System-Prompt
+        # System-Prompt: CoT + JSON-Schema klarmachen
         system_prompt = (
             "Du bist ein exzellenter Mathematik-Tutor. Deine Aufgabe ist es, Multiple-Choice-Fragen zu lösen.\n"
             "WICHTIG: Denke zuerst Schritt für Schritt nach ('reasoning'), bevor du dich auf eine Antwort festlegst."
         )
         
-        # Idefics3 profitiert von explizitem <image> Token im User-Prompt
-        user_prompt = "Hier ist die Aufgabe:\n<image>\nAnalysiere das Bild und die Aufgabe. Leite die Lösung logisch her und gib am Ende die Antwort (A-E) an."
+        user_prompt = (
+            "Hier ist die Känguru-Mathematik-Aufgabe:\n"
+            "<image>\n\n"
+            "Bestimme die korrekte Antwort basierend auf dem Bild. Gib nur das JSON zurück."
+        )
 
+        # Messages im HF-Idefics3-Format (für apply_chat_template)
         messages = [
-            {"role": "system", "content": system_prompt},
+            {
+                "role": "system",
+                "content": system_prompt
+            },
             {
                 "role": "user",
                 "content": [
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:{mime_type};base64,{image_b64}"
-                        }
-                    },
-                    {"type": "text", "text": user_prompt},
-                ],
-            },
+                    {"type": "image"},
+                    {"type": "text", "text": user_prompt}
+                ]
+            }
         ]
+
+        # Chat-Template in einen Prompt-String umwandeln
+        prompt = self.processor.apply_chat_template(
+            messages,
+            add_generation_prompt=True,
+            tokenize=False
+        )
         
         start_time = time.time()
         
-        # Generierung (1 Aufruf liefert N Outputs)
-        request_output = self.llm.chat(
-            messages=messages,
+        # vLLM-Generierung: ein Request mit n=5 Outputs
+        request_output = self.llm.generate(
+            {
+                "prompt": prompt,
+                "multi_modal_data": {
+                    "image": image
+                },
+            },
             sampling_params=self.sampling_params,
             use_tqdm=False
         )
@@ -192,8 +221,10 @@ class VLMEvaluator:
             return {
                 "prediction": None,
                 "confidence": 0.0,
-                "error": "All paths failed parsing",
-                "inference_time": duration,
+                "vote_distribution": {},
+                "reasoning_traces": [],
+                "error": f"All {len(outputs)} paths failed parsing",
+                "inference_time": round(duration, 4),
                 "input_tokens": input_tokens
             }
 
@@ -216,6 +247,8 @@ class VLMEvaluator:
     def cleanup(self):
         if hasattr(self, 'llm'):
             del self.llm
+        if hasattr(self, 'processor'):
+            del self.processor
         gc.collect()
 
 # ============================================================================
@@ -236,8 +269,10 @@ def run_benchmark():
     if LOG_FILE.exists():
         with open(LOG_FILE, 'r', encoding='utf-8') as f:
             for line in f:
-                try: processed.add(json.loads(line).get("task_id"))
-                except: pass
+                try:
+                    processed.add(json.loads(line).get("task_id"))
+                except:
+                    pass
 
     logger.info(f"🚀 Starte {MODEL_NAME}: {len(dataset) - len(processed)} Aufgaben offen")
     
@@ -272,7 +307,8 @@ def run_benchmark():
                     ground_truth = item.get("answer")
                     is_correct = (result["prediction"] == ground_truth)
                     
-                    if is_correct: correct_count += 1
+                    if is_correct:
+                        correct_count += 1
                     processed_count += 1
                     
                     log_entry = {
@@ -287,7 +323,10 @@ def run_benchmark():
                         "confidence": result["confidence"],
                         "vote_distribution": result.get("vote_distribution"),
                         # Gekürztes Reasoning speichern
-                        "sample_reasoning": result.get("reasoning_traces", [""])[0][:500] + "...",
+                        "sample_reasoning": (
+                            result.get("reasoning_traces", [""])[0][:500] + "..."
+                            if result.get("reasoning_traces") else ""
+                        ),
                         "inference_time": result["inference_time"],
                         "error_type": result["error"]
                     }
@@ -304,7 +343,9 @@ def run_benchmark():
                     
                 except Exception as e:
                     logger.error(f"❌ {task_id}: {e}")
-                    if "out of memory" in str(e).lower(): break
+                    if "out of memory" in str(e).lower():
+                        logger.error("💥 OOM - Abbruch.")
+                        break
             
             pbar.close()
             
