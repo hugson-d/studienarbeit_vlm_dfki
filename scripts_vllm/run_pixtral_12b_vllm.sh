@@ -45,6 +45,9 @@ set -euo pipefail
 # 1. CLEANUP & ISOLATION
 unset PYTHONPATH
 
+# Install python3-venv if missing
+apt update && apt install -y python3-venv || true
+
 VENV_DIR="/tmp/pixtral_stable"
 
 if [[ ! -d "$VENV_DIR" ]]; then
