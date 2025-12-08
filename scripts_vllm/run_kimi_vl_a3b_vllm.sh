@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=vlm_idefics3_8b_vllm_json_cot_voting
+#SBATCH --job-name=vlm_kimi_vl_a3b_vllm_json
 #SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
-#SBATCH --mem=64G
+#SBATCH --mem=80G
 #SBATCH --time=24:00:00
 #SBATCH --cpus-per-task=4
 #SBATCH --output=%x_%j.out
@@ -49,7 +49,7 @@ export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
 echo "=========================================="
-echo "🚀 VLM Benchmark: Idefics3-8B (vLLM + JSON Schema Guided Decoding)"
+echo "🚀 VLM Benchmark: Kimi-VL-A3B (vLLM + JSON Schema Guided Decoding)"
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
@@ -64,7 +64,7 @@ srun \
         echo "📦 Erstelle venv und installiere vLLM Dependencies..."
         
         # Venv erstellen (falls nicht vorhanden)
-        VENV_PATH="/netscratch/$USER/.venv/vllm_qwen"
+        VENV_PATH="/netscratch/$USER/.venv/vllm_kimi"
         if [[ ! -d "$VENV_PATH" ]]; then
             python -m venv "$VENV_PATH"
             echo "✅ Venv erstellt: $VENV_PATH"
@@ -92,8 +92,7 @@ srun \
             "python-dotenv>=1.0" \
             "pandas" \
             "tqdm" \
-            "pillow>=10.0" \
-            "qwen-vl-utils>=0.0.8"
+            "pillow>=10.0"
         
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
@@ -102,14 +101,14 @@ srun \
         # ------------------------------
         # Skript ausführen
         # ------------------------------
-        SCRIPT_PATH="'"$PROJECT_ROOT"'/src/eval/vllm_models/run_idefics_8b_vllm_cot_voting.py"
+        SCRIPT_PATH="'"$PROJECT_ROOT"'/src/eval/vllm_models/run_kimi_vl_a3b_vllm.py"
         
         if [[ ! -f "$SCRIPT_PATH" ]]; then
             echo "❌ Python-Skript nicht gefunden: $SCRIPT_PATH"
             exit 1
         fi
         
-        echo "▶️ Starte Idefics3-8B Evaluation mit vLLM..."
+        echo "▶️ Starte Kimi-VL-A3B Evaluation mit vLLM..."
         python3 "$SCRIPT_PATH"
     '
 
