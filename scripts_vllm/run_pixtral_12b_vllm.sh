@@ -54,7 +54,7 @@ srun \
     pip install "vllm>=0.6.3" "numpy<2.0" pandas tqdm pydantic python-dotenv
 
     # 3. Python Skript starten
-    SCRIPT_PATH="src/eval/vllm_models/run_pixtral_12b_vllm.py"
+    SCRIPT_PATH="'"$PROJECT_ROOT"'/src/eval/vllm_models/run_ovis2_5_9b_vllm.py"
     
     if [[ ! -f "$SCRIPT_PATH" ]]; then
         # Fallback falls Skript im Root liegt
