@@ -77,21 +77,18 @@ srun \
         pip install --upgrade pip
         
         # vLLM mit Vision Support (>= 0.6.0 für guided_decoding)
-        pip install -q "vllm>=0.6.0"
+        pip install "vllm>=0.6.3" "numpy<2.0" pandas tqdm pydantic python-dotenv opencv-python-headless
         
         # xgrammar für Structured Output Backend (JSON Schema)
         pip install -q xgrammar
         
         # Zusätzliche Dependencies
         pip install -q \
-            "numpy<2.0" \
             "transformers>=4.45.0" \
             "accelerate>=0.33.0" \
             "huggingface_hub>=0.24.0" \
             "pydantic>=2.0" \
             "python-dotenv>=1.0" \
-            "pandas" \
-            "tqdm" \
             "pillow>=10.0"
         
         echo "✅ Installation abgeschlossen"
