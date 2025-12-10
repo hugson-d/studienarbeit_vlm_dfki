@@ -1,0 +1,25 @@
+✅ HF_TOKEN geladen
+==========================================
+🚀 VLM Benchmark: Ovis2.5-2B (vLLM + JSON Schema Guided Decoding)
+PROJECT_ROOT: /netscratch/dhug/studienarbeit_vlm_dfki
+==========================================
+📦 Erstelle venv und installiere vLLM Dependencies...
+✅ Venv erstellt: /netscratch/root/.venv/vllm_qwen
+Looking in indexes: http://pypi-cache/index, https://pypi.ngc.nvidia.com
+Requirement already satisfied: pip in /usr/local/lib/python3.10/dist-packages (23.3.1)
+Collecting pip
+  Downloading http://pypi-cache/packages/44/3c/d717024885424591d5376220b5e836c2d5293ce2011523c9de23ff7bf068/pip-25.3-py3-none-any.whl.metadata (4.7 kB)
+Downloading http://pypi-cache/packages/44/3c/d717024885424591d5376220b5e836c2d5293ce2011523c9de23ff7bf068/pip-25.3-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 386.4 MB/s eta 0:00:00
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 23.3.1
+    Uninstalling pip-23.3.1:
+      Successfully uninstalled pip-23.3.1
+Successfully installed pip-25.3
+✅ Installation abgeschlossen
+DEBUG: Python: /usr/bin/python
+vLLM Version: 0.12.0
+▶️ Starte Ovis2.5-2B Evaluation mit vLLM...
+INFO 12-10 10:54:42 [utils.py:253] non-default args: {'trust_remote_code': True, 'dtype': 'bfloat16', 'seed': None, 'max_model_len': 8192, 'disable_log_stats': True, 'limit_mm_per_prompt': {'image': 1}, 'model': 'AIDC-AI/Ovis2.5-2B'}
+WARNING 12-10 10:54:42 [arg_utils.py:1175] `seed=None` is equivalent to `seed=0` in V1 Engine. You will no longer be allowed to pass `None` in v0.13.
