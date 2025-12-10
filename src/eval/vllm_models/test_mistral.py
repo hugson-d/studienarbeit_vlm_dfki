@@ -142,14 +142,18 @@ class VLMEvaluator:
         data_url = f"data:{mime_type};base64,{image_b64}"
         
         # 2. Prompt erstellen
-        system_prompt = "Du bist ein Mathe-Experte. Löse die Aufgabe im Bild."
+        system_prompt = "Du bist ein mathematisches Assistenzsystem für Multiple-Choice-Aufgaben.\n" \
+            "Analysiere das Bild und wähle die korrekte Antwort: A, B, C, D oder E.\n\n" \
+            "Antworte im JSON-Format: {\"answer\": \"X\"} wobei X = A, B, C, D oder E."
+        user_prompt = "Bestimme die richtige Antwort. Gib deine Antwort als JSON zurück."
         
         messages = [
+            {"role": "system", "content": system_prompt},
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": system_prompt},
-                    {"type": "image_url", "image_url": data_url}
+                    {"type": "image_url", "image_url": data_url},
+                    {"type": "text", "text": user_prompt}
                 ]
             }
         ]
