@@ -18,7 +18,6 @@ from typing import Dict, List, Union, Optional
 from pathlib import Path
 from tqdm import tqdm
 from enum import Enum
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from pydantic import BaseModel, Field, ValidationError
 
 # MISTRAL API
@@ -169,37 +168,36 @@ class VLMEvaluator:
         mime = get_image_mime_type(full_path)
         url = f"data:{mime};base64,{b64}"
 
-        # Prompt
+        # System Prompt für CoT (Konsistent mit anderen Skripten)
         system_prompt = (
-            "Du bist ein Mathe-Experte. Löse die Aufgabe im Bild.\n"
-            "1. Analysiere das Bild und den Text genau.\n"
-            "2. Denke Schritt für Schritt ('reasoning') nach.\n"
-            "3. Gib die Antwort ('answer') als A, B, C, D oder E aus.\n"
-            "Antworte als JSON: {\"reasoning\": \"...\", \"answer\": \"A\"}"
+            "Du bist ein exzellenter Mathematik-Tutor. Deine Aufgabe ist es, Multiple-Choice-Fragen zu lösen.\n"
+            "WICHTIG: Denke zuerst Schritt für Schritt nach ('reasoning'), bevor du dich auf eine Antwort festlegst."
         )
 
+        # User Prompt mit Bild
+        user_prompt = "Analysiere das Bild und die Aufgabe. Leite die Lösung logisch her und gib am Ende die Antwort (A-E) an."
+
         messages = [
+            {"role": "system", "content": system_prompt},
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": system_prompt},
-                    {"type": "image_url", "image_url": url}
+                    {"type": "image_url", "image_url": url},
+                    {"type": "text", "text": user_prompt}
                 ]
             }
         ]
 
         start_time = time.time()
         
-        # Parallel Execution für N Pfade
+        # Sequentiell N Calls (keine Parallelität)
         results = []
-        with ThreadPoolExecutor(max_workers=min(N_VOTING_PATHS, 5)) as executor:
-            # Wir starten N Aufgaben
-            futures = [executor.submit(self._single_request, messages) for _ in range(N_VOTING_PATHS)]
-            
-            for future in as_completed(futures):
-                res = future.result()
-                if res:
-                    results.append(res)
+        for i in range(N_VOTING_PATHS):
+            res = self._single_request(messages)
+            if res:
+                results.append(res)
+            # Kurze Pause zwischen Calls um Rate Limits zu schonen
+            time.sleep(0.5)
         
         duration = time.time() - start_time
 
@@ -270,9 +268,6 @@ def run_benchmark():
             
             try:
                 res = evaluator.generate_with_voting(item["image_path"])
-                
-                # Kurze Pause um Rate Limits zu schonen (bei 5 parallelen Calls wichtig)
-                time.sleep(1.0) 
                 
                 gt = item.get("answer")
                 is_correct = (res["prediction"] == gt)

@@ -50,7 +50,8 @@ if not MISTRAL_API_KEY:
 
 # Für Bilder (VLM) muss auf der API zwingend ein Pixtral-Modell genutzt werden.
 # Stand heute ist 'pixtral-12b-2409' das Standard-Modell.
-MODEL_NAME = "pixtral-12b-2409" 
+#MODEL_NAME = "pixtral-12b-2409" 
+MODEL_NAME = "mistral-large-2512"
 
 DATASET_PATH = PROJECT_ROOT / "dataset_final.json"
 if not DATASET_PATH.exists():
