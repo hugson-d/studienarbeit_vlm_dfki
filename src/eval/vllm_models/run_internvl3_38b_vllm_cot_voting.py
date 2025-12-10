@@ -56,7 +56,7 @@ except ImportError:
 # ============================================================================
 
 # Voting Parameter
-N_VOTING_PATHS = 5      # 5 Pfade
+N_VOTING_PATHS = 1      # 5 Pfade
 TEMPERATURE = 0.0       # Diversität
 
 MODEL_NAME = f"InternVL3-38B-CoT-Voting_n{N_VOTING_PATHS}"
