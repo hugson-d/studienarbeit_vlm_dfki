@@ -228,7 +228,6 @@ class VLMEvaluator:
             "confidence": confidence,
             "vote_distribution": dict(counts),
             "reasoning_sample": winner_reasoning,
-            "reasoning_traces": [r.get("reasoning", "") for r in results if r],  # Alle Reasonings
             "total_calls": N_VOTING_PATHS,
             "successful_calls": len(valid_answers),
             "inference_time": round(duration, 4)
@@ -288,7 +287,6 @@ def run_benchmark():
                     "is_correct": is_correct,
                     "confidence": res.get("confidence", 0),
                     "vote_distribution": res.get("vote_distribution"),
-                    "reasoning_traces": res.get("reasoning_traces", []),  # Alle Reasonings
                     "inference_time": res.get("inference_time"),
                     "class": item.get("class"),
                     "category": item.get("math_category")
