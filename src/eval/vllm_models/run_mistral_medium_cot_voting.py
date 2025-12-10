@@ -275,6 +275,7 @@ def run_benchmark():
                 count += 1
 
                 log_entry = {
+                    "model": MODEL_NAME,
                     "task_id": task_id,
                     "ground_truth": gt,
                     "prediction": res["prediction"],

@@ -27,7 +27,7 @@ except ImportError:
 
 # Voting Parameter
 N_VOTING_PATHS = 5      # Empfehlung: 5 (Sweetspot) oder 10 (Max Präzision, langsam)
-TEMPERATURE = 0.0       # Temperatur > 0 für Diversität in den Pfaden
+TEMPERATURE = 0.7       # Temperatur > 0 für Diversität in den Pfaden
 
 # Modell Name für Log-Datei (automatisch mit n-Zahl)
 BASE_MODEL_NAME = "Qwen3-VL-30B-Instruct"

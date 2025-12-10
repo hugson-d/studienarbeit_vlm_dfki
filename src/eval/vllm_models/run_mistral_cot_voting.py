@@ -153,10 +153,14 @@ class VLMEvaluator:
                 temperature=TEMPERATURE
             )
             content = response.choices[0].message.content
-            return parse_response(content)
+            parsed = parse_response(content)
+            # If the model returns a valid JSON response but it fails validation, provide the raw text as error
+            if parsed is None:
+                return {"error": "Invalid or non-JSON response", "raw_output": content}
+            return parsed
         except Exception as e:
             logger.warning(f"API Request failed: {e}")
-            return None
+            return {"error": f"API Request failed: {e}", "raw_output": ""}
 
     def generate_with_voting(self, image_path: str) -> Dict:
         full_path = DATA_DIR / image_path
@@ -205,10 +209,12 @@ class VLMEvaluator:
         valid_answers = [r['answer'] for r in results if r and r.get('answer')]
 
         if not valid_answers:
+            # Capture any error messages from the individual calls
+            errors = [r.get('error') for r in results if r and r.get('error')]
             return {
                 "prediction": None,
                 "confidence": 0.0,
-                "error": "All API calls failed or invalid JSON",
+                "error": "; ".join([e for e in errors if e]) or "All API calls failed or invalid JSON",
                 "inference_time": duration
             }
 
@@ -275,12 +281,14 @@ def run_benchmark():
                 count += 1
 
                 log_entry = {
+                    "model": MODEL_NAME,
                     "task_id": task_id,
                     "ground_truth": gt,
                     "prediction": res["prediction"],
                     "is_correct": is_correct,
                     "confidence": res.get("confidence", 0),
                     "vote_distribution": res.get("vote_distribution"),
+                    "error": res.get("error"),
                     "sample_reasoning": res.get("reasoning_traces", [""])[0][:500] + "...",
                     "inference_time": res.get("inference_time"),
                     "class": item.get("class"),
