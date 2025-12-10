@@ -282,6 +282,7 @@ def run_benchmark():
                     "is_correct": is_correct,
                     "confidence": res.get("confidence", 0),
                     "vote_distribution": res.get("vote_distribution"),
+                    "sample_reasoning": res.get("reasoning_traces", [""])[0][:500] + "...",
                     "inference_time": res.get("inference_time"),
                     "class": item.get("class"),
                     "category": item.get("math_category")
