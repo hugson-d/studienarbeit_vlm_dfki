@@ -1,8 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=vlm_mistral_medium_cot_voting
-#SBATCH --partition=cpu
+#SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI
 #SBATCH --ntasks=1
-#SBATCH --mem=16G
 #SBATCH --time=24:00:00
 #SBATCH --cpus-per-task=2
 #SBATCH --output=%x_%j.out
