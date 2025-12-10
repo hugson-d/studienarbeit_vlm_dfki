@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=vlm_pixtral_cot_voting
+#SBATCH --job-name=vlm_mistral_medium_cot_voting
 #SBATCH --partition=cpu
 #SBATCH --ntasks=1
 #SBATCH --mem=16G
@@ -49,7 +49,7 @@ export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
 echo "=========================================="
-echo "🚀 VLM Benchmark: Pixtral-12B CoT Voting (Mistral API)"
+echo "🚀 VLM Benchmark: Mistral Medium CoT Voting (API)"
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 
@@ -63,7 +63,7 @@ srun \
     bash -c '
         echo "📦 Erstelle venv und installiere Dependencies..."
         # Venv erstellen (falls nicht vorhanden)
-        VENV_PATH="/netscratch/$USER/.venv/pixtral_cot_voting"
+        VENV_PATH="/netscratch/$USER/.venv/mistral_medium_cot_voting"
         if [[ ! -d "$VENV_PATH" ]]; then
             python -m venv "$VENV_PATH"
             echo "✅ Venv erstellt: $VENV_PATH"
@@ -79,14 +79,14 @@ srun \
         # ------------------------------
         # Skript ausführen
         # ------------------------------
-        SCRIPT_PATH="'"$PROJECT_ROOT"'/src/eval/vllm_models/run_pixtral_12b_vllm_cot_voting.py"
+        SCRIPT_PATH="'"$PROJECT_ROOT"'/src/eval/vllm_models/run_mistral_medium_cot_voting.py"
 
         if [[ ! -f "$SCRIPT_PATH" ]]; then
             echo "❌ Python-Skript nicht gefunden: $SCRIPT_PATH"
             exit 1
         fi
 
-        echo "▶️ Starte Pixtral-12B CoT Voting..."
+        echo "▶️ Starte Mistral Medium CoT Voting..."
         python3 "$SCRIPT_PATH"
     '
 

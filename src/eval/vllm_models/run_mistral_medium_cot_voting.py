@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 VLM Benchmark: Känguru-Mathematik
-Modell: pixtral-12b-2409 (Mistral API)
+Modell: Mistral API (pixtral-12b-2409)
 Methode: Chain-of-Thought (CoT) + Self-Consistency Voting (Majority Vote)
 """
 
@@ -18,10 +18,22 @@ from typing import Dict, List, Union, Optional
 from pathlib import Path
 from tqdm import tqdm
 from enum import Enum
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field
 
 # MISTRAL API
 from mistralai import Mistral
+
+# ============================================================================
+# KONFIGURATION
+# ============================================================================
+
+# Voting Parameter
+N_VOTING_PATHS = 5      # Wie viele Versuche pro Bild? (Kostet mehr Credits!)
+TEMPERATURE = 0.7       # Etwas höher für Diversität beim Voting
+
+# Modell
+MODEL_NAME = "mistral-medium-2508"
+BENCHMARK_NAME = f"Mistral-API_CoT-Voting_n{N_VOTING_PATHS}"
 
 # Projekt-Setup
 _script_path = Path(__file__).resolve()
@@ -41,18 +53,6 @@ except ImportError:
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 if not MISTRAL_API_KEY:
     print("⚠️ ACHTUNG: MISTRAL_API_KEY fehlt!")
-
-# ============================================================================
-# KONFIGURATION
-# ============================================================================
-
-# Voting Parameter
-N_VOTING_PATHS = 5      # Wie viele Versuche pro Bild? (Kostet mehr Credits!)
-TEMPERATURE = 0.7       # Etwas höher für Diversität beim Voting
-
-# Modell
-MODEL_NAME = "pixtral-12b-2409"
-BENCHMARK_NAME = f"Pixtral-API_CoT-Voting_n{N_VOTING_PATHS}"
 
 DATASET_PATH = PROJECT_ROOT / "dataset_final.json"
 if not DATASET_PATH.exists():
@@ -78,7 +78,7 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[logging.StreamHandler(), logging.FileHandler(OUTPUT_DIR / f"{BENCHMARK_NAME}.log")]
 )
-logger = logging.getLogger("MistralVoting")
+logger = logging.getLogger("MistralCoTVoting")
 
 # ============================================================================
 # PYDANTIC SCHEMA
@@ -115,7 +115,7 @@ def parse_response(text: str) -> Optional[Dict]:
         data = json.loads(clean)
         return CoTResponse(**data).dict()
     except: pass
-    
+
     # 2. Markdown JSON
     match = re.search(r'```json\s*(\{.*?\})\s*```', clean, re.DOTALL)
     if match:
@@ -131,7 +131,7 @@ def parse_response(text: str) -> Optional[Dict]:
             data = json.loads(match.group(0))
             return CoTResponse(**data).dict()
         except: pass
-        
+
     return None
 
 # ============================================================================
@@ -141,7 +141,7 @@ def parse_response(text: str) -> Optional[Dict]:
 class VLMEvaluator:
     def __init__(self):
         self.client = Mistral(api_key=MISTRAL_API_KEY)
-        logger.info(f"🤖 Pixtral API Voting System (n={N_VOTING_PATHS}, T={TEMPERATURE})")
+        logger.info(f"🤖 Mistral API CoT Voting System (n={N_VOTING_PATHS}, T={TEMPERATURE})")
 
     def _single_request(self, messages) -> Optional[Dict]:
         """Führt einen einzelnen API Call durch."""
@@ -189,8 +189,8 @@ class VLMEvaluator:
         ]
 
         start_time = time.time()
-        
-        # Sequentiell N Calls (keine Parallelität)
+
+        # Sequentiell N Calls (keine Parallelität für Rate Limits)
         results = []
         for i in range(N_VOTING_PATHS):
             res = self._single_request(messages)
@@ -198,12 +198,12 @@ class VLMEvaluator:
                 results.append(res)
             # Kurze Pause zwischen Calls um Rate Limits zu schonen
             time.sleep(0.5)
-        
+
         duration = time.time() - start_time
 
         # Voting Auswertung
         valid_answers = [r['answer'] for r in results if r and r.get('answer')]
-        
+
         if not valid_answers:
             return {
                 "prediction": None,
@@ -225,7 +225,7 @@ class VLMEvaluator:
             "prediction": winner,
             "confidence": confidence,
             "vote_distribution": dict(counts),
-            "reasoning_sample": winner_reasoning,
+            "reasoning_traces": [r['reasoning'] for r in results if r and r.get('reasoning')],
             "total_calls": N_VOTING_PATHS,
             "successful_calls": len(valid_answers),
             "inference_time": round(duration, 4)
@@ -251,30 +251,29 @@ def run_benchmark():
                 try:
                     processed_ids.add(json.loads(line)['task_id'])
                 except: pass
-    
+
     tasks_to_do = [d for d in dataset if f"{d.get('year')}_{d.get('class')}_{d.get('task_id')}" not in processed_ids]
-    
-    logger.info(f"🚀 Start API Voting Benchmark. Tasks: {len(tasks_to_do)}")
-    
+
+    logger.info(f"🚀 Start Mistral API CoT Voting Benchmark. Tasks: {len(tasks_to_do)}")
+
     evaluator = VLMEvaluator()
     correct = 0
     count = 0
-    
+
     with open(LOG_FILE, 'a', encoding='utf-8') as f_log:
-        pbar = tqdm(tasks_to_do, desc="Pixtral Voting")
-        
+        pbar = tqdm(tasks_to_do, desc="Mistral CoT Voting")
         for item in pbar:
             task_id = f"{item.get('year')}_{item.get('class')}_{item.get('task_id')}"
-            
+
             try:
                 res = evaluator.generate_with_voting(item["image_path"])
-                
+
                 gt = item.get("answer")
                 is_correct = (res["prediction"] == gt)
-                
+
                 if is_correct: correct += 1
                 count += 1
-                
+
                 log_entry = {
                     "task_id": task_id,
                     "ground_truth": gt,
@@ -287,15 +286,15 @@ def run_benchmark():
                     "class": item.get("class"),
                     "category": item.get("math_category")
                 }
-                
+
                 f_log.write(json.dumps(log_entry) + "\n")
                 f_log.flush()
-                
+
                 pbar.set_postfix({
                     "acc": f"{correct/count:.1%}",
                     "conf": f"{res.get('confidence',0):.2f}"
                 })
-                
+
             except Exception as e:
                 logger.error(f"Error at {task_id}: {e}")
 

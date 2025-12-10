@@ -32,7 +32,7 @@ N_VOTING_PATHS = 5      # Wie viele Versuche pro Bild? (Kostet mehr Credits!)
 TEMPERATURE = 0.7       # Etwas höher für Diversität beim Voting
 
 # Modell
-MODEL_NAME = "pixtral-12b-2409"
+MODEL_NAME = "mistral-large-2512"
 BENCHMARK_NAME = f"Mistral-API_CoT-Voting_n{N_VOTING_PATHS}"
 
 # Projekt-Setup
