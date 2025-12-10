@@ -32,7 +32,7 @@ except ImportError:
 # ============================================================================
 
 # Voting Parameter
-N_VOTING_PATHS = 1      # 5 Pfade (Standard für Benchmarks)
+N_VOTING_PATHS = 5      # 5 Pfade (Standard für Benchmarks)
 TEMPERATURE = 0.0       # Temperatur > 0 für Diversität
 
 # Modell Identifikation

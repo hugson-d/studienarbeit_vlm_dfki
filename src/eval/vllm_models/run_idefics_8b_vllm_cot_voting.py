@@ -38,7 +38,7 @@ from transformers import AutoProcessor
 # ============================================================================
 
 # Voting Parameter
-N_VOTING_PATHS = 1      # 5 Pfade
+N_VOTING_PATHS = 5      # 5 Pfade
 TEMPERATURE = 0.0       # Diversität
 
 MODEL_NAME = f"Idefics3-8B-CoT-Voting_n{N_VOTING_PATHS}"
