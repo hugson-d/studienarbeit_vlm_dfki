@@ -33,7 +33,7 @@ TEMPERATURE = 0.7       # Etwas höher für Diversität beim Voting
 
 # Modell
 MODEL_NAME = "mistral-large-2512"
-BENCHMARK_NAME = f"Mistral-API_CoT-Voting_n{N_VOTING_PATHS}"
+BENCHMARK_NAME = f"{MODEL_NAME}_CoT-Voting_n{N_VOTING_PATHS}"
 
 # Projekt-Setup
 _script_path = Path(__file__).resolve()
