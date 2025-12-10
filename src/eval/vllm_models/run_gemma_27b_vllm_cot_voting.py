@@ -33,7 +33,7 @@ except ImportError:
 
 # Voting Parameter
 N_VOTING_PATHS = 1    # 5 Pfade (Standard für Benchmarks)
-TEMPERATURE = 0.7       # Temperatur > 0 für Diversität
+TEMPERATURE = 0.0      # Temperatur > 0 für Diversität
 
 # Modell Identifikation
 BASE_MODEL_NAME = "Gemma-3-27B-vLLM"

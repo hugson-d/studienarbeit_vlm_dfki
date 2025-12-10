@@ -57,7 +57,7 @@ except ImportError:
 
 # Voting Parameter
 N_VOTING_PATHS = 1      # 5 Pfade
-TEMPERATURE = 0.7       # Diversität
+TEMPERATURE = 0.0     # Diversität
 
 MODEL_NAME = f"InternVL3-8B-CoT-Voting_n{N_VOTING_PATHS}"
 MODEL_HF_ID = "OpenGVLab/InternVL3-8B"
