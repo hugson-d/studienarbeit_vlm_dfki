@@ -1,0 +1,206 @@
+Job 2377847: Running on node(s) serv-3340
+Job 2377847: Started at 2025-12-10 20:32:40+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2377847&from=1765395160000
+srun: jobinfo: version v1.0.0
+Job 2377847: Running on node(s) serv-3340
+Job 2377847: Started at 2025-12-10 20:32:41+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2377847&from=1765395161000
+Job 2377847: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
+Job 2377847: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 21.7 seconds
+Error: [Errno 13] Permission denied: '/netscratch/root'
+/usr/bin/bash: line 10: /netscratch/root/.venv/mistral_cot_voting/bin/activate: No such file or directory
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+2025-12-10 20:33:28,653 - INFO - 🚀 Start Mistral API CoT Voting Benchmark. Tasks: 3557
+2025-12-10 20:33:28,776 - INFO - 🤖 Mistral API CoT Voting System (n=5, T=0.7)
+Mistral CoT Voting:   0%|          | 0/3557 [00:00<?, ?it/s]2025-12-10 20:33:36,426 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:33:43,363 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:33:49,907 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:33:55,339 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:34:01,714 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 0/3557 [00:33<?, ?it/s, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 1/3557 [00:33<33:00:54, 33.42s/it, acc=0.0%, conf=0.00]2025-12-10 20:34:06,284 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:34:11,636 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:34:15,528 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:34:19,626 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:34:24,765 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 1/3557 [00:56<33:00:54, 33.42s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 2/3557 [00:56<26:58:49, 27.32s/it, acc=0.0%, conf=0.00]2025-12-10 20:34:32,274 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:34:38,107 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:34:43,728 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:34:49,963 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:34:57,199 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 2/3557 [01:28<26:58:49, 27.32s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 3/3557 [01:28<29:16:39, 29.66s/it, acc=0.0%, conf=0.00]2025-12-10 20:35:06,642 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:35:13,672 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:35:22,194 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:35:34,768 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:35:46,620 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 3/3557 [02:18<29:16:39, 29.66s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 4/3557 [02:18<36:58:12, 37.46s/it, acc=0.0%, conf=0.00]2025-12-10 20:35:53,991 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:36:01,524 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:36:09,252 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:36:16,845 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:36:26,262 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 4/3557 [02:57<36:58:12, 37.46s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 5/3557 [02:57<37:44:11, 38.25s/it, acc=0.0%, conf=0.00]2025-12-10 20:36:42,446 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:37:12,424 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:37:20,197 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:37:32,120 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:37:47,476 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 5/3557 [04:19<37:44:11, 38.25s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 6/3557 [04:19<52:08:09, 52.86s/it, acc=0.0%, conf=0.00]2025-12-10 20:38:38,630 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:39:39,272 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:40:00,500 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:40:30,944 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:41:17,229 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 6/3557 [07:48<52:08:09, 52.86s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 7/3557 [07:48<102:42:08, 104.15s/it, acc=0.0%, conf=0.00]2025-12-10 20:41:24,784 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:41:31,110 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:41:35,109 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:41:39,839 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:41:45,448 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 7/3557 [08:17<102:42:08, 104.15s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 8/3557 [08:17<78:50:36, 79.98s/it, acc=0.0%, conf=0.00]  2025-12-10 20:41:55,975 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:42:07,224 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:42:25,252 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:42:35,940 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:42:48,135 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 8/3557 [09:19<78:50:36, 79.98s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 9/3557 [09:19<73:29:39, 74.57s/it, acc=0.0%, conf=0.00]2025-12-10 20:43:03,495 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:43:34,187 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:43:50,223 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:44:12,179 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:44:30,422 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 9/3557 [11:02<73:29:39, 74.57s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 10/3557 [11:02<81:54:13, 83.13s/it, acc=0.0%, conf=0.00]2025-12-10 20:44:37,792 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:44:46,498 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:44:53,938 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:45:03,605 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:45:10,494 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 10/3557 [11:42<81:54:13, 83.13s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 11/3557 [11:42<68:54:03, 69.95s/it, acc=0.0%, conf=0.00]2025-12-10 20:45:23,966 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:45:36,048 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:45:44,950 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:45:58,893 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:46:12,748 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 11/3557 [12:44<68:54:03, 69.95s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 12/3557 [12:44<66:34:36, 67.61s/it, acc=0.0%, conf=0.00]2025-12-10 20:46:38,562 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:47:03,351 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:47:30,942 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:47:57,748 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:48:34,956 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 12/3557 [15:06<66:34:36, 67.61s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 13/3557 [15:06<88:48:29, 90.21s/it, acc=0.0%, conf=0.00]2025-12-10 20:48:39,905 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:48:47,143 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:48:52,100 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:48:56,949 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:49:02,592 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 13/3557 [15:34<88:48:29, 90.21s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 14/3557 [15:34<70:10:41, 71.31s/it, acc=0.0%, conf=0.00]2025-12-10 20:49:21,870 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:49:43,218 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:50:00,319 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:50:16,593 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:50:42,222 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 14/3557 [17:13<70:10:41, 71.31s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 15/3557 [17:13<78:33:28, 79.84s/it, acc=0.0%, conf=0.00]2025-12-10 20:50:58,162 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:51:06,026 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:51:06,932 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 503 Service Unavailable"
+2025-12-10 20:51:06,934 - WARNING - API Request failed: API error occurred: Status 503. Body: {"object":"error","message":"Internal server error","type":"unreachable_backend","param":null,"code":"1100"}
+2025-12-10 20:51:19,068 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:51:27,628 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 15/3557 [17:59<78:33:28, 79.84s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 16/3557 [17:59<68:20:39, 69.48s/it, acc=0.0%, conf=0.00]2025-12-10 20:51:39,476 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:51:53,686 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:52:02,358 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:52:13,570 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:52:23,075 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 16/3557 [18:54<68:20:39, 69.48s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 17/3557 [18:54<64:10:11, 65.26s/it, acc=0.0%, conf=0.00]2025-12-10 20:52:33,256 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:52:41,775 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:52:54,394 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:52:59,598 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:53:11,911 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   0%|          | 17/3557 [19:43<64:10:11, 65.26s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 18/3557 [19:43<59:18:19, 60.33s/it, acc=0.0%, conf=0.00]2025-12-10 20:53:25,536 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:53:38,896 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:54:00,040 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:54:15,336 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:54:33,382 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 18/3557 [21:05<59:18:19, 60.33s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 19/3557 [21:05<65:31:31, 66.67s/it, acc=0.0%, conf=0.00]2025-12-10 20:54:37,284 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:54:41,823 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:54:46,755 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:54:52,388 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:54:57,945 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 19/3557 [21:29<65:31:31, 66.67s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 20/3557 [21:29<53:05:05, 54.03s/it, acc=0.0%, conf=0.00]2025-12-10 20:55:06,893 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:55:13,338 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:55:21,261 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:55:30,089 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:55:40,461 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 20/3557 [22:12<53:05:05, 54.03s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 21/3557 [22:12<49:40:28, 50.57s/it, acc=0.0%, conf=0.00]2025-12-10 20:57:19,871 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:58:48,213 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 20:59:21,690 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:00:13,895 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:00:54,175 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 21/3557 [27:25<49:40:28, 50.57s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 22/3557 [27:25<127:12:46, 129.55s/it, acc=0.0%, conf=0.00]2025-12-10 21:01:12,798 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:01:29,171 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:01:36,823 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:01:54,682 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:02:18,380 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 22/3557 [28:50<127:12:46, 129.55s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 23/3557 [28:50<113:48:54, 115.94s/it, acc=0.0%, conf=0.00]2025-12-10 21:02:42,412 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:03:01,211 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:03:24,453 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:03:37,402 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:04:12,706 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 23/3557 [30:44<113:48:54, 115.94s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 24/3557 [30:44<113:18:20, 115.45s/it, acc=0.0%, conf=0.00]2025-12-10 21:04:24,632 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:04:32,591 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:04:40,849 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:04:50,503 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:05:04,791 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 24/3557 [31:36<113:18:20, 115.45s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 25/3557 [31:36<94:37:09, 96.44s/it, acc=0.0%, conf=0.00]  2025-12-10 21:05:16,698 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:05:29,617 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:05:41,188 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:05:51,909 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:06:02,243 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 25/3557 [32:33<94:37:09, 96.44s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 26/3557 [32:33<83:07:08, 84.74s/it, acc=0.0%, conf=0.00]2025-12-10 21:06:11,415 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:06:23,856 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:06:31,989 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:06:38,820 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:06:48,368 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 26/3557 [33:20<83:07:08, 84.74s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 27/3557 [33:20<71:44:14, 73.16s/it, acc=0.0%, conf=0.00]2025-12-10 21:07:04,139 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:07:13,643 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:07:24,906 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:07:37,263 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:07:50,609 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 27/3557 [34:22<71:44:14, 73.16s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 28/3557 [34:22<68:30:12, 69.88s/it, acc=0.0%, conf=0.00]2025-12-10 21:07:59,973 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:08:16,153 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:08:26,412 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:08:36,481 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:08:51,493 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 28/3557 [35:23<68:30:12, 69.88s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 29/3557 [35:23<65:50:31, 67.19s/it, acc=0.0%, conf=0.00]2025-12-10 21:09:28,293 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:10:12,507 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:11:00,740 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:11:59,564 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:13:01,012 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 29/3557 [39:32<65:50:31, 67.19s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 30/3557 [39:32<119:24:53, 121.89s/it, acc=0.0%, conf=0.00]2025-12-10 21:13:20,273 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:13:58,791 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:14:17,110 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:14:35,562 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:15:45,534 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 30/3557 [42:17<119:24:53, 121.89s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 31/3557 [42:17<131:54:24, 134.68s/it, acc=0.0%, conf=0.00]2025-12-10 21:15:52,962 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:16:03,748 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:16:13,423 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:16:26,098 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:17:06,084 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 31/3557 [43:37<131:54:24, 134.68s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 32/3557 [43:37<115:58:08, 118.44s/it, acc=0.0%, conf=0.00]2025-12-10 21:18:00,621 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:18:13,228 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:18:20,803 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:18:32,977 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:18:43,003 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 32/3557 [45:14<115:58:08, 118.44s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 33/3557 [45:14<109:37:10, 111.98s/it, acc=0.0%, conf=0.00]2025-12-10 21:18:50,571 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:18:59,598 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:19:27,454 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:19:40,319 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:19:56,205 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 33/3557 [46:27<109:37:10, 111.98s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 34/3557 [46:27<98:12:10, 100.35s/it, acc=0.0%, conf=0.00] 2025-12-10 21:20:05,461 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:20:18,108 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:20:29,611 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:20:41,470 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:20:53,871 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 34/3557 [47:25<98:12:10, 100.35s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 35/3557 [47:25<85:38:57, 87.55s/it, acc=0.0%, conf=0.00] 2025-12-10 21:21:06,215 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:21:20,080 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:21:29,747 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:21:43,359 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:21:58,785 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 35/3557 [48:30<85:38:57, 87.55s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 36/3557 [48:30<78:58:46, 80.75s/it, acc=0.0%, conf=0.00]2025-12-10 21:22:06,955 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:22:15,238 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:23:10,988 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:24:05,431 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:24:16,832 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+Mistral CoT Voting:   1%|          | 36/3557 [50:48<78:58:46, 80.75s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   1%|          | 37/3557 [50:48<95:45:49, 97.94s/it, acc=0.0%, conf=0.00]2025-12-10 21:24:39,684 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-10 21:24:56,600 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd: error: *** JOB 2377847 ON serv-3340 CANCELLED AT 2025-12-10T21:25:00 ***
+slurmstepd: error: *** STEP 2377847.0 ON serv-3340 CANCELLED AT 2025-12-10T21:25:00 ***
