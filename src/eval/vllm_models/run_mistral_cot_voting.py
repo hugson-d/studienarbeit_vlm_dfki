@@ -134,6 +134,12 @@ def parse_response(text: str) -> Optional[Dict]:
 
     return None
 
+
+def model_supports_images(model_name: str) -> bool:
+    image_keywords = ["pixtral", "ovis", "qwen", "internvl", "idefics", "gemma"]
+    lower = model_name.lower()
+    return any(k in lower for k in image_keywords)
+
 # ============================================================================
 # EVALUATOR
 # ============================================================================
@@ -288,7 +294,6 @@ def run_benchmark():
                     "is_correct": is_correct,
                     "confidence": res.get("confidence", 0),
                     "vote_distribution": res.get("vote_distribution"),
-                    "error": res.get("error"),
                     "sample_reasoning": res.get("reasoning_traces", [""])[0][:500] + "...",
                     "inference_time": res.get("inference_time"),
                     "class": item.get("class"),
