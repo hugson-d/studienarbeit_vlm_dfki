@@ -19,7 +19,6 @@ from pathlib import Path
 from tqdm import tqdm
 from enum import Enum
 from pydantic import BaseModel, Field
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # MISTRAL API
 from mistralai import Mistral
@@ -191,14 +190,14 @@ class VLMEvaluator:
 
         start_time = time.time()
 
-        # Parallele API Calls für Voting (höherer Throughput)
+        # Sequentiell N Calls (keine Parallelität für Rate Limits)
         results = []
-        with ThreadPoolExecutor(max_workers=min(N_VOTING_PATHS, 3)) as executor:  # Begrenze auf 3 um Rate Limits zu schonen
-            futures = [executor.submit(self._single_request, messages) for _ in range(N_VOTING_PATHS)]
-            for future in as_completed(futures):
-                res = future.result()
-                if res:
-                    results.append(res)
+        for i in range(N_VOTING_PATHS):
+            res = self._single_request(messages)
+            if res:
+                results.append(res)
+            # Kurze Pause zwischen Calls um Rate Limits zu schonen
+            time.sleep(0.2)
 
         duration = time.time() - start_time
 
