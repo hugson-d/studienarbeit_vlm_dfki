@@ -225,13 +225,37 @@ def load_dataset() -> List[Dict]:
         return json.load(f)
 
 def get_processed_ids() -> set:
-    processed = set()
-    if LOG_FILE.exists():
-        with open(LOG_FILE, 'r', encoding='utf-8') as f:
+    # Überprüfen, ob die lösungen.jsonl existiert
+    solutions_file = DATA_DIR / "lösungen.jsonl"
+    processed_ids = set()
+
+    if solutions_file.exists():
+        try:
+            with open(solutions_file, 'r') as f:
+                for line in f:
+                    try:
+                        solution_entry = json.loads(line)
+                        if 'task_id' in solution_entry:
+                            processed_ids.add(solution_entry['task_id'])
+                    except json.JSONDecodeError:
+                        logger.warning("Fehlerhafte Zeile in lösungen.jsonl übersprungen.")
+        except Exception as e:
+            logger.error(f"Fehler beim Lesen der lösungen.jsonl: {e}")
+    else:
+        logger.warning("lösungen.jsonl fehlt. Es wird versucht, die Log-Datei zu verwenden.")
+
+    # Fallback auf Log-Datei, falls lösungen.jsonl nicht existiert
+    if not processed_ids and LOG_FILE.exists():
+        with open(LOG_FILE, 'r') as f:
             for line in f:
-                try: processed.add(json.loads(line).get("task_id"))
-                except: pass
-    return processed
+                try:
+                    log_entry = json.loads(line)
+                    if 'task_id' in log_entry:
+                        processed_ids.add(log_entry['task_id'])
+                except json.JSONDecodeError:
+                    logger.warning("Fehlerhafte Log-Zeile übersprungen.")
+
+    return processed_ids
 
 def create_task_id(item: Dict) -> str:
     return f"{item.get('year')}_{item.get('class')}_{item.get('task_id')}"
@@ -302,5 +326,4 @@ def run_benchmark():
 
 if __name__ == "__main__":
     run_benchmark()
-    
-    
+

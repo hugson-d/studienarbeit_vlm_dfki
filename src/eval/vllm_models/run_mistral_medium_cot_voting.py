@@ -243,16 +243,44 @@ def run_benchmark():
     with open(DATASET_PATH, 'r') as f:
         dataset = json.load(f)
 
-    # Bereits verarbeitete Aufgaben filtern
+    # Überprüfen, ob die lösungen.jsonl existiert
+    solutions_file = DATA_DIR / "lösungen.jsonl"
     processed_ids = set()
-    if LOG_FILE.exists():
+
+    if solutions_file.exists():
+        try:
+            with open(solutions_file, 'r') as f:
+                for line in f:
+                    try:
+                        solution_entry = json.loads(line)
+                        if 'task_id' in solution_entry:
+                            processed_ids.add(solution_entry['task_id'])
+                    except json.JSONDecodeError:
+                        logger.warning("Fehlerhafte Zeile in lösungen.jsonl übersprungen.")
+        except Exception as e:
+            logger.error(f"Fehler beim Lesen der lösungen.jsonl: {e}")
+    else:
+        logger.warning("lösungen.jsonl fehlt. Es wird versucht, die Log-Datei zu verwenden.")
+
+    # Fallback auf Log-Datei, falls lösungen.jsonl nicht existiert
+    if not processed_ids and LOG_FILE.exists():
         with open(LOG_FILE, 'r') as f:
             for line in f:
                 try:
-                    processed_ids.add(json.loads(line)['task_id'])
-                except: pass
+                    log_entry = json.loads(line)
+                    if 'task_id' in log_entry:
+                        processed_ids.add(log_entry['task_id'])
+                except json.JSONDecodeError:
+                    logger.warning("Fehlerhafte Log-Zeile übersprungen.")
 
-    tasks_to_do = [d for d in dataset if f"{d.get('year')}_{d.get('class')}_{d.get('task_id')}" not in processed_ids]
+    tasks_to_do = [
+        d for d in dataset
+        if f"{d.get('year')}_{d.get('class')}_{d.get('task_id')}" not in processed_ids
+    ]
+
+    if not tasks_to_do:
+        logger.info("Alle Aufgaben wurden bereits verarbeitet. Keine weiteren Aufgaben vorhanden.")
+        return
 
     logger.info(f"🚀 Start Mistral API CoT Voting Benchmark. Tasks: {len(tasks_to_do)}")
 

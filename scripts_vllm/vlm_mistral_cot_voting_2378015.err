@@ -1,33 +1,0 @@
-Job 2378015: Running on node(s) serv-3340
-Job 2378015: Started at 2025-12-10 21:33:08+0100
-Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2378015&from=1765398788000
-srun: jobinfo: version v1.0.0
-Job 2378015: Running on node(s) serv-3340
-Job 2378015: Started at 2025-12-10 21:33:09+0100
-Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2378015&from=1765398789000
-Job 2378015: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
-Job 2378015: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 21.5 seconds
-Error: [Errno 13] Permission denied: '/netscratch/root'
-/usr/bin/bash: line 10: /netscratch/root/.venv/mistral_cot_voting/bin/activate: No such file or directory
-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
-2025-12-10 21:33:51,687 - INFO - 🚀 Start Mistral API CoT Voting Benchmark. Tasks: 3557
-2025-12-10 21:33:51,809 - INFO - 🤖 Mistral API CoT Voting System (n=5, T=0.7)
-Mistral CoT Voting:   0%|          | 0/3557 [00:00<?, ?it/s]2025-12-10 21:34:00,673 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-10 21:34:09,877 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-10 21:34:17,478 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-10 21:34:26,335 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-10 21:34:33,977 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-Mistral CoT Voting:   0%|          | 0/3557 [00:42<?, ?it/s, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 1/3557 [00:42<42:08:08, 42.66s/it, acc=0.0%, conf=0.00]2025-12-10 21:34:38,690 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-10 21:34:44,819 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-10 21:34:48,668 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-10 21:34:54,654 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-10 21:35:00,783 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-Mistral CoT Voting:   0%|          | 1/3557 [01:09<42:08:08, 42.66s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 2/3557 [01:09<32:54:57, 33.33s/it, acc=0.0%, conf=0.00]2025-12-10 21:35:07,634 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-10 21:35:15,196 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-10 21:35:23,758 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-10 21:35:30,724 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-10 21:35:38,712 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
-Mistral CoT Voting:   0%|          | 2/3557 [01:47<32:54:57, 33.33s/it, acc=0.0%, conf=0.00]Mistral CoT Voting:   0%|          | 3/3557 [01:47<34:58:42, 35.43s/it, acc=0.0%, conf=0.00]slurmstepd: error: *** STEP 2378015.0 ON serv-3340 CANCELLED AT 2025-12-10T21:35:55 ***
-slurmstepd: error: *** JOB 2378015 ON serv-3340 CANCELLED AT 2025-12-10T21:35:55 ***
