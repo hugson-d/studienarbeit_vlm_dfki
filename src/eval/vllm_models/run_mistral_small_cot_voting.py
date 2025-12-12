@@ -39,8 +39,23 @@ BENCHMARK_NAME = f"{MODEL_NAME}_CoT-Voting_n{N_VOTING_PATHS}"
 _script_path = Path(__file__).resolve()
 PROJECT_ROOT = Path(os.environ.get("VLM_PROJECT_ROOT", _script_path.parent.parent.parent.parent))
 
+# .env laden
+try:
+    from dotenv import load_dotenv
+    _env_file = PROJECT_ROOT / ".env"
+    if _env_file.exists():
+        load_dotenv(_env_file)
+    else:
+        load_dotenv()
+except ImportError:
+    pass
 
-MISTRAL_API_KEY = rEgPB6XeNpCFbq3t1kHODZd74vcSuBCa
+MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+if not MISTRAL_API_KEY:
+    print("⚠️ ACHTUNG: MISTRAL_API_KEY nicht gefunden!")
+
+
+
 DATASET_PATH = PROJECT_ROOT / "dataset_final.json"
 if not DATASET_PATH.exists():
     # Fallback Suche
