@@ -1,0 +1,39 @@
+Job 2381192: Running on node(s) serv-3340
+Job 2381192: Started at 2025-12-12 11:41:31+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2381192&from=1765536091000
+srun: jobinfo: version v1.0.0
+Job 2381192: Running on node(s) serv-3340
+Job 2381192: Started at 2025-12-12 11:41:32+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2381192&from=1765536092000
+Job 2381192: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
+Job 2381192: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 20.0 seconds
+Error: [Errno 13] Permission denied: '/netscratch/root'
+/usr/bin/bash: line 10: /netscratch/root/.venv/mistral_small/bin/activate: No such file or directory
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+2025-12-12 11:42:11,220 - WARNING - lösungen.jsonl fehlt. Es wird versucht, die Log-Datei zu verwenden.
+2025-12-12 11:42:11,222 - INFO - 🚀 Starte Structured API Benchmark: mistral-small-2506
+2025-12-12 11:42:11,224 - INFO -    Schema: KanguruAnswer (Reasoning + Answer)
+2025-12-12 11:42:11,225 - INFO -    Tasks: 3557 offen
+2025-12-12 11:42:11,226 - INFO - 🌐 Initialisiere Mistral API Client für mistral-small-2506
+API Req:   0%|          | 0/3557 [00:00<?, ?task/s]2025-12-12 11:42:13,903 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 0/3557 [00:03<?, ?task/s, acc=100.0%, last=✓]API Req:   0%|          | 1/3557 [00:03<3:30:53,  3.56s/task, acc=100.0%, last=✓]2025-12-12 11:42:16,399 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 1/3557 [00:06<3:30:53,  3.56s/task, acc=100.0%, last=✓]API Req:   0%|          | 2/3557 [00:06<2:53:45,  2.93s/task, acc=100.0%, last=✓]2025-12-12 11:42:19,766 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 2/3557 [00:09<2:53:45,  2.93s/task, acc=100.0%, last=✓]API Req:   0%|          | 3/3557 [00:09<3:05:28,  3.13s/task, acc=100.0%, last=✓]2025-12-12 11:42:21,969 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 3/3557 [00:11<3:05:28,  3.13s/task, acc=100.0%, last=✓]API Req:   0%|          | 4/3557 [00:11<2:43:42,  2.76s/task, acc=100.0%, last=✓]2025-12-12 11:42:27,491 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 4/3557 [00:17<2:43:42,  2.76s/task, acc=80.0%, last=✗] API Req:   0%|          | 5/3557 [00:17<3:42:32,  3.76s/task, acc=80.0%, last=✗]2025-12-12 11:42:30,426 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 5/3557 [00:20<3:42:32,  3.76s/task, acc=83.3%, last=✓]API Req:   0%|          | 6/3557 [00:20<3:25:52,  3.48s/task, acc=83.3%, last=✓]2025-12-12 11:42:34,104 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 6/3557 [00:23<3:25:52,  3.48s/task, acc=71.4%, last=✗]API Req:   0%|          | 7/3557 [00:23<3:29:39,  3.54s/task, acc=71.4%, last=✗]2025-12-12 11:42:36,132 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 7/3557 [00:25<3:29:39,  3.54s/task, acc=62.5%, last=✗]API Req:   0%|          | 8/3557 [00:25<3:01:04,  3.06s/task, acc=62.5%, last=✗]2025-12-12 11:42:39,037 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 8/3557 [00:28<3:01:04,  3.06s/task, acc=55.6%, last=✗]API Req:   0%|          | 9/3557 [00:28<2:58:08,  3.01s/task, acc=55.6%, last=✗]2025-12-12 11:42:41,782 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 9/3557 [00:31<2:58:08,  3.01s/task, acc=60.0%, last=✓]API Req:   0%|          | 10/3557 [00:31<2:53:11,  2.93s/task, acc=60.0%, last=✓]2025-12-12 11:42:43,803 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 10/3557 [00:33<2:53:11,  2.93s/task, acc=54.5%, last=✗]API Req:   0%|          | 11/3557 [00:33<2:36:42,  2.65s/task, acc=54.5%, last=✗]2025-12-12 11:42:46,428 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 11/3557 [00:36<2:36:42,  2.65s/task, acc=58.3%, last=✓]API Req:   0%|          | 12/3557 [00:36<2:36:11,  2.64s/task, acc=58.3%, last=✓]2025-12-12 11:42:52,794 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 12/3557 [00:42<2:36:11,  2.64s/task, acc=61.5%, last=✓]API Req:   0%|          | 13/3557 [00:42<3:42:45,  3.77s/task, acc=61.5%, last=✓]2025-12-12 11:42:55,024 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 13/3557 [00:44<3:42:45,  3.77s/task, acc=57.1%, last=✗]API Req:   0%|          | 14/3557 [00:44<3:15:11,  3.31s/task, acc=57.1%, last=✗]2025-12-12 11:42:58,321 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 14/3557 [00:47<3:15:11,  3.31s/task, acc=53.3%, last=✗]API Req:   0%|          | 15/3557 [00:47<3:14:59,  3.30s/task, acc=53.3%, last=✗]2025-12-12 11:43:01,671 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 15/3557 [00:51<3:14:59,  3.30s/task, acc=50.0%, last=✗]API Req:   0%|          | 16/3557 [00:51<3:15:45,  3.32s/task, acc=50.0%, last=✗]2025-12-12 11:43:06,016 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 16/3557 [00:55<3:15:45,  3.32s/task, acc=52.9%, last=✓]API Req:   0%|          | 17/3557 [00:55<3:33:57,  3.63s/task, acc=52.9%, last=✓]2025-12-12 11:43:08,685 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   0%|          | 17/3557 [00:58<3:33:57,  3.63s/task, acc=50.0%, last=✗]API Req:   1%|          | 18/3557 [00:58<3:16:55,  3.34s/task, acc=50.0%, last=✗]2025-12-12 11:43:14,801 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   1%|          | 18/3557 [01:04<3:16:55,  3.34s/task, acc=52.6%, last=✓]API Req:   1%|          | 19/3557 [01:04<4:06:02,  4.17s/task, acc=52.6%, last=✓]2025-12-12 11:43:17,767 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
+API Req:   1%|          | 19/3557 [01:07<4:06:02,  4.17s/task, acc=55.0%, last=✓]API Req:   1%|          | 20/3557 [01:07<3:44:38,  3.81s/task, acc=55.0%, last=✓]2025-12-12 11:43:23,183 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
