@@ -31,7 +31,7 @@ _script_path = Path(__file__).resolve()
 PROJECT_ROOT = Path(os.environ.get("VLM_PROJECT_ROOT", _script_path.parent.parent.parent.parent))
 
 
-MISTRAL_API_KEY = rEgPB6XeNpCFbq3t1kHODZd74vcSuBCa
+MISTRAL_API_KEY = "rEgPB6XeNpCFbq3t1kHODZd74vcSuBCa"
 
 # Modell Wahl
 MODEL_NAME = "mistral-small-2506" 
