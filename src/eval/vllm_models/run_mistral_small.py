@@ -30,20 +30,8 @@ from mistralai import Mistral
 _script_path = Path(__file__).resolve()
 PROJECT_ROOT = Path(os.environ.get("VLM_PROJECT_ROOT", _script_path.parent.parent.parent.parent))
 
-# .env laden
-try:
-    from dotenv import load_dotenv
-    _env_file = PROJECT_ROOT / ".env"
-    if _env_file.exists():
-        load_dotenv(_env_file)
-    else:
-        load_dotenv()
-except ImportError:
-    pass
 
-MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
-if not MISTRAL_API_KEY:
-    print("⚠️ ACHTUNG: MISTRAL_API_KEY nicht gefunden!")
+MISTRAL_API_KEY = rEgPB6XeNpCFbq3t1kHODZd74vcSuBCa
 
 # Modell Wahl
 MODEL_NAME = "mistral-small-2506" 
