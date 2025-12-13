@@ -17,15 +17,9 @@ def analyze_results():
         print(f"Ordner {RESULTS_DIR} nicht gefunden!")
         return
 
-    # Sammle Daten pro Modell
-    model_data = defaultdict(lambda: {
-        'total': 0,
-        'correct': 0,
-        'categories': defaultdict(lambda: {'total': 0, 'correct': 0}),
-        'invalid_formats': 0
-    })
-
-    # Gehe durch alle .jsonl Dateien
+    import csv
+    import csv
+    model_data = {}
     for file_path in RESULTS_DIR.glob("*.jsonl"):
         print(f"Verarbeite {file_path.name}...")
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -34,30 +28,79 @@ def analyze_results():
                     entry = json.loads(line.strip())
                     model = entry.get('model')
                     if not model:
-                        # Extrahiere Modellname aus Dateiname
-                        filename = file_path.stem  # ohne .jsonl
+                        filename = file_path.stem
                         model = filename.replace('_results', '').replace('_', '-')
-                    
                     if not model:
                         continue
-
-                    data = model_data[model]
-                    data['total'] += 1
+                    if model not in model_data:
+                        model_data[model] = {
+                            'model': model,
+                            'total': 0,
+                            'correct': 0,
+                            'invalid_formats': 0,
+                            'null_prediction': 0,
+                            'valid': 0,
+                            'categories': defaultdict(lambda: {'total': 0, 'correct': 0})
+                        }
+                    model_data[model]['total'] += 1
+                    cat = entry.get('math_category', 'unknown')
+                    if entry.get('prediction', 'NOT_SET') is None:
+                        model_data[model]['null_prediction'] += 1
+                        model_data[model]['categories'][cat]['total'] += 1
+                        # null_prediction als Fehler, also correct bleibt 0
+                        model_data[model]['categories'][cat]['null_prediction'] = model_data[model]['categories'][cat].get('null_prediction', 0) + 1
+                        continue
+                    model_data[model]['valid'] += 1
                     if entry.get('is_correct', False):
-                        data['correct'] += 1
-
-                    # Pro Kategorie
-                    category = entry.get('math_category', 'Unknown')
-                    data['categories'][category]['total'] += 1
-                    if entry.get('is_correct', False):
-                        data['categories'][category]['correct'] += 1
-
-                    # Format valid
+                        model_data[model]['correct'] += 1
                     if not entry.get('format_valid', True):
-                        data['invalid_formats'] += 1
-
+                        model_data[model]['invalid_formats'] += 1
+                    # Kategorie-Statistik
+                    model_data[model]['categories'][cat]['total'] += 1
+                    if entry.get('is_correct', False):
+                        model_data[model]['categories'][cat]['correct'] += 1
                 except json.JSONDecodeError:
                     print(f"Fehler beim Parsen einer Zeile in {file_path.name}")
+
+    if not model_data:
+        print("Keine gültigen Einträge gefunden.")
+        return
+
+    # Schreibe aggregierte CSV direkt ins vlm_repo
+    csv_path = Path(__file__).parent.parent / "auswertung_aggregiert.csv"
+    with open(csv_path, 'w', encoding='utf-8', newline='') as csvfile:
+        fieldnames = ['model', 'category', 'total', 'correct', 'accuracy', 'invalid_formats', 'null_prediction']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for model, data in sorted(model_data.items()):
+            # Modell-Gesamtzeile
+            accuracy = data['correct'] / data['total'] if data['total'] > 0 else 0
+            writer.writerow({
+                'model': model,
+                'category': 'ALL',
+                'total': data['total'],
+                'correct': data['correct'],
+                'accuracy': f"{accuracy:.4f}",
+                'invalid_formats': data['invalid_formats'],
+                'null_prediction': data['null_prediction']
+            })
+            # Pro Kategorie
+            for cat, cat_data in sorted(data['categories'].items(), key=lambda x: str(x[0]) if x[0] is not None else ""):
+                cat_total = cat_data['total']
+                cat_null = cat_data.get('null_prediction', 0)
+                # null_prediction als Fehler: total = alle, correct = nur korrekte
+                cat_correct = cat_data['correct']
+                cat_accuracy = cat_correct / cat_total if cat_total > 0 else 0
+                writer.writerow({
+                    'model': model,
+                    'category': cat,
+                    'total': cat_total,
+                    'correct': cat_correct,
+                    'accuracy': f"{cat_accuracy:.4f}",
+                    'invalid_formats': '',
+                    'null_prediction': cat_null
+                })
+    print(f"Aggregierte CSV gespeichert unter: {csv_path}")
 
     # Ausgabe der Ergebnisse
     print("\n" + "="*80)
@@ -78,8 +121,9 @@ def analyze_results():
         for cat, cat_data in sorted(data['categories'].items(), key=lambda x: str(x[0]) if x[0] is not None else ""):
             cat_total = cat_data['total']
             cat_correct = cat_data['correct']
+            cat_null = cat_data.get('null_prediction', 0)
             cat_acc = cat_correct / cat_total if cat_total > 0 else 0
-            print(f"      {cat}: {cat_correct}/{cat_total} = {cat_acc:.1%}")
+            print(f"      {cat}: {cat_correct}/{cat_total} = {cat_acc:.1%} (null_predictions: {cat_null})")
 
 if __name__ == "__main__":
     analyze_results()
