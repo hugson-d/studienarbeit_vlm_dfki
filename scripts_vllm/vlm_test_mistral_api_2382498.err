@@ -1,0 +1,11 @@
+Job 2382498: Running on node(s) kent
+Job 2382498: Started at 2025-12-13 14:44:01+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2382498&from=1765633441000
+srun: jobinfo: version v1.0.0
+Job 2382498: Running on node(s) kent
+Job 2382498: Started at 2025-12-13 14:44:01+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2382498&from=1765633441000
+Job 2382498: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
+Job 2382498: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 34.3 seconds
+Error: [Errno 13] Permission denied: '/netscratch/root'
+/usr/bin/bash: line 10: /netscratch/root/.venv/test_mistral/bin/activate: No such file or directory
