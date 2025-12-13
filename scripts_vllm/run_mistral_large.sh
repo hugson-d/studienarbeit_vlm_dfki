@@ -77,7 +77,7 @@ srun \
         # ------------------------------
         # Skript ausführen
         # ------------------------------
-        SCRIPT_PATH="'"$PROJECT_ROOT"'/src/eval/vllm_models/test_mistral.py"
+        SCRIPT_PATH="'"$PROJECT_ROOT"'/src/eval/vllm_models/run_mistral_large.py"
 
         if [[ ! -f "$SCRIPT_PATH" ]]; then
             echo "❌ Python-Skript nicht gefunden: $SCRIPT_PATH"
