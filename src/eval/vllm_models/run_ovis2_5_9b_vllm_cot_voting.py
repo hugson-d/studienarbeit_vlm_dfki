@@ -32,8 +32,8 @@ except ImportError:
 # ============================================================================
 
 # Voting Parameter
-N_VOTING_PATHS = 1      # 5 Pfade (Sweetspot für Benchmark)
-TEMPERATURE = 0.0       # Temperatur > 0 für Diversität
+N_VOTING_PATHS = 5     # 5 Pfade (Sweetspot für Benchmark)
+TEMPERATURE = 0.7       # Temperatur > 0 für Diversität
 
 # Modell Identifikation
 BASE_MODEL_NAME = "Ovis2.5-9B"
