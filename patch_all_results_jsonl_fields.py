@@ -1,81 +1,88 @@
 #!/usr/bin/env python3
 """
-Patch all results_vllm/*.jsonl files to ensure math_category and is_text_only fields by joining with dataset_final.json.
+Patcht alle results_vllm/*.jsonl Dateien direkt (In-Place-Update).
+Gleicht task_id mit dem Dateinamen aus dataset_final.json ab und
+erzwingt das Setzen von 'is_text_only' und 'math_category'.
 """
 import json
 from pathlib import Path
 import glob
 
-# --- Mapping-Funktion wie gehabt ---
-def build_taskid_map(dataset_path):
+def build_mapping(dataset_path):
+    """
+    Erstellt Mapping: Dateiname ohne Endung -> {is_text_only, math_category}
+    Beispiel Key: "2025_11bis13_B7" (aus dataset_final/2025_11bis13_B7.png)
+    """
+    print(f"Lade Mapping aus {dataset_path} ...")
     with open(dataset_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
+    
     mapping = {}
     for item in data:
-        # Robustes Bauen des Keys aus image_path + task_id
-        # Beispiel: image_path = 'dataset_final/1998_3und4_1.png', task_id = 'A1'
-        # -> key = '1998_3und4_A1'
         image_path = item.get('image_path', '')
-        tid = item.get('task_id')
-        key = None
-        if image_path and tid:
-            try:
-                fname = Path(image_path).stem  # '1998_3und4_1'
-                parts = fname.split('_')
-                if len(parts) >= 2:
-                    year = parts[0]
-                    cls = parts[1]
-                    key = f"{year}_{cls}_{tid}"
-            except Exception:
-                key = None
-        # Fallback: falls key noch nicht gesetzt, versuchen mit year/class/task_id Feldern
-        if key is None:
-            year = item.get('year', 'unknown')
-            cls = item.get('class', 'unknown')
-            tid = tid or item.get('task_id', 'unknown')
-            key = f"{year}_{cls}_{tid}"
-        mapping[key] = {
-            "math_category": item.get("math_category"),
-            "is_text_only": item.get("is_text_only")
-        }
+        if image_path:
+            # Holt "2025_11bis13_B7" aus "dataset_final/2025_11bis13_B7.png"
+            key = Path(image_path).stem 
+            mapping[key] = {
+                "math_category": item.get("math_category"),
+                "is_text_only": item.get("is_text_only")
+            }
     return mapping
 
-# --- Patch-Funktion wie gehabt ---
-def patch_jsonl(jsonl_path, mapping):
+def patch_file_inplace(jsonl_path, mapping):
     jsonl_path = Path(jsonl_path)
-    out_path = jsonl_path.with_suffix(jsonl_path.suffix + '.patched')
-    unmatched = 0
-    total = 0
-    with open(jsonl_path, 'r', encoding='utf-8') as fin, open(out_path, 'w', encoding='utf-8') as fout:
-        for line in fin:
-            if not line.strip():
-                continue
-            total += 1
-            entry = json.loads(line)
-            task_id = entry.get("task_id")
-            if task_id and (task_id in mapping):
-                m = mapping[task_id]
-                if ("math_category" not in entry) or (entry.get("math_category") is None):
-                    entry["math_category"] = m.get("math_category")
-                if ("is_text_only" not in entry) or (entry.get("is_text_only") is None):
-                    entry["is_text_only"] = m.get("is_text_only")
-            else:
-                unmatched += 1
-            fout.write(json.dumps(entry, ensure_ascii=False) + "\n")
-    print(f"Wrote patched file: {out_path} (total={total}, unmatched={unmatched})")
-    return out_path
+    
+    # 1. Alles in den Speicher lesen
+    with open(jsonl_path, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+    
+    patched_lines = []
+    changes_count = 0
+    
+    # 2. Daten verarbeiten
+    for line in lines:
+        if not line.strip():
+            continue
+        
+        entry = json.loads(line)
+        task_id = entry.get("task_id") # z.B. "2025_11bis13_B7"
+        
+        if task_id and task_id in mapping:
+            source = mapping[task_id]
+            
+            # Werte hart überschreiben (oder neu anlegen)
+            entry["is_text_only"] = source["is_text_only"]
+            entry["math_category"] = source["math_category"]
+            changes_count += 1
+            
+        patched_lines.append(json.dumps(entry, ensure_ascii=False))
+    
+    # 3. Datei direkt überschreiben
+    with open(jsonl_path, 'w', encoding='utf-8') as f:
+        f.write("\n".join(patched_lines) + "\n")
+        
+    print(f"Updated: {jsonl_path.name} (Einträge aktualisiert: {changes_count})")
 
-# --- Main: Alle JSONL patchen ---
 def main():
-    dataset_path = Path("dataset_final.json")
-    mapping = build_taskid_map(dataset_path)
+    dataset_file = Path("dataset_final.json")
+    if not dataset_file.exists():
+        print("Fehler: dataset_final.json fehlt.")
+        return
+
+    mapping = build_mapping(dataset_file)
+    
+    # Suche alle .jsonl Dateien im Unterordner
     jsonl_files = glob.glob("results_vllm/*.jsonl")
-    for jsonl_path in jsonl_files:
-        patched = patch_jsonl(jsonl_path, mapping)
-        # Optional: overwrite original (disabled by default). If desired, uncomment.
-        # backup = Path(jsonl_path + '.bak')
-        # Path(jsonl_path).replace(backup)
-        # patched.replace(jsonl_path)
+    
+    if not jsonl_files:
+        print("Keine .jsonl Dateien in results_vllm/ gefunden.")
+        return
+
+    print(f"Verarbeite {len(jsonl_files)} Dateien...")
+    for f in jsonl_files:
+        patch_file_inplace(f, mapping)
+        
+    print("Fertig. Alle Dateien wurden überschrieben.")
 
 if __name__ == "__main__":
     main()
