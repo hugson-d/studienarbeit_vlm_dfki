@@ -125,13 +125,6 @@ InternVL3-38B-vLLM,Arithmetik,1109,346,0.3120,0,1.0000,0,1109
 InternVL3-38B-vLLM,Geometrie,1168,340,0.2911,0,1.0000,0,1168
 InternVL3-38B-vLLM,Stochastik,593,208,0.3508,0,1.0000,0,593
 InternVL3-38B-vLLM,unknown,91,30,0.3297,0,1.0000,0,91
-InternVL3-78B,ALL,3557,682,0.1917,0,1.0000,0,0
-InternVL3-78B,,3,0,0.0000,0,1.0000,0,0
-InternVL3-78B,Algebra,593,126,0.2125,0,1.0000,0,0
-InternVL3-78B,Arithmetik,1109,200,0.1803,0,1.0000,0,0
-InternVL3-78B,Geometrie,1168,237,0.2029,0,1.0000,0,0
-InternVL3-78B,Stochastik,593,102,0.1720,0,1.0000,0,0
-InternVL3-78B,unknown,91,17,0.1868,0,1.0000,0,0
 InternVL3-8B-CoT-Voting_n1,ALL,3557,430,0.1209,2091,0.4121,0,3557
 InternVL3-8B-CoT-Voting_n1,,3,0,0.0000,3,0.0000,0,3
 InternVL3-8B-CoT-Voting_n1,Algebra,593,74,0.1248,379,0.3609,0,593
@@ -188,6 +181,13 @@ Ovis2.5-9B-CoT-Voting-n5,Arithmetik,1109,749,0.6754,1,0.9991,0,1109
 Ovis2.5-9B-CoT-Voting-n5,Geometrie,1168,479,0.4101,0,1.0000,0,1168
 Ovis2.5-9B-CoT-Voting-n5,Stochastik,593,284,0.4789,1,0.9983,0,593
 Ovis2.5-9B-CoT-Voting-n5,unknown,91,40,0.4396,0,1.0000,0,91
+Ovis2.5-9B-TempSweep-0-1-Voting-n5,ALL,19283,9653,0.5006,90,0.9953,0,19283
+Ovis2.5-9B-TempSweep-0-1-Voting-n5,,18,2,0.1111,2,0.8889,0,18
+Ovis2.5-9B-TempSweep-0-1-Voting-n5,Algebra,3231,1863,0.5766,24,0.9926,0,3231
+Ovis2.5-9B-TempSweep-0-1-Voting-n5,Arithmetik,6042,3747,0.6202,27,0.9955,0,6042
+Ovis2.5-9B-TempSweep-0-1-Voting-n5,Geometrie,6312,2423,0.3839,20,0.9968,0,6312
+Ovis2.5-9B-TempSweep-0-1-Voting-n5,Stochastik,3191,1452,0.4550,17,0.9947,0,3191
+Ovis2.5-9B-TempSweep-0-1-Voting-n5,unknown,489,166,0.3395,0,1.0000,0,489
 Ovis2.5-9B-vLLM,ALL,3557,1105,0.3107,0,1.0000,0,0
 Ovis2.5-9B-vLLM,,3,0,0.0000,0,1.0000,0,0
 Ovis2.5-9B-vLLM,Algebra,593,196,0.3305,0,1.0000,0,0
@@ -363,3 +363,9 @@ Qwen3-VL-8B-Instruct-CoT-Voting-n5,Arithmetik,1109,836,0.7538,182,0.8359,0,1109
 Qwen3-VL-8B-Instruct-CoT-Voting-n5,Geometrie,1168,429,0.3673,337,0.7115,0,1168
 Qwen3-VL-8B-Instruct-CoT-Voting-n5,Stochastik,593,278,0.4688,222,0.6256,0,593
 Qwen3-VL-8B-Instruct-CoT-Voting-n5,unknown,91,36,0.3956,29,0.6813,0,91
+mistral-large-2512,ALL,3556,2228,0.6265,0,1.0000,0,0
+mistral-large-2512,unknown,3556,2228,0.6265,0,1.0000,0,0
+mistral-medium-2508,ALL,3556,1692,0.4758,0,1.0000,0,0
+mistral-medium-2508,unknown,3556,1692,0.4758,0,1.0000,0,0
+mistral-medium-2508-CoT-Voting_n5,ALL,3557,1920,0.5398,28,0.9921,0,3557
+mistral-medium-2508-CoT-Voting_n5,unknown,3557,1920,0.5398,28,0.9921,0,3557

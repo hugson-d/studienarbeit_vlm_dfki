@@ -121,7 +121,8 @@ def main():
     """Hauptfunktion zur Analyse aller Bilder."""
     
     # Pfade
-    base_dir = Path(__file__).parent.parent
+    # Always use project root (vlm_repo) as base_dir
+    base_dir = Path(__file__).resolve().parent.parent.parent
     json_path = base_dir / "dataset_final.json"
     images_dir = base_dir / "data" / "dataset_final"
     cache_path = base_dir / "data" / "text_only_analysis_cache.json"
@@ -130,9 +131,6 @@ def main():
     load_dotenv(base_dir / ".env")
     
     # OpenAI Client initialisieren
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise ValueError("❌ OPENAI_API_KEY Umgebungsvariable nicht gesetzt!")
     
     client = OpenAI(api_key=api_key)
     
@@ -157,8 +155,38 @@ def main():
     # Durch alle Einträge iterieren
     for i, entry in enumerate(dataset, 1):
         image_path_rel = entry.get("image_path")
-        
-        # Prüfen ob bereits im Cache analysiert
+        # Jahr extrahieren (aus task_id oder image_path_rel)
+        # Annahme: Jahr ist am Anfang von image_path_rel, z.B. "2016_..."
+        try:
+            year = int(str(image_path_rel).split('_')[0])
+        except Exception:
+            year = None
+
+        if year is not None and year >= 2016:
+            # Immer neu analysieren, Cache ignorieren
+            image_path_full = base_dir / "data" / image_path_rel
+            if not image_path_full.exists():
+                print(f"⚠️  [{i}/{total}] Bild nicht gefunden: {image_path_rel}")
+                processed += 1
+                continue
+            print(f"🔍 [{i}/{total}] Analysiere {image_path_rel} (force re-analyze ab 2016)...")
+            is_text_only = analyze_text_only(client, str(image_path_full))
+            entry["is_text_only"] = is_text_only
+            analyzed_cache[image_path_rel] = is_text_only
+            if is_text_only:
+                stats["text_only"] += 1
+                print(f"✅ [{i}/{total}] {image_path_rel} → nur Text benötigt")
+            else:
+                stats["visual_required"] += 1
+                print(f"✅ [{i}/{total}] {image_path_rel} → visuelle Elemente benötigt")
+            processed += 1
+            if processed % 10 == 0:
+                save_dataset(str(json_path), dataset)
+                save_analyzed_cache(cache_path, analyzed_cache)
+                print(f"💾 Zwischenspeicherung nach {processed} Bildern")
+            continue
+
+        # Für Aufgaben vor 2016: Cache wie gehabt
         if image_path_rel in analyzed_cache:
             cached_value = analyzed_cache[image_path_rel]
             entry["is_text_only"] = cached_value
@@ -169,34 +197,23 @@ def main():
                 stats["visual_required"] += 1
             # print(f"⏭️  [{i}/{total}] {image_path_rel} aus Cache geladen: {cached_value}")
             continue
-        
-        # Vollständigen Pfad erstellen
+
         image_path_full = base_dir / "data" / image_path_rel
-        
-        # Prüfen ob Bild existiert
         if not image_path_full.exists():
             print(f"⚠️  [{i}/{total}] Bild nicht gefunden: {image_path_rel}")
             processed += 1
             continue
-        
-        # Bild analysieren
         print(f"🔍 [{i}/{total}] Analysiere {image_path_rel}...")
         is_text_only = analyze_text_only(client, str(image_path_full))
-        
-        # Wert im Dataset und Cache aktualisieren
         entry["is_text_only"] = is_text_only
         analyzed_cache[image_path_rel] = is_text_only
-        
         if is_text_only:
             stats["text_only"] += 1
             print(f"✅ [{i}/{total}] {image_path_rel} → nur Text benötigt")
         else:
             stats["visual_required"] += 1
             print(f"✅ [{i}/{total}] {image_path_rel} → visuelle Elemente benötigt")
-        
         processed += 1
-        
-        # Periodisch speichern (alle 10 Bilder)
         if processed % 10 == 0:
             save_dataset(str(json_path), dataset)
             save_analyzed_cache(cache_path, analyzed_cache)
