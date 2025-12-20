@@ -12,7 +12,6 @@ Qwen2.5-VL-32B-Instruct_CoT-Voting_n1,35.6,26.4,41.5,15.1,43.9,33.9,29.4
 Qwen2.5-VL-3B-Instruct_CoT-Voting_n1,23.4,17.1,27.4,10.3,30.8,21.9,17.7
 Qwen2.5-VL-72B-Instruct-AWQ_CoT-Voting_n1,52.8,32.9,65.3,32.4,64.2,52.7,41.6
 Qwen2.5-VL-7B-Instruct_CoT-Voting_n1,27.8,20.4,32.5,12.1,35.7,26.2,21.7
-Qwen3-VL-2B-Instruct_CoT-Voting_n1,19.0,5.6,27.5,22.0,31.1,17.0,9.2
 Qwen3-VL-30B-Instruct_CoT-Voting_n1,43.4,20.9,57.7,36.8,59.0,43.2,28.5
 Qwen3-VL-4B-Instruct_CoT-Voting_n1,41.0,16.1,56.8,40.6,54.3,43.2,25.8
 Qwen3-VL-8B-Instruct_CoT-Voting_n1,44.4,18.9,60.7,41.8,58.6,45.4,29.7
