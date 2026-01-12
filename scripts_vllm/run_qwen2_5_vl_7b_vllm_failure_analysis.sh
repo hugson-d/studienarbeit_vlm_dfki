@@ -64,60 +64,37 @@ srun \
     bash -c '
         echo "📦 Erstelle venv und installiere vLLM Dependencies..."
         
-        # GLEICHER VENV wie das funktionierende Original-Script!
+        # Venv erstellen (falls nicht vorhanden)
         VENV_PATH="/netscratch/$USER/.venv/vllm_qwen"
         if [[ ! -d "$VENV_PATH" ]]; then
-            echo "✅ Erstelle NEUEN venv (ohne system-site-packages)..."
-            python -m venv --without-pip "$VENV_PATH"
-            # Bootstrap pip im venv
-            curl -sS https://bootstrap.pypa.io/get-pip.py | "$VENV_PATH/bin/python"
+            python -m venv "$VENV_PATH"
+            echo "✅ Venv erstellt: $VENV_PATH"
         fi
         
-        # Venv aktivieren UND System-Packages explizit ausschließen
+        # Venv aktivieren
         source "$VENV_PATH/bin/activate"
-        export PYTHONNOUSERSITE=1
-        
-        # Verify we are using venv python
-        echo "DEBUG: Python: $(which python)"
-        echo "DEBUG: Python path: $(python -c \"import sys; print(sys.executable)\")"
         
         # Dependencies installieren
         pip install --upgrade pip
         
-        # Option 1: Nutze requirements.txt (exakte Versionen - empfohlen!)
-        if [ -f "$PROJECT_ROOT/scripts_vllm/requirements_vllm_qwen.txt" ]; then
-            echo "📋 Installiere aus requirements_vllm_qwen.txt (fixierte Versionen)..."
-            pip install -q -r "$PROJECT_ROOT/scripts_vllm/requirements_vllm_qwen.txt"
-        else
-            # Option 2: Fallback mit Version Pinning
-            echo "⚠️ requirements.txt nicht gefunden, nutze Fallback..."
-            
-            # numpy<2.0 ZUERST installieren (alle anderen bauen darauf auf)
-            pip install -q "numpy<2.0"
-            
-            # PyArrow mit numpy 1.x kompatibel installieren
-            pip install -q "pyarrow<15.0"
-            
-            # pandas mit festen Versionen
-            pip install -q "pandas<2.2"
-            
-            # vLLM mit Vision Support
-            pip install -q "vllm>=0.6.0,<0.7.0"
-            
-            # xgrammar für Structured Output Backend
-            pip install -q xgrammar
-            
-            # Zusätzliche Dependencies mit festen Versionen
-            pip install -q \
-                "transformers>=4.45.0,<4.50.0" \
-                "accelerate>=0.33.0,<0.40.0" \
-                "huggingface_hub>=0.24.0" \
-                "pydantic>=2.0,<3.0" \
-                "python-dotenv>=1.0" \
-                "tqdm" \
-                "pillow>=10.0" \
-                "qwen-vl-utils>=0.0.8"
-        fi
+        # vLLM mit Vision Support (>= 0.6.0 für guided_decoding)
+        pip install -q "vllm>=0.6.0"
+        
+        # xgrammar für Structured Output Backend (JSON Schema)
+        pip install -q xgrammar
+        
+        # Zusätzliche Dependencies
+        pip install -q \
+            "numpy<2.0" \
+            "transformers>=4.45.0" \
+            "accelerate>=0.33.0" \
+            "huggingface_hub>=0.24.0" \
+            "pydantic>=2.0" \
+            "python-dotenv>=1.0" \
+            "pandas" \
+            "tqdm" \
+            "pillow>=10.0" \
+            "qwen-vl-utils>=0.0.8"
         
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
@@ -126,7 +103,7 @@ srun \
         python -c "import pydantic; print(f\"Pydantic: {pydantic.__version__}\")"
         python -c "import xgrammar; print(\"xgrammar: verfügbar\")" 2>/dev/null || echo "xgrammar: nicht installiert (fallback auf outlines)"
         
-        # Python-Skript ausführen (FAILURE ANALYSIS SCRIPT)
+        # Python-Skript ausführen
         python '"$PROJECT_ROOT"'/src/eval/vllm_models/run_qwen2_5_vl_7b_vllm_failure_analysis.py
     '
 
