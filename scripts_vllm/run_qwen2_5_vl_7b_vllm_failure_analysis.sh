@@ -30,6 +30,7 @@ if [[ -f "$PROJECT_ROOT/.env" ]]; then
 fi
 
 export VLM_PROJECT_ROOT="$PROJECT_ROOT"
+export PROJECT_ROOT
 export PYTHONUNBUFFERED=1
 
 echo "=========================================="
@@ -47,23 +48,39 @@ srun \
     bash -c '
         unset PYTHONPATH
         
-        VENV_PATH="/netscratch/$USER/.venv/vllm_qwen_25"
-        if [ ! -d "$VENV_PATH" ]; then
-            echo "📦 Erstelle neuen venv..."
-            python -m venv "$VENV_PATH"
+        # Immer frischen venv nutzen um Konflikte auszuschließen
+        VENV_PATH="/netscratch/$USER/.venv/vllm_qwen_25_failure_analysis"
+        if [ -d "$VENV_PATH" ]; then
+            echo "🧹 Lösche alten venv..."
+            rm -rf "$VENV_PATH"
         fi
+        
+        echo "📦 Erstelle neuen venv..."
+        python -m venv "$VENV_PATH"
         
         source "$VENV_PATH/bin/activate"
         pip install --upgrade pip
         
-        # vLLM 0.7.0+ bringt eigene optimierte Kernels mit. 
-        # flash-attn NICHT separat installieren, um ABI-Fehler zu vermeiden.
-        pip install "vllm>=0.7.0" xgrammar pydantic pandas tqdm qwen-vl-utils
+        # vLLM installiert kompatibles flash-attn/xformers automatisch
+        # Wir zwingen keine spezifische Version um ABI Konflikte zu meiden
+        pip install "vllm>=0.6.3" xgrammar pydantic pandas tqdm qwen-vl-utils xformers
+
+        # FORCE XFORMERS BACKEND: Verhindert Nutzung von flash_attn
+        export VLLM_ATTENTION_BACKEND=XFORMERS
 
         # Fix für LD_LIBRARY_PATH (stellt sicher, dass PyTorch-C++ Libs gefunden werden)
         export LD_LIBRARY_PATH=$(python -c "import torch; print(torch._C.__file__)" | xargs dirname):$LD_LIBRARY_PATH
         
         echo "✅ Setup bereit. Starte Analyse..."
+        echo "📂 Working Directory: $(pwd)"
+        echo "📂 Project Root: $PROJECT_ROOT"
+        
+        # Sicherstellen dass wir das Script finden
+        if [ ! -f "$PROJECT_ROOT/src/eval/vllm_models/run_qwen2_5_vl_7b_vllm_failure_analysis.py" ]; then
+            echo "❌ Script nicht gefunden unter: $PROJECT_ROOT/src/eval/vllm_models/run_qwen2_5_vl_7b_vllm_failure_analysis.py"
+            exit 1
+        fi
+        
         python "$PROJECT_ROOT/src/eval/vllm_models/run_qwen2_5_vl_7b_vllm_failure_analysis.py"
     '
 
