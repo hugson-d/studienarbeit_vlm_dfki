@@ -2,7 +2,8 @@
 import os
 
 # Flash Attention Backend global deaktivieren, bevor vLLM geladen wird
-os.environ["VLLM_ATTENTION_BACKEND"] = "XFORMERS"
+# Gültige Optionen: FLASH_ATTN, TORCH_SDPA, TRITON_ATTN, etc.
+os.environ["VLLM_ATTENTION_BACKEND"] = "TORCH_SDPA"
 
 import json
 import logging
@@ -108,7 +109,7 @@ class ErrorCategory:
 
 class VLMEvaluatorWithLogging:
     def __init__(self):
-        logger.info(f"🏗️ Initialisiere {MODEL_HF_ID} mit XFORMERS Backend")
+        logger.info(f"🏗️ Initialisiere {MODEL_HF_ID} mit TORCH_SDPA Backend")
         self.llm = LLM(
             model=MODEL_HF_ID,
             trust_remote_code=True,
