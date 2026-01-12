@@ -115,14 +115,15 @@ class ErrorCategory:
 
 class VLMEvaluatorWithLogging:
     def __init__(self):
-        logger.info(f"🏗️ Initialisiere {MODEL_HF_ID} mit TORCH_SDPA Backend")
+        logger.info(f"🏗️ Initialisiere {MODEL_HF_ID} (eager mode)")
         self.llm = LLM(
             model=MODEL_HF_ID,
             trust_remote_code=True,
-            max_model_len=8192, # Reduziert für Stabilität ohne Flash Attn
+            max_model_len=8192,
             gpu_memory_utilization=0.90,
             dtype="bfloat16",
             limit_mm_per_prompt={"image": 1},
+            enforce_eager=True,
         )
         self.sampling_params = SamplingParams(
             temperature=TEMPERATURE,
