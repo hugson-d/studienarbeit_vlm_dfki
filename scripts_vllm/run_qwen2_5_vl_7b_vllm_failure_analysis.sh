@@ -97,6 +97,11 @@ srun \
             "qwen-vl-utils>=0.0.8"
         
         echo "✅ Installation abgeschlossen"
+        
+        # KRITISCH: flash-attn deinstallieren (verursacht ABI-Fehler)
+        echo "🛡️ Entferne flash-attn (falls installiert)..."
+        pip uninstall -y flash-attn 2>/dev/null || true
+        
         echo "DEBUG: Python: $(which python)"
         python -c "import vllm; print(f\"vLLM Version: {vllm.__version__}\")"
         python -c "import transformers; print(f\"Transformers: {transformers.__version__}\")"

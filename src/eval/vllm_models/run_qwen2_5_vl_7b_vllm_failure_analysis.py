@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 import os
+import sys
 
 # Flash Attention Backend global deaktivieren, bevor vLLM geladen wird
 # Gültige Optionen: FLASH_ATTN, TORCH_SDPA, TRITON_ATTN, etc.
 os.environ["VLLM_ATTENTION_BACKEND"] = "TORCH_SDPA"
+
+# KRITISCH: Verhindere Import von flash_attn (selbst wenn installiert)
+# Das blockiert jeden Versuch, flash_attn zu laden
+sys.modules['flash_attn'] = None
+sys.modules['flash_attn_2_cuda'] = None
 
 import json
 import logging
