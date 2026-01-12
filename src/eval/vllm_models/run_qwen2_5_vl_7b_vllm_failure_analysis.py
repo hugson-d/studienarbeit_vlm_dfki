@@ -2,9 +2,8 @@
 import os
 import sys
 
-# Flash Attention Backend global deaktivieren, bevor vLLM geladen wird
-# Gültige Optionen: FLASH_ATTN, TORCH_SDPA, TRITON_ATTN, etc.
-os.environ["VLLM_ATTENTION_BACKEND"] = "TORCH_SDPA"
+# KEIN Backend-Override mehr - der alte venv funktioniert ohne
+# Das war das Problem: TORCH_SDPA gibt es in der alten vLLM Version nicht
 
 # KRITISCH: Verhindere Import von flash_attn (selbst wenn installiert)
 # Das blockiert jeden Versuch, flash_attn zu laden
