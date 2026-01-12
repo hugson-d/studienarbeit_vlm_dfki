@@ -31,11 +31,8 @@ export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PROJECT_ROOT
 export PYTHONUNBUFFERED=1
 
-# DEAKTIVIERUNG VON FLASH ATTENTION
-export VLLM_ATTENTION_BACKEND=XFORMERS
-
 echo "=========================================="
-echo "🔬 VLM Failure Analysis: Qwen2.5-VL-7B (NO FLASH ATTN)"
+echo "🔬 VLM Failure Analysis: Qwen2.5-VL-7B"
 echo "Container: nvcr.io/nvidia/pytorch:23.12-py3"
 echo "=========================================="
 
@@ -57,11 +54,15 @@ srun \
         source "$VENV_PATH/bin/activate"
         pip install --upgrade pip
         
-        # Installation von xformers als Flash-Attention Ersatz
-        pip install "vllm>=0.6.3" xformers xgrammar pydantic pandas tqdm qwen-vl-utils
+        # WICHTIG: numpy<2.0 erzwingen, da pandas/vLLM oft binary inkompatibel sind mit numpy 2.x
+        # Wir nutzen TORCH_SDPA als Backend für maximale Stabilität.
+        pip install "numpy<2.0" "vllm>=0.6.3" xgrammar pydantic pandas tqdm qwen-vl-utils
 
+        # LD_LIBRARY_PATH Fix
         export LD_LIBRARY_PATH=$(python -c "import torch; print(torch._C.__file__)" | xargs dirname):$LD_LIBRARY_PATH
-        export VLLM_ATTENTION_BACKEND=XFORMERS
+        
+        # Nutzen von PyTorch SDPA (funktioniert immer, kein Kompilier-Stress)
+        export VLLM_ATTENTION_BACKEND=TORCH_SDPA
         
         python "$PROJECT_ROOT/src/eval/vllm_models/run_qwen2_5_vl_7b_vllm_failure_analysis.py"
     '
