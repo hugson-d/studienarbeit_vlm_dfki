@@ -63,10 +63,10 @@ srun \
         
         # vLLM installiert kompatibles flash-attn/xformers automatisch
         # Wir zwingen keine spezifische Version um ABI Konflikte zu meiden
-        pip install "vllm>=0.6.3" xgrammar pydantic pandas tqdm qwen-vl-utils xformers
+        pip install "vllm>=0.6.3" xgrammar pydantic pandas tqdm qwen-vl-utils
 
-        # FORCE XFORMERS BACKEND: Verhindert Nutzung von flash_attn
-        export VLLM_ATTENTION_BACKEND=XFORMERS
+        # FORCE TORCH_SDPA BACKEND: Standard PyTorch Attention (sicherer als flash_attn)
+        export VLLM_ATTENTION_BACKEND=TORCH_SDPA
 
         # Fix für LD_LIBRARY_PATH (stellt sicher, dass PyTorch-C++ Libs gefunden werden)
         export LD_LIBRARY_PATH=$(python -c "import torch; print(torch._C.__file__)" | xargs dirname):$LD_LIBRARY_PATH
