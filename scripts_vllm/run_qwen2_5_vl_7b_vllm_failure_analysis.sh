@@ -35,14 +35,14 @@ export PYTHONUNBUFFERED=1
 
 echo "=========================================="
 echo "🔬 VLM Failure Analysis: Qwen2.5-VL-7B"
-echo "Container: nvcr.io/nvidia/pytorch:24.10-py3"
+echo "Container: nvcr.io/nvidia/pytorch:23.12-py3"
 echo "=========================================="
 
 # ------------------------------
 # Ausführung im Container
 # ------------------------------
 srun \
-    --container-image=/enroot/nvcr.io_nvidia_pytorch_24.10-py3.sqsh \
+    --container-image=/enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
     bash -c '
@@ -61,18 +61,9 @@ srun \
         source "$VENV_PATH/bin/activate"
         pip install --upgrade pip
         
-        # vLLM installiert kompatibles flash-attn/xformers automatisch
-        # Wir zwingen keine spezifische Version um ABI Konflikte zu meiden
+        # vLLM installiert kompatibles flash-attn automatisch
+        # Im 23.12 Container funktioniert das meistens gut
         pip install "vllm>=0.6.3" xgrammar pydantic pandas tqdm qwen-vl-utils
-
-        # SICHERHEITSNETZ: flash-attn deinstallieren
-        # pip install vllm installiert es oft mit, aber die Binary crasht im Container.
-        # Wenn es weg ist, KANN vLLM es nicht importieren -> kein Absturz.
-        echo "🛡️ Entferne flash-attn um Import-Crash zu verhindern..."
-        pip uninstall -y flash-attn
-
-        # FORCE TORCH_SDPA BACKEND: Standard PyTorch Attention (sicherer als flash_attn)
-        export VLLM_ATTENTION_BACKEND=TORCH_SDPA
 
         # Fix für LD_LIBRARY_PATH (stellt sicher, dass PyTorch-C++ Libs gefunden werden)
         export LD_LIBRARY_PATH=$(python -c "import torch; print(torch._C.__file__)" | xargs dirname):$LD_LIBRARY_PATH
