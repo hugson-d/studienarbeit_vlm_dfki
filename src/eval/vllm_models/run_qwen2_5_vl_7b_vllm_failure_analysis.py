@@ -2,13 +2,8 @@
 import os
 import sys
 
-# KEIN Backend-Override mehr - der alte venv funktioniert ohne
-# Das war das Problem: TORCH_SDPA gibt es in der alten vLLM Version nicht
-
-# KRITISCH: Verhindere Import von flash_attn (selbst wenn installiert)
-# Das blockiert jeden Versuch, flash_attn zu laden
-sys.modules['flash_attn'] = None
-sys.modules['flash_attn_2_cuda'] = None
+# Nutze den funktionierenden alten venv - KEIN Backend-Override, KEIN Blocking
+# InternVL funktioniert damit → Qwen sollte auch funktionieren
 
 import json
 import logging
