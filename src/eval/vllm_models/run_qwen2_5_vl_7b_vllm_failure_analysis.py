@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 VLM Benchmark: Känguru-Mathematik
-Modell: AIDC-AI/Ovis2.5-9B (vLLM)
+Modell: Qwen/Qwen2.5-VL-7B-Instruct (vLLM)
 Methode: Failure Analysis - Run 5 times to check consistency of null predictions
 
 Dieses Skript führt 5 unabhängige Durchläufe durch um zu prüfen:
@@ -43,9 +43,9 @@ N_VOTING_PATHS = 1     # 1 Pfad pro Durchlauf
 TEMPERATURE = 0.0      # Temperatur (0.0 für deterministisch, >0 für Variation)
 
 # Modell Identifikation
-BASE_MODEL_NAME = "Ovis2.5-9B"
+BASE_MODEL_NAME = "Qwen2.5-VL-7B-Instruct"
 MODEL_NAME = f"{BASE_MODEL_NAME}_FailureAnalysis_{N_RUNS}runs"
-MODEL_HF_ID = "AIDC-AI/Ovis2.5-9B"
+MODEL_HF_ID = "Qwen/Qwen2.5-VL-7B-Instruct"
 
 # Projekt-Setup
 _script_path = Path(__file__).resolve()
@@ -216,12 +216,12 @@ class VLMEvaluatorWithLogging:
         logger.info(f"🏗️ Lade {MODEL_HF_ID} mit vLLM")
         logger.info(f"⚙️ Config: Failure Analysis ({N_RUNS} runs, T={TEMPERATURE})")
 
-        # Modell initialisieren
+        # Modell initialisieren (identisch zum funktionierenden Qwen-Script)
         self.llm = LLM(
             model=MODEL_HF_ID,
             trust_remote_code=True,
-            max_model_len=8192,
-            gpu_memory_utilization=0.9,
+            max_model_len=16384,
+            gpu_memory_utilization=0.95,
             dtype="bfloat16",
             limit_mm_per_prompt={"image": 1},
         )

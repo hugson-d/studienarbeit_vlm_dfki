@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=vlm_ovis2_5_9b_failure_analysis
+#SBATCH --job-name=vlm_qwen2_5_vl_7b_failure_analysis
 #SBATCH --partition=H100,H200,A100-80GB,H100-SLT,A100-PCI
 #SBATCH --gpus=1
 #SBATCH --ntasks=1
-#SBATCH --mem=80G
+#SBATCH --mem=64G
 #SBATCH --time=48:00:00
 #SBATCH --cpus-per-task=4
 #SBATCH --output=%x_%j.out
@@ -49,7 +49,7 @@ export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
 echo "=========================================="
-echo "🔬 VLM Failure Analysis: Ovis2.5-9B (5 runs per task)"
+echo "🔬 VLM Failure Analysis: Qwen2.5-VL-7B (5 runs per task)"
 echo "PROJECT_ROOT: $PROJECT_ROOT"
 echo "=========================================="
 echo "📊 This script runs each task 5 times to identify:"
@@ -103,22 +103,15 @@ srun \
         echo "✅ Installation abgeschlossen"
         echo "DEBUG: Python: $(which python)"
         python -c "import vllm; print(f\"vLLM Version: {vllm.__version__}\")"
-
-        # ------------------------------
-        # Failure Analysis Skript ausführen
-        # ------------------------------
-        SCRIPT_PATH="'"$PROJECT_ROOT"'/src/eval/vllm_models/run_ovis2_5_9b_vllm_failure_analysis.py"
+        python -c "import transformers; print(f\"Transformers: {transformers.__version__}\")"
+        python -c "import pydantic; print(f\"Pydantic: {pydantic.__version__}\")"
+        python -c "import xgrammar; print(\"xgrammar: verfügbar\")" 2>/dev/null || echo "xgrammar: nicht installiert (fallback auf outlines)"
         
-        if [[ ! -f "$SCRIPT_PATH" ]]; then
-            echo "❌ Python-Skript nicht gefunden: $SCRIPT_PATH"
-            exit 1
-        fi
-        
-        echo "▶️ Starte Ovis2.5-9B Failure Analysis (5 runs per task)..."
-        python3 "$SCRIPT_PATH"
+        # Python-Skript ausführen
+        python '"$PROJECT_ROOT"'/src/eval/vllm_models/run_qwen2_5_vl_7b_vllm_failure_analysis.py
     '
 
-echo "✅ Job beendet."
+echo "✅ Job abgeschlossen"
 echo ""
 echo "📁 Output files in evaluation_results/:"
 echo "   - *_results.jsonl    : Detailed results per run"
