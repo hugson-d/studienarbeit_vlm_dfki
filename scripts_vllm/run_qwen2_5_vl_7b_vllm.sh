@@ -103,7 +103,7 @@ srun \
         python -c "import xgrammar; print(\"xgrammar: verfügbar\")" 2>/dev/null || echo "xgrammar: nicht installiert (fallback auf outlines)"
         
         # Python-Skript ausführen
-        python '"$PROJECT_ROOT"'/src/eval/vllm_models/run_qwen2_5_vl_7b_vllm.py
+        python '"$PROJECT_ROOT"'/src/eval/vllm_models/run_qwen2_5_vl_7b_vllm_failure_analysis.py
     '
 
 echo "✅ Job abgeschlossen"
