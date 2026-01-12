@@ -48,6 +48,9 @@ fi
 export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
+# Fix für flash_attn Konflikt - nutze xformers backend statt flash_attn
+export VLLM_ATTENTION_BACKEND=XFORMERS
+
 echo "=========================================="
 echo "🔬 VLM Failure Analysis: Ovis2.5-9B (5 runs per task)"
 echo "PROJECT_ROOT: $PROJECT_ROOT"
@@ -81,12 +84,11 @@ srun \
         # Dependencies installieren
         pip install --upgrade pip
         
-        # WICHTIG: flash_attn neu installieren um Version-Konflikt zu vermeiden
-        pip uninstall -y flash-attn 2>/dev/null || true
-        pip install -q flash-attn --no-build-isolation
-        
         # vLLM mit Vision Support (>= 0.6.0 für guided_decoding)
         pip install -q "vllm>=0.6.0"
+        
+        # xformers als Attention Backend (statt flash_attn wegen Container-Konflikt)
+        pip install -q xformers
         
         # xgrammar für Structured Output Backend (JSON Schema)
         pip install -q xgrammar
