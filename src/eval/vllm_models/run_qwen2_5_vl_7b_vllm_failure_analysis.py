@@ -2,8 +2,14 @@
 import os
 import sys
 
-# Nutze den funktionierenden alten venv - KEIN Backend-Override, KEIN Blocking
-# InternVL funktioniert damit → Qwen sollte auch funktionieren
+# Flash Attention Backend global deaktivieren, bevor vLLM geladen wird
+# Gültige Optionen: FLASH_ATTN, TORCH_SDPA, TRITON_ATTN, etc.
+os.environ["VLLM_ATTENTION_BACKEND"] = "TORCH_SDPA"
+
+# KRITISCH: Verhindere Import von flash_attn (selbst wenn installiert)
+# Das blockiert jeden Versuch, flash_attn zu laden
+sys.modules['flash_attn'] = None
+sys.modules['flash_attn_2_cuda'] = None
 
 import json
 import logging
@@ -109,15 +115,14 @@ class ErrorCategory:
 
 class VLMEvaluatorWithLogging:
     def __init__(self):
-        logger.info(f"🏗️ Initialisiere {MODEL_HF_ID} (ohne Flash Attention)")
+        logger.info(f"🏗️ Initialisiere {MODEL_HF_ID} mit TORCH_SDPA Backend")
         self.llm = LLM(
             model=MODEL_HF_ID,
             trust_remote_code=True,
-            max_model_len=8192,
+            max_model_len=8192, # Reduziert für Stabilität ohne Flash Attn
             gpu_memory_utilization=0.90,
             dtype="bfloat16",
             limit_mm_per_prompt={"image": 1},
-            enforce_eager=True,  # Deaktiviert CUDA Graphs - vermeidet Flash Attention
         )
         self.sampling_params = SamplingParams(
             temperature=TEMPERATURE,
