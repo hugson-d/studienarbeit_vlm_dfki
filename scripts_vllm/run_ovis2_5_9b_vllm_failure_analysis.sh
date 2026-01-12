@@ -81,6 +81,10 @@ srun \
         # Dependencies installieren
         pip install --upgrade pip
         
+        # WICHTIG: flash_attn neu installieren um Version-Konflikt zu vermeiden
+        pip uninstall -y flash-attn 2>/dev/null || true
+        pip install -q flash-attn --no-build-isolation
+        
         # vLLM mit Vision Support (>= 0.6.0 für guided_decoding)
         pip install -q "vllm>=0.6.0"
         
