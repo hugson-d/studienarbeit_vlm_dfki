@@ -61,14 +61,13 @@ srun \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
     bash -c '
-        echo "📦 Erstelle venv und installiere vLLM Dependencies..."
+        echo "📦 Erstelle frischen venv für Failure Analysis..."
         
-        # Venv erstellen (falls nicht vorhanden)
-        VENV_PATH="/netscratch/$USER/.venv/vllm_qwen"
-        if [[ ! -d "$VENV_PATH" ]]; then
-            python -m venv "$VENV_PATH"
-            echo "✅ Venv erstellt: $VENV_PATH"
-        fi
+        # Eigener venv für Failure Analysis (frisch erstellen)
+        VENV_PATH="/netscratch/$USER/.venv/vllm_failure_analysis"
+        rm -rf "$VENV_PATH"
+        python -m venv "$VENV_PATH"
+        echo "✅ Frischer venv erstellt: $VENV_PATH"
         
         # Venv aktivieren
         source "$VENV_PATH/bin/activate"
