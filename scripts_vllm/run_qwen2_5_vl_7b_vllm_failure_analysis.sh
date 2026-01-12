@@ -59,14 +59,15 @@ srun \
         # 2. Base Tools Update
         pip install --upgrade pip setuptools wheel
         
-        # 3. Critical: Numpy < 2.0 ZUERST installieren
-        # Viele binary packages sind noch nicht compatibel mit numpy 2.x
-        echo "⬇️ Installiere Numpy < 2.0..."
-        pip install "numpy<2.0" --no-cache-dir
+        # 3. Critical: Numpy < 2.0 und Pandas ZWINGEND in den venv installieren
+        # Nutzung von --ignore-installed verhindert, dass pip die System-Pakete in /usr/local/lib wiederverwendet
+        # Das verhindert den "numpy.dtype size changed" Error durch Mismatches.
+        echo "⬇️ Installiere Numpy/Pandas (Force Reinstall)..."
+        pip install --ignore-installed "numpy<2.0" pandas
         
         # 4. Installiere Rest
         echo "⬇️ Installiere vLLM und Tools..."
-        pip install "vllm>=0.6.3" xgrammar pydantic pandas tqdm qwen-vl-utils
+        pip install "vllm>=0.6.3" xgrammar pydantic tqdm qwen-vl-utils
         
         # 5. Safety: Flash Attention entfernen (verursacht oft ABI Fehler)
         echo "🛡️ Entferne flash-attn (Safety Check)..."
