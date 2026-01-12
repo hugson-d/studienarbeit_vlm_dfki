@@ -108,7 +108,7 @@ srun \
 
         # Python-Skript ausführen
         echo "▶️ Starte InternVL3-14B Evaluation mit vLLM..."
-        python '"$PROJECT_ROOT"'/src/eval/vllm_models/run_internvl3_14b_vllm_cot_voting.py
+        python '"$PROJECT_ROOT"'/src/eval/vllm_models/test.py
     '
 
 echo "✅ Job beendet."
