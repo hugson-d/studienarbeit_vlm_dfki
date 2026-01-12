@@ -77,21 +77,29 @@ srun \
         # Dependencies installieren
         pip install --upgrade pip
         
-        # vLLM mit Vision Support (>= 0.6.0 für guided_decoding)
-        pip install -q "vllm>=0.6.0"
+        # KRITISCH: Versionen fixieren um Numpy 2.x Probleme zu vermeiden
+        # numpy<2.0 ZUERST installieren (alle anderen bauen darauf auf)
+        pip install -q "numpy<2.0"
         
-        # xgrammar für Structured Output Backend (JSON Schema)
+        # PyArrow mit numpy 1.x kompatibel installieren (verhindert _ARRAY_API errors)
+        pip install -q "pyarrow<15.0"
+        
+        # pandas mit festen Versionen (kompatibel mit numpy 1.x)
+        pip install -q "pandas<2.2"
+        
+        # vLLM mit Vision Support
+        pip install -q "vllm>=0.6.0,<0.7.0"
+        
+        # xgrammar für Structured Output Backend
         pip install -q xgrammar
         
-        # Zusätzliche Dependencies
+        # Zusätzliche Dependencies mit festen Versionen
         pip install -q \
-            "numpy<2.0" \
-            "transformers>=4.45.0" \
-            "accelerate>=0.33.0" \
+            "transformers>=4.45.0,<4.50.0" \
+            "accelerate>=0.33.0,<0.40.0" \
             "huggingface_hub>=0.24.0" \
-            "pydantic>=2.0" \
+            "pydantic>=2.0,<3.0" \
             "python-dotenv>=1.0" \
-            "pandas" \
             "tqdm" \
             "pillow>=10.0" \
             "qwen-vl-utils>=0.0.8"
