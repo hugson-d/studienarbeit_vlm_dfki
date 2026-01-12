@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
 VLM Benchmark: Känguru-Mathematik
-Modell: InternVL3-14B (vLLM Backend)
-Methode: Failure Analysis - 5 runs per task with detailed error logging
-Status: Adapted from Qwen failure analysis
+Modell: InternVL3-8B (vLLM Backend)
+Methode: CoT + Voting (n=5) + Structured Outputs
+Status: FIX für Chat-Template Bug (nutzt llm.generate)
 """
 
 import os
@@ -13,15 +13,13 @@ import re
 import time
 import random
 import gc
-import traceback
 import pandas as pd
-from typing import Dict, List, Union, Optional, Any
+from typing import Dict, List, Union
 from pathlib import Path
 from tqdm import tqdm
 from enum import Enum
 from PIL import Image
-from collections import Counter, defaultdict
-from datetime import datetime
+from collections import Counter
 
 from pydantic import BaseModel, Field
 
@@ -57,13 +55,11 @@ except ImportError:
 # KONFIGURATION
 # ============================================================================
 
-# Failure Analysis Parameter
-N_RUNS = 5             # Anzahl der Durchläufe
-N_VOTING_PATHS = 1     # 1 Pfad pro Durchlauf
-TEMPERATURE = 0.0      # Temperatur (0.0 für deterministisch)
+# Voting Parameter
+N_VOTING_PATHS = 1      # 5 Pfade
+TEMPERATURE = 0.0 # Diversität
 
-BASE_MODEL_NAME = "InternVL3-14B"
-MODEL_NAME = f"{BASE_MODEL_NAME}_FailureAnalysis_{N_RUNS}runs"
+MODEL_NAME = f"InternVL3-14B-CoT-Voting_n{N_VOTING_PATHS}"
 MODEL_HF_ID = "OpenGVLab/InternVL3-14B"
 
 # Suchlogik für Dataset
@@ -79,22 +75,17 @@ if not DATASET_PATH.exists():
 
 DATA_DIR = PROJECT_ROOT / "data"
 OUTPUT_DIR = PROJECT_ROOT / "evaluation_results"
+LOG_FILE = OUTPUT_DIR / f"{MODEL_NAME}_results.jsonl"
 SEED = 42
 
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# Timestamped output files
-TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
-LOG_FILE = OUTPUT_DIR / f"{MODEL_NAME}_{TIMESTAMP}_results.jsonl"
-ERROR_LOG_FILE = OUTPUT_DIR / f"{MODEL_NAME}_{TIMESTAMP}_errors.jsonl"
-SUMMARY_FILE = OUTPUT_DIR / f"{MODEL_NAME}_{TIMESTAMP}_summary.json"
-
 logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s',
+    level=logging.INFO, 
+    format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(),
-        logging.FileHandler(OUTPUT_DIR / f"{MODEL_NAME}_{TIMESTAMP}.log")
+        logging.FileHandler(OUTPUT_DIR / f"{MODEL_NAME}.log")
     ]
 )
 logger = logging.getLogger(MODEL_NAME)
@@ -124,86 +115,6 @@ class CoTResponse(BaseModel):
 COT_JSON_SCHEMA = CoTResponse.model_json_schema()
 
 # ============================================================================
-# ERROR ANALYSIS
-# ============================================================================
-
-def analyze_raw_output(raw_text: str) -> Dict[str, Any]:
-    """Analysiert den Raw Output des Modells um Fehlerursachen zu identifizieren."""
-    analysis = {
-        "raw_text": raw_text,
-        "raw_length": len(raw_text) if raw_text else 0,
-        "is_empty": not raw_text or raw_text.strip() == "",
-        "is_ellipsis": raw_text and raw_text.strip() in ["...", "…"],
-        "starts_with_brace": raw_text.strip().startswith("{") if raw_text else False,
-        "ends_with_brace": raw_text.strip().endswith("}") if raw_text else False,
-        "has_reasoning_key": '"reasoning"' in raw_text if raw_text else False,
-        "has_answer_key": '"answer"' in raw_text if raw_text else False,
-        "truncation_indicators": [],
-        "json_parse_error": None,
-        "pydantic_error": None,
-    }
-    
-    if raw_text:
-        if raw_text.endswith("..."):
-            analysis["truncation_indicators"].append("ends_with_ellipsis")
-        if not raw_text.strip().endswith("}"):
-            analysis["truncation_indicators"].append("incomplete_json")
-        if raw_text.count("{") != raw_text.count("}"):
-            analysis["truncation_indicators"].append("unbalanced_braces")
-            
-        try:
-            parsed = json.loads(raw_text)
-            analysis["json_parse_success"] = True
-            analysis["parsed_keys"] = list(parsed.keys()) if isinstance(parsed, dict) else None
-            
-            try:
-                validated = CoTResponse(**parsed)
-                analysis["pydantic_success"] = True
-                analysis["answer_value"] = validated.answer.value
-                analysis["reasoning_length"] = len(validated.reasoning)
-            except Exception as e:
-                analysis["pydantic_success"] = False
-                analysis["pydantic_error"] = str(e)
-                
-        except json.JSONDecodeError as e:
-            analysis["json_parse_success"] = False
-            analysis["json_parse_error"] = {
-                "message": str(e),
-                "position": e.pos if hasattr(e, 'pos') else None,
-            }
-    
-    return analysis
-
-class ErrorCategory:
-    EMPTY_OUTPUT = "empty_output"
-    ELLIPSIS_ONLY = "ellipsis_only"
-    TRUNCATED_JSON = "truncated_json"
-    INVALID_JSON = "invalid_json"
-    PYDANTIC_VALIDATION = "pydantic_validation"
-    FILE_NOT_FOUND = "file_not_found"
-    INFERENCE_ERROR = "inference_error"
-    UNKNOWN = "unknown"
-
-def categorize_error(analysis: Dict[str, Any], exception: Optional[Exception] = None) -> str:
-    if exception:
-        err_str = str(exception).lower()
-        if "not found" in err_str:
-            return ErrorCategory.FILE_NOT_FOUND
-    
-    if analysis.get("is_empty"):
-        return ErrorCategory.EMPTY_OUTPUT
-    if analysis.get("is_ellipsis"):
-        return ErrorCategory.ELLIPSIS_ONLY
-    if not analysis.get("json_parse_success"):
-        if analysis.get("truncation_indicators"):
-            return ErrorCategory.TRUNCATED_JSON
-        return ErrorCategory.INVALID_JSON
-    if not analysis.get("pydantic_success"):
-        return ErrorCategory.PYDANTIC_VALIDATION
-    
-    return ErrorCategory.UNKNOWN
-
-# ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
 
@@ -227,9 +138,7 @@ def create_task_id(item: Dict) -> str:
 class VLMEvaluator:
     def __init__(self):
         logger.info(f"🏗️ Lade {MODEL_NAME} mit vLLM")
-        logger.info(f"⚙️ Config: Failure Analysis ({N_RUNS} runs, T={TEMPERATURE})")
-        
-        self.error_log = []
+        logger.info(f"⚙️ Config: CoT + Voting (k={N_VOTING_PATHS}, T={TEMPERATURE})")
         
         # InternVL Setup
         self.llm = LLM(
@@ -256,35 +165,14 @@ class VLMEvaluator:
                 max_tokens=1024
             )
 
-    def generate_single_run(self, image_rel_path: str, task_id: str, run_id: int) -> Dict:
+    def generate_with_voting(self, image_rel_path: str) -> Dict:
         full_path = DATA_DIR / image_rel_path
         
-        result = {
-            "task_id": task_id,
-            "run_id": run_id,
-            "image_path": image_rel_path,
-            "prediction": None,
-            "confidence": 0.0,
-            "error_category": None,
-            "error_details": None,
-            "raw_output": None,
-            "raw_output_analysis": None,
-            "inference_time": None,
-            "input_tokens": None,
-            "output_tokens": None,
-        }
-        
         if not full_path.exists():
-            result["error_category"] = ErrorCategory.FILE_NOT_FOUND
-            result["error_details"] = f"File not found: {full_path}"
-            logger.error(f"❌ [{task_id}][Run {run_id}] File not found: {full_path}")
-            return result
-        
-        start_time = time.time()
-        
-        try:
-            # 1. Bild laden
-            image = Image.open(full_path).convert("RGB")
+            raise FileNotFoundError(f"Bild fehlt: {full_path}")
+            
+        # 1. Bild laden
+        image = Image.open(full_path).convert("RGB")
         
         # 2. Manueller Prompt-Bau (CoT angepasst)
         # Wir umgehen weiterhin das Chat-Template
@@ -302,125 +190,66 @@ class VLMEvaluator:
             "multi_modal_data": {"image": image},
         }
 
-            raw_output = None
-            error_msg = None
-            error_traceback = None
-            
-            # Single run with n=1
-            request_output = self.llm.generate(
-                [inputs],
-            if not outputs or len(outputs) == 0:
-                error_msg = "Empty output from vLLM"
-                return {
-                    "prediction": None,
-                    "raw_output": "",
-                    "inference_time": duration,
-                    "error": error_msg,
-                    "error_traceback": None,
-                    "input_tokens": input_tokens,
-                    "run_id": run_id
-                }
-            
-            raw_output = outputs[0].text.strip()
-            
-            # Try JSON parsing
-            try:
-                data = json.loads(raw_output)
-                validated = CoTResponse(**data)
-                return {
-                    "prediction": validated.answer.value,
-                    "reasoning": validated.reasoning,
-                    "raw_output": raw_output,
-                    "inference_time": round(duration, 4),
-                    "error": None,
-                    "error_traceback": None,
-                    "input_tokens": input_tokens,
-                    "run_id": run_id
-                }
-            except json.JSONDecodeError as e:
-                # Fallback regex parsing
-                match = re.search(r'"answer"\s*:\s*"([A-E])"', raw_output)
-                if match:
-                    return {
-                        "prediction": match.group(1),
-                        "reasoning": raw_output[:500],
-                        "raw_output": raw_output,
-                        "inference_time": round(duration, 4),
-                        "error": f"JSON parse failed, regex fallback: {str(e)}",
-                        "error_traceback": None,
-                        "input_tokens": input_tokens,
-                        "run_id": run_id
-                    }
-                else:
-                    error_msg = f"JSON parse failed, no regex match: {str(e)}"
-                    return {
-                        "prediction": None,
-                        "raw_output": raw_output,
-                        "inference_time": round(duration, 4),
-                        "error": error_msg,
-                        "error_traceback": None,
-                        "input_tokens": input_tokens,
-                        "run_id": run_id
-                    }
-            except Exception as e:
-                error_msg = f"Pydantic validation failed: {str(e)}"
-                return {
-                    "prediction": None,
-                    "raw_output": raw_output,
-                    "inference_time": round(duration, 4),
-                    "error": error_msg,
-                    "error_traceback": traceback.format_exc(),
-                    "input_tokens": input_tokens,
-                    "run_id": run_id
-                }
-                
-        except Exception as e:
-            duration = time.time() - start_time
-            error_msg = f"vLLM generation failed: {str(e)}"
-            error_traceback = traceback.format_exc()
-            return {
-                "prediction": None,
-                "raw_output": raw_output or "",
-                "inference_time": round(duration, 4),
-                "error": error_msg,
-                "error_traceback": error_traceback,
-                "input_tokens": 0,
-                "run_id": run_id
-            }
-    
-    def run_multiple_passes(self, image_rel_path: str, task_id: str) -> Dict[str, Any]:
-        """Run N_RUNS independent passes and collect results."""
-        results = []
-        for run_id in range(1, N_RUNS + 1):
-            result = self.generate_single_run(image_rel_path, task_id, run_id)
-            results.append(result)
+        start_time = time.time()
         
-        # Aggregate
-        predictions = [r["prediction"] for r in results if r["prediction"] is not None]
-        errors = [r for r in results if r["error"] is not None]
+        # 3. Generate aufrufen (liefert N Outputs zurück)
+        request_output = self.llm.generate(
+            [inputs],
+            sampling_params=self.sampling_params,
+            use_tqdm=False
+        )
+        
+        duration = time.time() - start_time
+        
+        # Zugriff auf die Liste der Outputs (Größe N)
+        outputs = request_output[0].outputs
+        input_tokens = len(request_output[0].prompt_token_ids) if request_output[0].prompt_token_ids else 0
+        
+        # 4. Voting Logik
+        predictions = []
+        reasoning_traces = []
+        parse_errors = 0
+
+        for output in outputs:
+            text = output.text.strip()
+            try:
+                # JSON Parsing
+                data = json.loads(text)
+                validated = CoTResponse(**data)
+                predictions.append(validated.answer.value)
+                reasoning_traces.append(validated.reasoning)
+            except Exception:
+                # Fallback Parsing (falls JSON Schema scheitert)
+                match = re.search(r'"answer"\s*:\s*"([A-E])"', text)
+                if match:
+                    predictions.append(match.group(1))
+                    reasoning_traces.append(text[:200] + "...")
+                else:
+                    parse_errors += 1
         
         if not predictions:
             return {
-                "final_prediction": None,
-                "confidence": 0.0,
-                "all_results": results,
-                "error_count": len(errors),
-                "success_count": 0
+                "prediction": None, 
+                "confidence": 0.0, 
+                "inference_time": duration, 
+                "error": "All paths failed parsing",
+                "input_tokens": input_tokens
             }
-        
-        # Majority vote
+
+        # Majority Vote
         counts = Counter(predictions)
         most_common = counts.most_common(1)[0]
         winner = most_common[0]
-        confidence = most_common[1] / len(predictions)
+        confidence = most_common[1] / len(outputs) # z.B. 4/5 = 0.8
         
         return {
-            "final_prediction": winner,
+            "prediction": winner,
             "confidence": confidence,
             "vote_distribution": dict(counts),
-            "all_results": results,
-            "error_count": len(errors),
-            "success_count": len(predictions)
+            "reasoning_traces": reasoning_traces,
+            "inference_time": round(duration, 4),
+            "input_tokens": input_tokens,
+            "error": None if parse_errors == 0 else f"{parse_errors} paths failed"
         }
 
     def cleanup(self):
@@ -476,11 +305,11 @@ def run_benchmark():
                         logger.warning(f"⚠️ {task_id}: Ungültiger Pfad-Typ")
                         continue
 
-                    # Multiple runs with failure analysis
-                    result = evaluator.run_multiple_passes(image_path, task_id)
+                    # Voting Aufruf
+                    result = evaluator.generate_with_voting(image_path)
                     
                     ground_truth = item.get("answer")
-                    is_correct = (result["final_prediction"] == ground_truth)
+                    is_correct = (result["prediction"] == ground_truth)
                     
                     if is_correct: correct_count += 1
                     processed_count += 1
@@ -492,39 +321,23 @@ def run_benchmark():
                         "class": item.get("class"),
                         "math_category": item.get("math_category"),
                         "ground_truth": ground_truth,
-                        "prediction": result["final_prediction"],
+                        "prediction": result["prediction"],
                         "is_correct": is_correct,
                         "confidence": result["confidence"],
                         "vote_distribution": result.get("vote_distribution"),
-                        "error_count": result["error_count"],
-                        "success_count": result["success_count"],
-                        "n_runs": N_RUNS
+                        # Kurzes Reasoning für Log-File
+                        "sample_reasoning": result.get("reasoning_traces", [""])[0][:500] + "...",
+                        "inference_time": result["inference_time"],
+                        "error_type": result["error"]
                     }
                     
                     f_log.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
                     f_log.flush()
                     
-                    # Log errors to separate file
-                    if result["error_count"] > 0:
-                        with open(ERROR_LOG_FILE, 'a', encoding='utf-8') as f_err:
-                            for run_result in result["all_results"]:
-                                if run_result.get("error"):
-                                    error_entry = {
-                                        "task_id": task_id,
-                                        "run_id": run_result["run_id"],
-                                        "raw_output": run_result["raw_output"],
-                                        "error": run_result["error"],
-                                        "error_traceback": run_result.get("error_traceback"),
-                                        "error_category": categorize_error(run_result["raw_output"], run_result["error"])
-                                    }
-                                    f_err.write(json.dumps(error_entry, ensure_ascii=False) + "\n")
-                            f_err.flush()
-                    
                     acc = correct_count / processed_count if processed_count > 0 else 0
                     pbar.set_postfix({
                         "acc": f"{acc:.1%}", 
                         "conf": f"{result['confidence']:.2f}",
-                        "err": result["error_count"],
                         "last": f"{'✓' if is_correct else '✗'}"
                     })
                     
