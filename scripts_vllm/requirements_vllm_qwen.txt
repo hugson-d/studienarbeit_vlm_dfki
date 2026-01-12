@@ -8,6 +8,10 @@ numpy==1.24.4
 pyarrow==14.0.2
 pandas==2.1.4
 
+# OpenCV (CRITICAL - must be compatible version)
+opencv-python==4.8.1.78
+opencv-python-headless==4.8.1.78
+
 # vLLM and related
 vllm==0.6.3.post1
 xgrammar==0.1.7

@@ -67,12 +67,19 @@ srun \
         # GLEICHER VENV wie das funktionierende Original-Script!
         VENV_PATH="/netscratch/$USER/.venv/vllm_qwen"
         if [[ ! -d "$VENV_PATH" ]]; then
-            python -m venv "$VENV_PATH"
-            echo "✅ Venv erstellt: $VENV_PATH"
+            echo "✅ Erstelle NEUEN venv (ohne system-site-packages)..."
+            python -m venv --without-pip "$VENV_PATH"
+            # Bootstrap pip im venv
+            curl -sS https://bootstrap.pypa.io/get-pip.py | "$VENV_PATH/bin/python"
         fi
         
-        # Venv aktivieren
+        # Venv aktivieren UND System-Packages explizit ausschließen
         source "$VENV_PATH/bin/activate"
+        export PYTHONNOUSERSITE=1
+        
+        # Verify we are using venv python
+        echo "DEBUG: Python: $(which python)"
+        echo "DEBUG: Python path: $(python -c \"import sys; print(sys.executable)\")"
         
         # Dependencies installieren
         pip install --upgrade pip
