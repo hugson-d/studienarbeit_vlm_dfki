@@ -42,28 +42,48 @@ srun \
     --container-workdir="$PROJECT_ROOT" \
     bash -c '
         unset PYTHONPATH
+        
+        # --- BULLET PROOF SETUP ---
         VENV_PATH="/netscratch/$USER/.venv/vllm_qwen_25_failure_analysis"
         
+        # 1. Clean Slate
         if [ -d "$VENV_PATH" ]; then
-            echo "🧹 Lösche alten venv..."
+            echo "🧹 Lösche alten venv komplett..."
             rm -rf "$VENV_PATH"
         fi
         
-        echo "📦 Erstelle neuen venv..."
+        echo "📦 Erstelle neuen isolierten venv..."
         python -m venv "$VENV_PATH"
         source "$VENV_PATH/bin/activate"
-        pip install --upgrade pip
         
-        # WICHTIG: numpy<2.0 erzwingen, da pandas/vLLM oft binary inkompatibel sind mit numpy 2.x
-        # Wir nutzen TORCH_SDPA als Backend für maximale Stabilität.
-        pip install "numpy<2.0" "vllm>=0.6.3" xgrammar pydantic pandas tqdm qwen-vl-utils
+        # 2. Base Tools Update
+        pip install --upgrade pip setuptools wheel
+        
+        # 3. Critical: Numpy < 2.0 ZUERST installieren
+        # Viele binary packages sind noch nicht compatibel mit numpy 2.x
+        echo "⬇️ Installiere Numpy < 2.0..."
+        pip install "numpy<2.0" --no-cache-dir
+        
+        # 4. Installiere Rest
+        echo "⬇️ Installiere vLLM und Tools..."
+        pip install "vllm>=0.6.3" xgrammar pydantic pandas tqdm qwen-vl-utils
+        
+        # 5. Safety: Flash Attention entfernen (verursacht oft ABI Fehler)
+        echo "🛡️ Entferne flash-attn (Safety Check)..."
+        pip uninstall -y flash-attn || true
+        
+        # 6. Sanity Check imports
+        echo "🔍 Prüfe Imports vor Start..."
+        python -c "import numpy; print(f\"Numpy: {numpy.__version__}\"); import pandas; print(\"Pandas ok\"); import vllm; print(f\"vLLM: {vllm.__version__}\")"
 
-        # LD_LIBRARY_PATH Fix
+        # 7. Environment Variables
+        # Link torch lib path properly
         export LD_LIBRARY_PATH=$(python -c "import torch; print(torch._C.__file__)" | xargs dirname):$LD_LIBRARY_PATH
         
-        # Nutzen von PyTorch SDPA (funktioniert immer, kein Kompilier-Stress)
+        # Use Torch SDPA (Pure Torch Implementation) - Most stable
         export VLLM_ATTENTION_BACKEND=TORCH_SDPA
         
+        echo "🚀 Starte Analyse Script..."
         python "$PROJECT_ROOT/src/eval/vllm_models/run_qwen2_5_vl_7b_vllm_failure_analysis.py"
     '
 
