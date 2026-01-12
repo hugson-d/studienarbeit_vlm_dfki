@@ -48,9 +48,6 @@ fi
 export VLM_PROJECT_ROOT="$PROJECT_ROOT"
 export PYTHONUNBUFFERED=1
 
-# WICHTIG: Umgehe flash_attn Konflikt im Container
-export VLLM_ATTENTION_BACKEND=XFORMERS
-
 echo "=========================================="
 echo "🔬 VLM Failure Analysis: Qwen2.5-VL-7B (5 runs per task)"
 echo "PROJECT_ROOT: $PROJECT_ROOT"
@@ -64,6 +61,9 @@ srun \
     --container-mounts=/netscratch:/netscratch,/ds:/ds:ro,"$PROJECT_ROOT":"$PROJECT_ROOT" \
     --container-workdir="$PROJECT_ROOT" \
     bash -c '
+        # WICHTIG: PYTHONPATH unsetten damit System-Pakete nicht interferieren!
+        unset PYTHONPATH
+        
         echo "📦 Erstelle frischen venv für Failure Analysis..."
         
         # Eigener venv für Failure Analysis (frisch erstellen)
@@ -75,17 +75,15 @@ srun \
         # Venv aktivieren
         source "$VENV_PATH/bin/activate"
         
-        # WICHTIG: Umgehe flash_attn im Container
-        export VLLM_ATTENTION_BACKEND=XFORMERS
-        
         # Dependencies installieren
         pip install --upgrade pip
         
         # vLLM mit Vision Support (>= 0.6.0 für guided_decoding)
-        pip install -q "vllm>=0.6.0"
+        # --force-reinstall um sicherzustellen dass es im venv landet
+        pip install -q "vllm>=0.6.0" --force-reinstall
         
-        # xformers als Attention Backend
-        pip install -q xformers
+        # flash-attn explizit installieren (falls vLLM es nicht korrekt zieht)
+        pip install -q flash-attn --no-build-isolation
         
         # xgrammar für Structured Output Backend (JSON Schema)
         pip install -q xgrammar
