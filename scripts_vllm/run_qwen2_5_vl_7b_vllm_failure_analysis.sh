@@ -65,6 +65,12 @@ srun \
         # Wir zwingen keine spezifische Version um ABI Konflikte zu meiden
         pip install "vllm>=0.6.3" xgrammar pydantic pandas tqdm qwen-vl-utils
 
+        # SICHERHEITSNETZ: flash-attn deinstallieren
+        # pip install vllm installiert es oft mit, aber die Binary crasht im Container.
+        # Wenn es weg ist, KANN vLLM es nicht importieren -> kein Absturz.
+        echo "🛡️ Entferne flash-attn um Import-Crash zu verhindern..."
+        pip uninstall -y flash-attn
+
         # FORCE TORCH_SDPA BACKEND: Standard PyTorch Attention (sicherer als flash_attn)
         export VLLM_ATTENTION_BACKEND=TORCH_SDPA
 
