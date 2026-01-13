@@ -1,0 +1,317 @@
+⚠️ HF_TOKEN nicht gesetzt. Gated Modelle werden fehlschlagen.
+==========================================
+🚀 VLM Benchmark: InternVL3-14B (vLLM + JSON Schema Guided Decoding)
+PROJECT_ROOT: /netscratch/dhug/studienarbeit_vlm_dfki
+==========================================
+📦 Erstelle venv und installiere vLLM Dependencies...
+✅ Venv erstellt: /netscratch/root/.venv/vllm_internvl
+Looking in indexes: http://pypi-cache/index, https://pypi.ngc.nvidia.com
+Requirement already satisfied: pip in /usr/local/lib/python3.10/dist-packages (23.3.1)
+Collecting pip
+  Downloading http://pypi-cache/packages/44/3c/d717024885424591d5376220b5e836c2d5293ce2011523c9de23ff7bf068/pip-25.3-py3-none-any.whl.metadata (4.7 kB)
+Downloading http://pypi-cache/packages/44/3c/d717024885424591d5376220b5e836c2d5293ce2011523c9de23ff7bf068/pip-25.3-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 262.5 MB/s eta 0:00:00
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 23.3.1
+    Uninstalling pip-23.3.1:
+      Successfully uninstalled pip-23.3.1
+Successfully installed pip-25.3
+Found existing installation: flash-attn 2.0.4
+Uninstalling flash-attn-2.0.4:
+  Successfully uninstalled flash-attn-2.0.4
+✅ Installation abgeschlossen
+DEBUG: Python: /usr/bin/python
+vLLM Version: 0.13.0
+Transformers: 4.57.4
+timm: 1.0.24
+▶️ Starte InternVL3-14B Evaluation mit vLLM...
+INFO 01-13 12:33:01 [utils.py:253] non-default args: {'trust_remote_code': True, 'dtype': 'bfloat16', 'max_model_len': 4096, 'disable_log_stats': True, 'limit_mm_per_prompt': {'image': 1}, 'model': 'OpenGVLab/InternVL3-14B'}
+INFO 01-13 12:33:07 [model.py:514] Resolved architecture: InternVLChatModel
+INFO 01-13 12:33:07 [model.py:1661] Using max model len 4096
+INFO 01-13 12:33:07 [scheduler.py:230] Chunked prefill is enabled with max_num_batched_tokens=16384.
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:08 [core.py:93] Initializing a V1 LLM engine (v0.13.0) with config: model='OpenGVLab/InternVL3-14B', speculative_config=None, tokenizer='OpenGVLab/InternVL3-14B', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False), seed=0, served_model_name=OpenGVLab/InternVL3-14B, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'level': None, 'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'splitting_ops': ['vllm::unified_attention', 'vllm::unified_attention_with_output', 'vllm::unified_mla_attention', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::linear_attention', 'vllm::plamo2_mamba_mixer', 'vllm::gdn_attention_core', 'vllm::kda_attention', 'vllm::sparse_attn_indexer'], 'compile_mm_encoder': False, 'compile_sizes': [], 'compile_ranges_split_points': [16384], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'eliminate_noops': True, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False}, 'local_cache_dir': None}
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:09 [parallel_state.py:1203] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://192.168.33.220:57007 backend=nccl
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:09 [parallel_state.py:1411] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, EP rank 0
+[0;36m(EngineCore_DP0 pid=19722)[0;0m WARNING 01-13 12:33:10 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+[0;36m(EngineCore_DP0 pid=19722)[0;0m WARNING 01-13 12:33:10 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:10 [gpu_model_runner.py:3562] Starting to load model OpenGVLab/InternVL3-14B...
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:10 [layer.py:477] Using AttentionBackendEnum.FLASH_ATTN for MultiHeadAttention in multimodal encoder.
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:27 [cuda.py:351] Using FLASH_ATTN attention backend out of potential backends: ('FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION')
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:32 [default_loader.py:308] Loading weights took 4.50 seconds
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:32 [gpu_model_runner.py:3659] Model loading took 28.2232 GiB memory and 21.474240 seconds
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:32 [gpu_model_runner.py:4446] Encoder cache will be initialized with a budget of 16384 tokens, and profiled with 4 image items of the maximum feature size.
+[0;36m(EngineCore_DP0 pid=19722)[0;0m WARNING 01-13 12:33:32 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+[0;36m(EngineCore_DP0 pid=19722)[0;0m WARNING 01-13 12:33:32 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:39 [backends.py:643] Using cache directory: /root/.cache/vllm/torch_compile_cache/b4042a8a72/rank_0_0/backbone for vLLM's torch.compile
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:39 [backends.py:703] Dynamo bytecode transform time: 5.85 s
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:44 [backends.py:261] Cache the graph of compile range (1, 16384) for later use
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:49 [backends.py:278] Compiling a graph for compile range (1, 16384) takes 8.13 s
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:49 [monitor.py:34] torch.compile takes 13.98 s in total
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:51 [gpu_worker.py:375] Available KV cache memory: 37.01 GiB
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:51 [kv_cache_utils.py:1291] GPU KV cache size: 202,112 tokens
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:51 [kv_cache_utils.py:1296] Maximum concurrency for 4,096 tokens per request: 49.34x
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:56 [gpu_model_runner.py:4587] Graph capturing finished in 5 secs, took -1.38 GiB
+[0;36m(EngineCore_DP0 pid=19722)[0;0m INFO 01-13 12:33:56 [core.py:259] init engine (profile, create kv cache, warmup model) took 24.10 seconds
+[0;36m(EngineCore_DP0 pid=19722)[0;0m WARNING 01-13 12:33:56 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+INFO 01-13 12:33:57 [llm.py:360] Supported tasks: ['generate']
+WARNING 01-13 12:33:57 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:33:57 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:34:23 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:34:23 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:34:26 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:34:26 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:34:30 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:34:30 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:34:33 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:34:33 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:34:37 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:34:37 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:34:41 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:34:41 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:06 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:06 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:09 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:09 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:13 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:13 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:16 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:16 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:30 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:30 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:35 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:35 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:38 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:38 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:40 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:40 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:46 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:46 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:50 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:50 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:57 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:35:57 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:01 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:01 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:06 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:06 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:08 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:08 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:12 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:12 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:37 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:37 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:43 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:43 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:46 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:46 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:50 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:50 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:55 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:55 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:57 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:36:57 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:00 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:00 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:04 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:04 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:07 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:07 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:15 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:15 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:19 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:19 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:26 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:26 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:30 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:30 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:33 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:33 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:37 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:37 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:42 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:42 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:47 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:47 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:52 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:52 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:58 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:37:58 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:04 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:04 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:07 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:07 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:11 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:11 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:15 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:15 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:19 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:19 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:22 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:22 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:27 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:27 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:30 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:30 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:38 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:38 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:44 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:44 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:49 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:49 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:58 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:58 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:59 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:38:59 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:24 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:24 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:27 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:27 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:35 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:35 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:38 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:38 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:42 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:42 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:45 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:45 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:50 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:50 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:58 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:39:58 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:40:04 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:40:04 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:40:07 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:40:07 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:40:13 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:40:13 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:40:22 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:40:22 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:40:46 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:40:46 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:41:12 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:41:12 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:41:18 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:41:18 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:41:22 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:41:22 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:41:26 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:41:26 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:41:35 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:41:35 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:41:38 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:41:38 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:03 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:03 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:10 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:10 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:14 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:14 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:17 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:17 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:23 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:23 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:27 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:27 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:33 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:33 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:41 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:41 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:47 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:47 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:50 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:50 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:57 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:42:57 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:06 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:06 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:09 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:09 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:23 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:23 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:27 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:27 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:33 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:33 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:40 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:40 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:46 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:46 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:53 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:53 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:57 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:43:57 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:00 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:00 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:05 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:05 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:10 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:10 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:15 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:15 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:18 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:18 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:23 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:23 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:28 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:28 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:35 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:35 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:46 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:46 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:50 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:50 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:52 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:52 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:55 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:44:55 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:10 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:10 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:11 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:11 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:14 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:14 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:16 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:16 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:19 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:19 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:22 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:22 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:25 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:25 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:28 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:28 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:30 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:30 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:37 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:37 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:41 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:41 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:49 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:49 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:53 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:53 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:56 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:45:56 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:00 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:00 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:02 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:02 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:04 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:04 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:07 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:07 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:09 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:09 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:10 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:10 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:16 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:16 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:19 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:19 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:23 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:23 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:26 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:26 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:31 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}
+WARNING 01-13 12:46:31 [func_utils.py:230] The following intended overrides are not keyword args and will be dropped: {'truncation'}

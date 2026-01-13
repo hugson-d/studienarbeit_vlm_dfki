@@ -1,0 +1,19 @@
+⚠️ HF_TOKEN nicht gesetzt. Gated Modelle werden fehlschlagen.
+==========================================
+🔬 VLM Failure Analysis: Qwen2.5-VL-7B
+PROJECT_ROOT: /netscratch/dhug/studienarbeit_vlm_dfki
+==========================================
+📦 Nutze vorhandenen venv...
+✅ Nutze existierenden venv: /netscratch/dhug/vlm_venv
+Looking in indexes: http://pypi-cache/index, https://pypi.ngc.nvidia.com
+Requirement already satisfied: pip in /netscratch/dhug/vlm_venv/lib/python3.10/site-packages (25.3)
+✅ Installation abgeschlossen
+🛡️ Entferne flash-attn (falls installiert)...
+Found existing installation: flash-attn 2.0.4
+Not uninstalling flash-attn at /usr/local/lib/python3.10/dist-packages, outside environment /netscratch/dhug/vlm_venv
+Can't uninstall 'flash-attn'. No files were found to uninstall.
+DEBUG: Python: /netscratch/dhug/vlm_venv/bin/python
+vLLM Version: 0.13.0
+Transformers: 4.57.3
+Pydantic: 2.12.5
+xgrammar: verfügbar

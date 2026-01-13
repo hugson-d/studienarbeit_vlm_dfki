@@ -1,0 +1,26 @@
+Job 2443967: Running on node(s) serv-3316
+Job 2443967: Started at 2026-01-13 10:52:03+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2443967&from=1768297923000
+srun: jobinfo: version v1.0.0
+Job 2443967: Running on node(s) serv-3316
+Job 2443967: Started at 2026-01-13 10:52:03+0100
+Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2443967&from=1768297923000
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+contourpy 1.2.0 requires numpy<2.0,>=1.20, but you have numpy 2.2.6 which is incompatible.
+cudf 23.10.0 requires numba<0.58,>=0.57, but you have numba 0.61.2 which is incompatible.
+cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 2.2.6 which is incompatible.
+dask-cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 2.2.6 which is incompatible.
+matplotlib 3.8.2 requires numpy<2,>=1.21, but you have numpy 2.2.6 which is incompatible.
+spacy 3.7.2 requires typer<0.10.0,>=0.3.0, but you have typer 0.21.1 which is incompatible.
+torch-tensorrt 2.2.0a0 requires torch<2.3.0,>=2.1.0.dev, but you have torch 2.9.0 which is incompatible.
+torchtext 0.17.0a0 requires torch==2.2.0a0+81ea7a4, but you have torch 2.9.0 which is incompatible.
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+opencv-python-headless 4.12.0.88 requires numpy<2.3.0,>=2; python_version >= "3.9", but you have numpy 1.26.4 which is incompatible.
+cudf 23.10.0 requires numba<0.58,>=0.57, but you have numba 0.61.2 which is incompatible.
+cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 1.26.4 which is incompatible.
+dask-cudf 23.10.0 requires numpy<1.25,>=1.21, but you have numpy 1.26.4 which is incompatible.
+spacy 3.7.2 requires typer<0.10.0,>=0.3.0, but you have typer 0.21.1 which is incompatible.
+torch-tensorrt 2.2.0a0 requires torch<2.3.0,>=2.1.0.dev, but you have torch 2.9.0 which is incompatible.
+torchtext 0.17.0a0 requires torch==2.2.0a0+81ea7a4, but you have torch 2.9.0 which is incompatible.
+python: can't open file '/netscratch/dhug/studienarbeit_vlm_dfki/src/eval/vllm_models/run_qwen2_5_vl_7b_vllm_failure_analysis.py': [Errno 2] No such file or directory
+srun: error: serv-3316: task 0: Exited with exit code 2
