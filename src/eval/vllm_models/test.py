@@ -44,7 +44,7 @@ except ImportError:
 
 SEED = 42
 TEMPERATURE = 0.0
-MAX_TOKENS = 1024
+MAX_TOKENS = 2048
 
 BASE_MODEL_NAME = "InternVL3-14B"
 MODEL_NAME = f"{BASE_MODEL_NAME}_FailureAnalysis_1run"
@@ -184,7 +184,7 @@ class InternVLEvaluatorFailureAnalysis:
         self.llm = LLM(
             model=MODEL_HF_ID,
             trust_remote_code=True,
-            max_model_len=4096,
+            max_model_len=8192,  # Erhöht für längere Completions
             gpu_memory_utilization=0.90,
             dtype="bfloat16",
             limit_mm_per_prompt={"image": 1},
