@@ -1,39 +1,0 @@
-Job 2389233: Running on node(s) serv-3316
-Job 2389233: Started at 2025-12-16 13:33:11+0100
-Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2389233&from=1765888391000
-srun: jobinfo: version v1.0.0
-Job 2389233: Running on node(s) serv-3316
-Job 2389233: Started at 2025-12-16 13:33:12+0100
-Monitor this job here: http://monitoring.pegasus.kl.dfki.de/d/slurm-job-details/job-details?var-jobid=2389233&from=1765888392000
-Job 2389233: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh
-Job 2389233: creating container for /enroot/nvcr.io_nvidia_pytorch_23.12-py3.sqsh took 29.9 seconds
-Error: [Errno 13] Permission denied: '/netscratch/root'
-/usr/bin/bash: line 10: /netscratch/root/.venv/mistral_small/bin/activate: No such file or directory
-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
-2025-12-16 13:34:07,515 - WARNING - lösungen.jsonl fehlt. Es wird versucht, die Log-Datei zu verwenden.
-2025-12-16 13:34:07,604 - INFO - 🚀 Starte Structured API Benchmark: mistral-small-2506
-2025-12-16 13:34:07,608 - INFO -    Schema: KanguruAnswer (Reasoning + Answer)
-2025-12-16 13:34:07,612 - INFO -    Tasks: 236 offen
-2025-12-16 13:34:07,616 - INFO - 🌐 Initialisiere Mistral API Client für mistral-small-2506
-API Req:   0%|          | 0/236 [00:00<?, ?task/s]2025-12-16 13:49:07,933 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 504 Gateway Timeout"
-2025-12-16 13:49:07,937 - ERROR - API/Parse Error: API error occurred: Status 504 Content-Type "application/json; charset=utf-8". Body: {
-  "message":"The upstream server is timing out",
-  "request_id":"d268676cf67f1f3c05490b2db797ae00"
-}
-2025-12-16 13:49:08,942 - ERROR - ❌ 1999_9und10_C9: 'NoneType' object is not subscriptable
-API Req:   0%|          | 1/236 [15:01<58:49:30, 901.15s/task]2025-12-16 14:04:09,067 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 504 Gateway Timeout"
-2025-12-16 14:04:09,070 - ERROR - API/Parse Error: API error occurred: Status 504 Content-Type "application/json; charset=utf-8". Body: {
-  "message":"The upstream server is timing out",
-  "request_id":"4095a44361bc9b78c3d8ca2252224f54"
-}
-2025-12-16 14:04:10,075 - ERROR - ❌ 1999_11bis13_C4: 'NoneType' object is not subscriptable
-API Req:   1%|          | 2/236 [30:02<58:34:26, 901.14s/task]2025-12-16 14:04:13,818 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 200 OK"
-API Req:   1%|          | 2/236 [30:07<58:34:26, 901.14s/task, acc=33.3%, last=✓]API Req:   1%|▏         | 3/236 [30:07<31:49:56, 491.83s/task, acc=33.3%, last=✓]2025-12-16 14:19:14,972 - INFO - HTTP Request: POST https://api.mistral.ai/v1/chat/completions "HTTP/1.1 504 Gateway Timeout"
-2025-12-16 14:19:14,976 - ERROR - API/Parse Error: API error occurred: Status 504 Content-Type "application/json; charset=utf-8". Body: {
-  "message":"The upstream server is timing out",
-  "request_id":"36061d5f104c864021ca2f7920b72826"
-}
-2025-12-16 14:19:15,980 - ERROR - ❌ 2004_7und8_B1: 'NoneType' object is not subscriptable
-srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
-slurmstepd: error: *** JOB 2389233 ON serv-3316 CANCELLED AT 2025-12-16T14:31:36 ***
