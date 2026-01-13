@@ -1,0 +1,124 @@
+{
+  "file": "InternVL3-14B_FailureAnalysis_1run_20260112_195910_results.jsonl",
+  "total_records": 3557,
+  "bad_jsonl_lines": 0,
+  "null_predictions": 445,
+  "top_error_category": [
+    [
+      "invalid_json",
+      445
+    ]
+  ],
+  "top_failure_stage": [
+    [
+      "json_parse",
+      445
+    ]
+  ],
+  "top_finish_reason": [
+    [
+      "length",
+      445
+    ]
+  ],
+  "top_root_causes": [
+    [
+      "json_truncated_unterminated_string (finish=length)",
+      395
+    ],
+    [
+      "json_truncated_missing_comma_or_cutoff (finish=length)",
+      31
+    ],
+    [
+      "json_parse_failed_finish_length",
+      17
+    ],
+    [
+      "json_truncated_expecting_value (finish=length)",
+      2
+    ]
+  ],
+  "top_failure_message_prefix": [
+    [
+      "Unterminated string starting at: line 1 column 15 (char 14)",
+      352
+    ],
+    [
+      "Unterminated string starting at: line 1 column 16 (char 15)",
+      33
+    ],
+    [
+      "Unterminated string starting at: line 2 column 16 (char 19)",
+      4
+    ],
+    [
+      "Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      4
+    ],
+    [
+      "Unterminated string starting at: line 1 column 14 (char 13)",
+      3
+    ],
+    [
+      "Expecting ',' delimiter: line 1 column 384 (char 383)",
+      2
+    ],
+    [
+      "Expecting ',' delimiter: line 1 column 195 (char 194)",
+      1
+    ],
+    [
+      "Invalid \\uXXXX escape: line 1 column 2058 (char 2057)",
+      1
+    ],
+    [
+      "Expecting ',' delimiter: line 1 column 124 (char 123)",
+      1
+    ],
+    [
+      "Invalid \\uXXXX escape: line 1 column 1275 (char 1274)",
+      1
+    ],
+    [
+      "Invalid \\uXXXX escape: line 1 column 2127 (char 2126)",
+      1
+    ],
+    [
+      "Unterminated string starting at: line 1 column 17 (char 16)",
+      1
+    ],
+    [
+      "Expecting ',' delimiter: line 1 column 524 (char 523)",
+      1
+    ],
+    [
+      "Unterminated string starting at: line 2 column 16 (char 18)",
+      1
+    ],
+    [
+      "Invalid \\uXXXX escape: line 1 column 1366 (char 1365)",
+      1
+    ],
+    [
+      "Expecting ',' delimiter: line 1 column 142 (char 141)",
+      1
+    ],
+    [
+      "Expecting property name enclosed in double quotes: line 3 column 720 (char 1007)",
+      1
+    ],
+    [
+      "Expecting ',' delimiter: line 1 column 168 (char 167)",
+      1
+    ],
+    [
+      "Expecting ',' delimiter: line 1 column 353 (char 352)",
+      1
+    ],
+    [
+      "Expecting ',' delimiter: line 1 column 141 (char 140)",
+      1
+    ]
+  ]
+}

@@ -44,7 +44,7 @@ except ImportError:
 
 SEED = 42
 TEMPERATURE = 0.0
-MAX_TOKENS = 1024
+MAX_TOKENS = 8000
 
 BASE_MODEL_NAME = "InternVL3-14B"
 MODEL_NAME = f"{BASE_MODEL_NAME}_FailureAnalysis_1run"
