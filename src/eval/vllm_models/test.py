@@ -45,6 +45,9 @@ except ImportError:
 SEED = 42
 TEMPERATURE = 0.0
 MAX_TOKENS = 2048
+MAX_REASONING_TOKENS = 512
+# JSON Schema limitiert Strings per Zeichen (maxLength). Ca. 4 Zeichen ≈ 1 Token.
+MAX_REASONING_CHARS = MAX_REASONING_TOKENS * 4
 
 BASE_MODEL_NAME = "InternVL3-14B"
 MODEL_NAME = f"{BASE_MODEL_NAME}_FailureAnalysis_1run"
@@ -84,7 +87,10 @@ class AnswerChoice(str, Enum):
     E = "E"
 
 class CoTResponse(BaseModel):
-    reasoning: str = Field(description="Detaillierte Schritt-für-Schritt Herleitung der Lösung auf Deutsch.")
+    reasoning: str = Field(
+        description="Detaillierte Schritt-für-Schritt Herleitung der Lösung auf Deutsch.",
+        max_length=MAX_REASONING_CHARS,
+    )
     answer: AnswerChoice = Field(description="Der finale Lösungsbuchstabe (A, B, C, D oder E).")
 
 COT_JSON_SCHEMA = CoTResponse.model_json_schema()
