@@ -1,7 +1,7 @@
 import json
 import os
 
-from datasets import Dataset, DatasetDict, Features, Image, Sequence, Value
+from datasets import Dataset, DatasetDict, Features, Image, Value
 from huggingface_hub import create_repo, delete_repo, login
 
 # --- KONFIGURATION ---
@@ -41,12 +41,21 @@ def build_dataset():
       {
         "image": os.path.abspath(full_path),
         "question": entry["extracted_text"]["question"],
-        "choices": entry["extracted_text"]["answer_options"],
-        "answer": entry["answer"],
+        "ground_truth": entry["answer"],
+        "is_text_only": bool(entry.get("is_text_only")),
         "year": int(entry["year"]),
         "class": entry["class"],
         "task_id": entry["task_id"],
-        "math_category": entry["math_category"],
+        "math_category": entry.get("math_category") or "unknown",
+        "difficulty": (
+          "easy"
+          if str(entry.get("task_id", "")).startswith("A")
+          else "medium"
+          if str(entry.get("task_id", "")).startswith("B")
+          else "hard"
+          if str(entry.get("task_id", "")).startswith("C")
+          else "unknown"
+        ),
       }
     )
 
@@ -61,12 +70,13 @@ def build_dataset():
     {
       "image": Image(),
       "question": Value("string"),
-      "choices": Sequence(Value("string")),
-      "answer": Value("string"),
+      "ground_truth": Value("string"),
+      "is_text_only": Value("bool"),
       "year": Value("int32"),
       "class": Value("string"),
       "task_id": Value("string"),
       "math_category": Value("string"),
+      "difficulty": Value("string"),
     }
   )
 
@@ -94,8 +104,10 @@ Dieses Dataset wurde automatisch hochgeladen. Es folgt der Struktur von VLM-Benc
 ## Struktur
 - **image**: Das Bild zur Aufgabe
 - **question**: Die Textfrage
-- **choices**: Antwortmöglichkeiten
-- **answer**: Die korrekte Antwort (Label)
+- **ground_truth**: Die korrekte Antwort (Label)
+- **is_text_only**: Kennzeichnet Aufgaben ohne Bildbezug
+- **math_category**: Mathematischer Themenbereich ("unknown" wenn leer)
+- **difficulty**: Schwierigkeitsgrad aus `task_id` (easy/medium/hard/unknown)
 """
     with open("README.md", "w", encoding="utf-8") as f:
         f.write(readme_content)
