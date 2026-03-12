@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Your Cart – WatchStore{% endblock %}
+
+{% block content %}
+<h1>Shopping Cart</h1>
+
+{% if items %}
+<div class="cart-layout">
+    <div class="cart-items">
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td class="cart-product-cell">
+                        <img src="{{ item.image_url }}" alt="{{ item.name }}" class="cart-thumb">
+                        <div>
+                            <strong>{{ item.name }}</strong><br>
+                            <small>{{ item.brand }}</small>
+                        </div>
+                    </td>
+                    <td>${{ "%.2f"|format(item.price) }}</td>
+                    <td>
+                        <form action="{{ url_for('update_cart') }}" method="post" class="qty-form">
+                            <input type="hidden" name="watch_id" value="{{ item.id }}">
+                            <input type="number" name="quantity" value="{{ item.quantity }}"
+                                   min="1" max="10" class="qty-input"
+                                   onchange="this.form.submit()">
+                        </form>
+                    </td>
+                    <td>${{ "%.2f"|format(item.subtotal) }}</td>
+                    <td>
+                        <form action="{{ url_for('remove_from_cart') }}" method="post">
+                            <input type="hidden" name="watch_id" value="{{ item.id }}">
+                            <button type="submit" class="btn-remove" title="Remove">✕</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="cart-summary">
+        <h2>Order Summary</h2>
+        <div class="summary-row">
+            <span>Subtotal</span>
+            <span>${{ "%.2f"|format(total) }}</span>
+        </div>
+        <div class="summary-row">
+            <span>Shipping</span>
+            <span>Free</span>
+        </div>
+        <div class="summary-row total-row">
+            <span>Total</span>
+            <span>${{ "%.2f"|format(total) }}</span>
+        </div>
+        <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-block">Proceed to Checkout</a>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary btn-block">Continue Shopping</a>
+    </div>
+</div>
+{% else %}
+<div class="empty-cart">
+    <p>Your cart is empty.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Browse Watches</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}WatchStore – Premium Timepieces{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Discover Your Perfect Watch</h1>
+    <p>Curated collections from the world's finest watchmakers.</p>
+</section>
+
+<div class="filter-bar">
+    {% for cat in categories %}
+    <a href="{{ url_for('index', category=cat) }}"
+       class="filter-btn {% if active_category == cat %}active{% endif %}">
+        {{ cat }}
+    </a>
+    {% endfor %}
+</div>
+
+<div class="product-grid">
+    {% for watch in watches %}
+    <div class="product-card">
+        <a href="{{ url_for('product', watch_id=watch.id) }}">
+            <img src="{{ watch.image_url }}" alt="{{ watch.name }}" class="product-img">
+        </a>
+        <div class="product-info">
+            <span class="product-brand">{{ watch.brand }}</span>
+            <h3 class="product-name">
+                <a href="{{ url_for('product', watch_id=watch.id) }}">{{ watch.name }}</a>
+            </h3>
+            <div class="product-meta">
+                <span class="product-price">${{ "%.2f"|format(watch.price) }}</span>
+                <span class="product-rating">★ {{ watch.rating }}</span>
+            </div>
+            <span class="product-category-badge">{{ watch.category }}</span>
+            <form action="{{ url_for('add_to_cart') }}" method="post" class="add-to-cart-form">
+                <input type="hidden" name="watch_id" value="{{ watch.id }}">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <p class="no-results">No watches found in this category.</p>
+    {% endfor %}
+</div>
+{% endblock %}

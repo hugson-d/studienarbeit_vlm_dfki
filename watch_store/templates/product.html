@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}{{ watch.name }} – WatchStore{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Home</a> &rsaquo;
+    <a href="{{ url_for('index', category=watch.category) }}">{{ watch.category }}</a> &rsaquo;
+    {{ watch.name }}
+</div>
+
+<div class="product-detail">
+    <div class="product-detail-image">
+        <img src="{{ watch.image_url }}" alt="{{ watch.name }}">
+    </div>
+    <div class="product-detail-info">
+        <span class="product-brand large">{{ watch.brand }}</span>
+        <h1>{{ watch.name }}</h1>
+        <div class="product-rating-large">
+            ★ {{ watch.rating }} / 5.0
+        </div>
+        <p class="product-price-large">${{ "%.2f"|format(watch.price) }}</p>
+        <span class="product-category-badge">{{ watch.category }}</span>
+        {% if watch.in_stock %}
+        <p class="in-stock">✔ In Stock</p>
+        {% else %}
+        <p class="out-of-stock">✘ Out of Stock</p>
+        {% endif %}
+        <p class="product-description">{{ watch.description }}</p>
+
+        {% if watch.in_stock %}
+        <form action="{{ url_for('add_to_cart') }}" method="post" class="add-to-cart-form">
+            <input type="hidden" name="watch_id" value="{{ watch.id }}">
+            <div class="quantity-row">
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" class="qty-input">
+            </div>
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+{% if related %}
+<section class="related-products">
+    <h2>Related Products</h2>
+    <div class="product-grid">
+        {% for w in related %}
+        <div class="product-card">
+            <a href="{{ url_for('product', watch_id=w.id) }}">
+                <img src="{{ w.image_url }}" alt="{{ w.name }}" class="product-img">
+            </a>
+            <div class="product-info">
+                <span class="product-brand">{{ w.brand }}</span>
+                <h3 class="product-name">
+                    <a href="{{ url_for('product', watch_id=w.id) }}">{{ w.name }}</a>
+                </h3>
+                <div class="product-meta">
+                    <span class="product-price">${{ "%.2f"|format(w.price) }}</span>
+                    <span class="product-rating">★ {{ w.rating }}</span>
+                </div>
+                <form action="{{ url_for('add_to_cart') }}" method="post" class="add-to-cart-form">
+                    <input type="hidden" name="watch_id" value="{{ w.id }}">
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

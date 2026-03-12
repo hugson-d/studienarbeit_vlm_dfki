@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout – WatchStore{% endblock %}
+
+{% block content %}
+<h1>Checkout</h1>
+
+<div class="checkout-layout">
+    <form method="post" action="{{ url_for('checkout') }}" class="checkout-form">
+        <section class="form-section">
+            <h2>Contact & Shipping</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="first_name">First Name *</label>
+                    <input type="text" id="first_name" name="first_name"
+                           value="{{ form.get('first_name', '') }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name *</label>
+                    <input type="text" id="last_name" name="last_name"
+                           value="{{ form.get('last_name', '') }}" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email"
+                       value="{{ form.get('email', '') }}" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address *</label>
+                <input type="text" id="address" name="address"
+                       value="{{ form.get('address', '') }}" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="city">City *</label>
+                    <input type="text" id="city" name="city"
+                           value="{{ form.get('city', '') }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="zip">ZIP / Postal Code *</label>
+                    <input type="text" id="zip" name="zip"
+                           value="{{ form.get('zip', '') }}" required>
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2>Payment</h2>
+            <div class="form-group">
+                <label for="card_number">Card Number *</label>
+                <input type="text" id="card_number" name="card_number"
+                       placeholder="1234 5678 9012 3456" maxlength="19" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="expiry">Expiry Date *</label>
+                    <input type="text" id="expiry" name="expiry"
+                           placeholder="MM/YY" maxlength="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="cvv">CVV *</label>
+                    <input type="text" id="cvv" name="cvv"
+                           placeholder="123" maxlength="4" required>
+                </div>
+            </div>
+        </section>
+
+        <button type="submit" class="btn btn-primary btn-block">Place Order</button>
+    </form>
+
+    <div class="checkout-summary">
+        <h2>Order Summary</h2>
+        <ul class="checkout-items">
+            {% for item in items %}
+            <li class="checkout-item">
+                <span class="checkout-item-name">{{ item.name }} × {{ item.quantity }}</span>
+                <span>${{ "%.2f"|format(item.subtotal) }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="summary-row">
+            <span>Shipping</span>
+            <span>Free</span>
+        </div>
+        <div class="summary-row total-row">
+            <span>Total</span>
+            <span>${{ "%.2f"|format(total) }}</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

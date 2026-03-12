@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmed – WatchStore{% endblock %}
+
+{% block content %}
+<div class="confirmation-page">
+    <div class="confirmation-icon">✔</div>
+    <h1>Thank You for Your Order!</h1>
+    <p class="confirmation-ref">Order Reference: <strong>{{ ref }}</strong></p>
+    <p>We have received your order and will send a confirmation email shortly.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Continue Shopping</a>
+</div>
+{% endblock %}
