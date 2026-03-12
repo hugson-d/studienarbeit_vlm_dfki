@@ -1905,7 +1905,7 @@
     "class": "11bis13",
     "task_id": "C9",
     "answer": "E",
-    "math_category": null,
+    "math_category": "unknown",
     "is_text_only": true,
     "extracted_text": {
       "question": "29. Die Anzahl der Möglichkeiten, 100 als Summe von zwei oder mehr aufeinanderfolgenden ganzen Zahlen darzustellen, ist gleich",
@@ -1924,7 +1924,7 @@
     "class": "11bis13",
     "task_id": "C10",
     "answer": "D",
-    "math_category": null,
+    "math_category": "unknown",
     "is_text_only": true,
     "extracted_text": {
       "question": "30. Drei kugelförmige Luftballons schweben in einem Raum. Ihre Mittelpunkte liegen nicht auf einer Geraden. Wie viele verschiedene Ebenen kann es maximal geben, die gleichzeitig alle drei Ballons berühren (d.h. für alle drei Ballons Tangentialebenen sind)?",
@@ -27821,7 +27821,7 @@
     "class": "9und10",
     "task_id": "C10",
     "answer": "D",
-    "math_category": null,
+    "math_category": "unknown",
     "is_text_only": true,
     "extracted_text": {
       "question": "30. Eine Primzahl wird „prima“ genannt, wenn sie entweder einstellig ist – falls sie mehr als eine Stelle hat – sowohl nach Streichen der ersten Ziffer, als auch nach Streichen der letzten Ziffer, jeweils eine „prima“ Primzahl übrigbleibt. Wie viele „prima“ Primzahlen gibt es?",
