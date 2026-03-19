@@ -1,0 +1,26 @@
+2026-03-18 14:00:02,931 - INFO - 📂 Dataset geladen: 3557 Aufgaben
+2026-03-18 14:00:02,932 - INFO - 📜 Output: /Users/dennishug/Desktop/vlm_repo/results_vllm/gpt-5.4_results.jsonl
+2026-03-18 14:00:02,932 - INFO - 🤖 Modell: gpt-5.4
+2026-03-18 14:00:02,932 - INFO - ✅ Bereits valide Predictions: 0
+2026-03-18 14:00:02,932 - INFO - 🚀 Offene Tasks: 3557
+2026-03-18 14:07:34,689 - INFO - 📂 Dataset geladen: 3557 Aufgaben
+2026-03-18 14:07:34,690 - INFO - 📜 Output: /Users/dennishug/Desktop/vlm_repo/results_vllm/gpt-5.4_results.jsonl
+2026-03-18 14:07:34,690 - INFO - 🤖 Modell: gpt-5.4
+2026-03-18 14:07:34,690 - INFO - ✅ Bereits valide Predictions: 0
+2026-03-18 14:07:34,690 - INFO - 🚀 Offene Tasks: 3557
+2026-03-18 15:15:46,122 - INFO - 📂 Dataset geladen: 3557 Aufgaben
+2026-03-18 15:15:46,124 - INFO - 📜 Output: /Users/dennishug/Desktop/vlm_repo/results_vllm/gpt-5.4_results.jsonl
+2026-03-18 15:15:46,124 - INFO - 🤖 Modell: gpt-5.4
+2026-03-18 15:15:46,124 - INFO - ✅ Bereits valide Predictions: 579
+2026-03-18 15:15:46,124 - INFO - 🚀 Offene Tasks: 2978
+2026-03-18 17:51:47,136 - INFO - 📂 Dataset geladen: 3557 Aufgaben
+2026-03-18 17:51:47,136 - INFO - 📜 Output: /Users/dennishug/Desktop/vlm_repo/results_vllm/gpt-5.4_results.jsonl
+2026-03-18 17:51:47,136 - INFO - 🤖 Modell: gpt-5.4
+2026-03-18 17:51:47,136 - INFO - ✅ Bereits valide Predictions: 679
+2026-03-18 17:51:47,136 - INFO - 🚀 Offene Tasks: 2878
+2026-03-19 19:30:07,841 - INFO - 📂 Dataset geladen: 3557 Aufgaben
+2026-03-19 19:30:07,842 - INFO - 📜 Output: /Users/dennishug/Desktop/vlm_repo/results_vllm/gpt-5.4_results.jsonl
+2026-03-19 19:30:07,842 - INFO - 🤖 Modell: gpt-5.4
+2026-03-19 19:30:07,842 - INFO - ✅ Bereits valide Predictions: 3413
+2026-03-19 19:30:07,842 - INFO - 🚀 Offene Tasks: 144
+2026-03-19 19:47:52,839 - INFO - 📊 Ergebnis (neu verarbeitet): 103/144 = 71.5%
