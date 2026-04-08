@@ -33,6 +33,7 @@ env/
 *.swp
 *.swo
 *~
+.ipynb_checkpoints/
 
 # OS
 .DS_Store
@@ -44,10 +45,6 @@ Thumbs.db
 # Project specific
 kaenguru_solutions.pdf
 
-# Evaluation results (keep local copies safe but not in git)
-evaluation_results/
-eval_results/
-
 # Analysis cache files
 data/text_only_analysis_cache.json
 data/text_extraction_cache.json
@@ -56,3 +53,8 @@ data/text_extraction_cache.json
 data/references/*.png
 secrets.sh
 .hf_token
+
+# Cluster and local runtime logs
+*.out
+*.err
+*.log
